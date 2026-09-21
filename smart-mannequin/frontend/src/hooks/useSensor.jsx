@@ -9,6 +9,7 @@ export const useFetchSensor = async (
   sensorId,
   mannequinId = 1,
   returnFullResponse = false,
+  limit = 10,
 ) => {
   try {
     const token = Cookies.get("token");
@@ -18,7 +19,7 @@ export const useFetchSensor = async (
     }
 
     const response = await axios.get(
-      `${API_URL}/sensor/${sensor}/${sensorId}?mid=${mannequinId}`,
+      `${API_URL}/sensor/${sensor}/${sensorId}?mid=${mannequinId}&limit=${limit}`,
       { headers },
     );
 

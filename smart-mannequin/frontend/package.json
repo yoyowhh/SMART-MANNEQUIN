@@ -44,6 +44,7 @@
     "react-router-dom": "^6.17.0",
     "react-use-websocket": "^4.8.1",
     "recharts": "^3.10.1",
+    "smart-integrated-workspace": "file:../..",
     "socket.io-client": "^4.8.3",
     "sweetalert2": "^11.14.5",
     "tailwind-merge": "^2.3.0"

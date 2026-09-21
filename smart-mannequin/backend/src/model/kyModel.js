@@ -33,7 +33,7 @@ Ky.index = async (mannequinId) => {
   }
 }
 
-Ky.show = async (id, mannequinId) => {
+Ky.show = async (id, mannequinId, limit = 10) => {
   let table
   switch (parseInt(id)) {
     case 601:
@@ -47,7 +47,8 @@ Ky.show = async (id, mannequinId) => {
   }
 
   try {
-    const query = `SELECT * FROM ${table} WHERE mannequin_id = ? order by event_id DESC LIMIT 10`;
+    const safeLimit = Math.min(Math.max(parseInt(limit) || 10, 1), 500);
+    const query = `SELECT * FROM ${table} WHERE mannequin_id = ? order by event_id DESC LIMIT ${safeLimit}`;
     const [rows, fields] = await db.execute(query, [mannequinId]);
 
     let isHighValue = false
