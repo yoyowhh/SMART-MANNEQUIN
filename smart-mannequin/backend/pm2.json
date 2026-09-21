@@ -1,0 +1,5 @@
+{
+    "name": "api-smart-manekin",
+    "script": "./bin/www",
+    "instances": "1"
+}

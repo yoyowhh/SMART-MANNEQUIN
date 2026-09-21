@@ -1,0 +1,120 @@
+{
+  "welcome": "Welcome",
+  "description": "This is a description",
+  "lang": "Language",
+  "choose-lang": "Choose Language",
+  "showMore": "Show More",
+  "informasiTim": "Team Information",
+  "informasiSensor": "Sensor Information",
+  "Temperatur": "Temperature",
+  "Kelembaban": "Humidity",
+  "Tekanan Udara": "Air Pressure",
+  "Ketinggian": "Altitude",
+  "Collpase": "Collapse",
+  "Mannequin": "Mannequin",
+  "Project": "Project",
+  "Company": "Company",
+  "HighHeart": "High Heart Rate Detected",
+  "LowHeart": "Low Heart Rate Detected",
+  "Acknowledge": "Acknowledge",
+  "Please take the following precautions": "Please take the following precautions:",
+  "listPrecautions": {
+    "1": "Sit down and try to relax",
+    "2": "Take slow, deep breathsr",
+    "3": "Drink some water",
+    "4": "If symptoms persist, consider seeking medical attention"
+  },
+  "listProject": {
+    "SmartMannequin": "Smart Mannequin",
+    "SmartFarming": "Smart Farming",
+    "SmartMouse": "Smart Mouse",
+    "SmartWeaponRack": "Smart Weapon Rack"
+  },
+  "AboutUs": "About Us",
+  "OurTeams": "Our Teams",
+  "Career": "Career",
+  "Blog": "Blog",
+  "sensor": {
+    "overall": "Overall",
+    "sound": "Sound Sensor",
+    "gas": "Gas Sensor",
+    "lidar": "Lidar Sensor",
+    "camera": "Camera Sensor",
+    "wit": "Witmotion Sensor",
+    "adxl": "ADXL Sensor",
+    "mpu": "MPU Sensor",
+    "mpu6050": "MPU6050 Sensor",
+    "bme": "BME Sensor",
+    "air-pressure": "Air Pressure",
+    "altitude": "Altitude",
+    "loadcell": "Load Cell Sensor",
+    "skin": "Skin Sensor",
+    "smartskin": "Smartskin"
+  },
+  "soundSensor": {
+    "telinga-kiri": "Left Ear",
+    "telinga-kanan": "Right Ear",
+    "sensorSuara1": "Sound Sensor 1",
+    "sensorSuara2": "Sound Sensor 2",
+    "deskripsiSensor": "This is a new Analog Sound Sensor that is compatible with Arduino. This sensor uses a microphone that can detect sound and output an analog voltage signal. Sound Sensor is usually used to detect loudness in the surrounding environment, Arduino can collect its output signal and drive it. You can use it to create some funny interactive works like clapping and buzzing to find lost keys or remote control if you add a bell. This sensor works best with our Audio analyzer module."
+  },
+  "gasSensor": {
+    "deskripsiSensor": "The MQ-2 Gas Sensor is a sensor that can detect gases such as LPG, i-butane, propane, methane, alcohol, hydrogen, smoke, and carbon monoxide. This sensor has two output pins, one is an analog output (AO) and the other is a digital output (DO). This sensor has high sensitivity and fast response time. This sensor is very suitable for gas detection applications."
+  },
+  "lidarSensor": {
+    "deskripsiSensor": "Lidar Sensor is a sensor that can measure distance using a laser. This sensor has a long and accurate measurement range. This sensor is very suitable for navigation and distance measurement applications."
+  },
+  "cameraSensor": {
+    "deskripsiSensor": "The AMG8833 is the next generation of 8x8 thermal IR sensors from Panasonic, and offers higher performance than it's predecessor the AMG8831. The sensor only supports I2C, and has a configurable interrupt pin that can fire when any individual pixel goes above or below a threshold that you set. The sensor is essentially a thermal camera, that when connected to a microcontroller (or raspberry pi) will return an array of 64 individual infrared temperature readings over I2C. The driver board is compatible with any microcontroller that can communicate over I2C, or with a raspberry pi using the wiringPi library.",
+    "kamera": "Camera",
+    "termal": "Thermal Camera",
+    "termaltemperatur": "Thermal Temperature"
+  },
+  "witmotionSensor": {
+    "deskripsiSensor": "The module combines high-precision gyroscopes,accelerometers, and geomagnetic sensors with advanced microprocessors and Kalman filtering. It provides real-time motion posture detection with 0.2° accuracy, stable headig",
+    "witAccel": "Accelerometer Sensor",
+    "witAngle": "Angle Sensor",
+    "witMagnetic": "Magnetic Sensor",
+    "witPressure": "Pressure Sensor",
+    "witQuaternion": "Quaternion Sensor",
+    "witVelocity": "Velocity Sensor"
+  },
+  "adxlSensor": {
+    "tanganKiri": "Left Hand",
+    "tanganKanan": "Right Hand",
+    "dekripsiSensor": "The sensor consists of a micro-machined structure on a silicon wafer. The structure is suspended by polysilicon springs which allow it to deflect smoothly in any direction when subject to acceleration in the X, Y and/or Z axis."
+  },
+  "mpuSensor": {
+    "deskripsiSensor": "Inside are two sensors, one is a classic 3-axis accelerometer, which can tell you which direction is downtowards the Earth (by measuring gravity). The other is a gyroscope that can sense how fast the board is being twisted around. By combining this data you can tell how your project is moving through space"
+  },
+  "bmeSensor": {
+    "deskripsiSensor": "Bosch Sensortec BME680 Integrated Environmental Sensor is designed for mobile applications and wearables. The BME680 combines a gas sensor with air pressure, humidity, and ambient air temperature sensing functions within a single"
+  },
+  "loadcellSensor": {
+    "deskripsiSensor": "A load cell is an electro-mechanical sensor used to measure force or weight. It has a simple yet effective design which relies upon the well-known transference between an applied force, material deformation and the flow of electricity.",
+    "loadcell-leher": "Neck Load Cell",
+    "loadcell-leftThigh": "Left Thigh Load Cell",
+    "loadcell-rightThigh": "Right Thigh Load Cell",
+    "loadcell-leftFoot": "Left Foot Load Cell",
+    "loadcell-rightFoot": "Right Foot Load Cell"
+  },
+  "skinSensor": {
+    "deskripsiSensor": "Skin Sensor (Flex & Strain Gauge) monitors joint bending angles and surface strain across 8 body locations (Front & Back): Right/Left Shoulder, Right/Left Elbow, Right/Left Waist, and Right/Left Knee.",
+    "sensor1": "Right Shoulder",
+    "sensor2": "Left Shoulder",
+    "sensor3": "Right Elbow",
+    "sensor4": "Left Elbow",
+    "sensor5": "Right Waist",
+    "sensor6": "Left Waist",
+    "sensor7": "Right Knee",
+    "sensor8": "Left Knee"
+  },
+  "smartskinSensor": {
+    "temperature": "SmartSkin Temperature (MCP9808)",
+    "pressure": "SmartSkin Pressure (FSR)",
+    "vibration": "SmartSkin Vibration (Piezo)",
+    "flex": "SmartSkin Flex & Strain Gauge",
+    "anatomy": "Mannequin Anatomy",
+    "deskripsiSensor": "Smart Skin is a multimodal sensing system integrated into the mannequin surface to detect real-time tactile and environmental stimuli. It features MCP9808 temperature sensors, FSR RP-S40-ST pressure sensors, piezoelectric impact sensors, and flex & strain gauge sensors for monitoring 8 joint articulation points (Shoulder, Elbow, Waist, Knee) across both Front and Back."
+  }
+}

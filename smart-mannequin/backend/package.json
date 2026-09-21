@@ -1,0 +1,35 @@
+{
+  "name": "api-manekin-js",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon ./bin/www",
+    "setup:local-db": "powershell -ExecutionPolicy Bypass -File ./scripts/setup-local-db.ps1",
+    "simulate:lora": "node ./scripts/simulate-lora.js",
+    "simulate:smartskin": "node ./scripts/simulate-smartskin.js",
+    "simulate:all": "node ./scripts/simulate-all.js",
+    "debug": "DEBUG=api-manekin-js:* pnpm start",
+    "debug-cmd": "set DEBUG=api-manekin-js:* & pnpm start",
+    "debug-ps": "$env:DEBUG='api-manekin-js:*'; pnpm start"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
+    "debug": "~2.6.9",
+    "dotenv": "^16.3.1",
+    "express": "^4.16.1",
+    "http-errors": "~1.6.3",
+    "jsonwebtoken": "^9.0.2",
+    "moment-timezone": "^0.5.43",
+    "morgan": "~1.9.1",
+    "mysql2": "^3.6.3",
+    "pug": "^3.0.2",
+    "socket.io": "^4.8.3",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

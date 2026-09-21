@@ -1,0 +1,16 @@
+services:
+  db-smart-manekin-2026:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: dbsensor
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      # host:container
+      - '4023:3306'
+    volumes:
+      - db_smart-manekin-2026:/var/lib/mysql
+
+
+volumes:
+  db_smart-manekin-2026:

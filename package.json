@@ -1,0 +1,15 @@
+{
+  "name": "smart-integrated-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Unified Web Application and Real-time Sensor System for Smart Mannequin & Smart Skin",
+  "scripts": {
+    "install:all": "npm --prefix smart-mannequin/frontend install && pnpm --dir smart-mannequin/backend install",
+    "dev": "npx -y concurrently -k -p \"[{name}]\" -n \"FE,BE\" -c \"cyan,blue\" \"npm run dev:fe\" \"npm run dev:be\"",
+    "dev:fe": "npm --prefix smart-mannequin/frontend run dev",
+    "dev:be": "pnpm --dir smart-mannequin/backend start",
+    "simulate:smartskin": "pnpm --dir smart-mannequin/backend run simulate:smartskin",
+    "simulate:lora": "pnpm --dir smart-mannequin/backend run simulate:lora",
+    "simulate:all": "pnpm --dir smart-mannequin/backend run simulate:all"
+  }
+}

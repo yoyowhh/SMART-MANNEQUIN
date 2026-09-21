@@ -1,0 +1,9 @@
+{
+  "watch": ["app.js", "bin", "routes", "src"],
+  "ext": "js,json",
+  "ignore": [
+    "scripts/*-simulator-backup.*",
+    "scripts/lora-simulator-backup.json",
+    "scripts/device-simulator-backup.json"
+  ]
+}

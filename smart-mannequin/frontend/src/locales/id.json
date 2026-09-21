@@ -1,0 +1,121 @@
+{
+  "welcome": "Selamat Datang",
+  "description": "Ini adalah deskripsi",
+  "lang": "Bahasa",
+  "choose-lang": "Pilih Bahasa",
+  "showMore": "Tampilkan Detail",
+  "informasiTim": "Informasi Tim",
+  "informasiSensor": "Informasi Sensor",
+  "Temperatur": "Temperatur",
+  "Kelembaban": "Kelembaban",
+  "Tekanan Udara": "Tekanan Udara",
+  "Ketinggian": "Ketinggian",
+  "Collpase": "Runtuhkan",
+  "Mannequin": "Manekin",
+  "Project": "Proyek",
+  "Company": "Perusahaan",
+  "HighHeart": "Deteksi Detak Jantung Tinggi",
+  "LowHeart": "Deteksi Detak Jantung Rendah",
+  "Acknowledge": "Akui",
+  "Please take the following precautions": "Silakan ambil langkah-langkah pencegahan berikut:",
+  "listPrecautions": {
+    "1": "Duduk dan coba untuk rileks",
+    "2": "Bernapas perlahan dan dalam",
+    "3": "Minum air",
+    "4": "Jika gejala tetap, pertimbangkan untuk mencari perhatian medis"
+  },
+  "listProject": {
+    "SmartMannequin": "Manekin Pintar",
+    "SmartFarming": "Pertanian Pintar",
+    "SmartMouse": "Tikus Pintar",
+    "SmartWeaponRack": "Rak Senjata Pintar"
+  },
+  "AboutUs": "Tentang Kami",
+  "OurTeams": "Tim Kami",
+  "Career": "Karir",
+  "Blog": "Blog",
+  "sensor": {
+    "overall": "Keseluruhan",
+    "sound": "Sensor Suara",
+    "gas": "Sensor Gas",
+    "lidar": "Sensor Lidar",
+    "camera": "Kamera",
+    "wit": "Sensor Witmotion",
+    "adxl": "Sensor ADXL345",
+    "mpu": "Sensor MPU",
+    "mpu6050": "Sensor MPU6050",
+    "bme": "Sensor BME280",
+    "air-pressure": "Sensor Tekanan Udara",
+    "altitude": "Sensor Ketinggian",
+    "loadcell": "Sensor Load Cell",
+    "skin": "Sensor Kulit",
+    "smartskin": "Smartskin"
+  },
+  "soundSensor": {
+    "telinga-kiri": "Telinga Kiri",
+    "telinga-kanan": "Telinga Kanan",
+    "sensorSuara1": "Sensor Suara 1",
+    "sensorSuara2": "Sensor Suara 2",
+    "deskripsiSensor": "Ini adalah Sensor Suara Analog baru yang kompatibel dengan Arduino. Sensor ini menggunakan mikrofon yang dapat mendeteksi suara dan mengeluarkan sinyal tegangan analog. Sensor Suara biasanya digunakan untuk mendeteksi kenyaringan di lingkungan sekitar, Arduino dapat mengumpulkan sinyal keluarannya dan menggerakkannya. Anda dapat menggunakannya untuk membuat beberapa karya interaktif yang lucu seperti tepukan dan dengungan untuk menemukan kunci yang hilang atau remote control jika Anda menambahkan bel. Sensor ini bekerja paling baik dengan modul penganalisis Audio kami."
+  },
+  "gasSensor": {
+    "deskripsiSensor": "Sensor Gas MQ-2 adalah sensor yang dapat mendeteksi gas seperti LPG, i-butana, propana, metana, alkohol, hidrogen, asap dan karbon monoksida. Sensor ini memiliki dua pin keluaran, satu adalah keluaran analog (AO) dan yang lainnya adalah keluaran digital (DO). Sensor ini memiliki sensitivitas yang tinggi dan waktu respon yang cepat. Sensor ini sangat cocok untuk aplikasi deteksi gas."
+  },
+  "lidarSensor": {
+    "deskripsiSensor": "Sensor Lidar adalah sensor yang dapat mengukur jarak dengan menggunakan laser. Sensor ini memiliki jangkauan pengukuran yang jauh dan akurat. Sensor ini sangat cocok untuk aplikasi navigasi dan pengukuran jarak."
+  },
+  "cameraSensor": {
+    "deskripsiSensor": "AMG8833 adalah generasi berikutnya dari sensor IR termal 8x8 dari Panasonic, dan menawarkan kinerja yang lebih tinggi dari pendahulunya AMG8831. Sensor ini hanya mendukung I2C, dan memiliki pin interupsi yang dapat dikonfigurasi yang dapat dipicu ketika setiap piksel melebihi atau kurang dari ambang batas yang Anda tetapkan. Sensor ini pada dasarnya adalah kamera termal, yang ketika terhubung ke mikrokontroler (atau raspberry pi) akan mengembalikan array dari 64 pembacaan suhu inframerah individu melalui I2C. Papan pengemudi kompatibel dengan setiap mikrokontroler yang dapat berkomunikasi melalui I2C, atau dengan raspberry pi menggunakan perpustakaan wiringPi.",
+    "kamera": "Kamera",
+    "termal": "Kamera Termal",
+    "termaltemperatur": "Termal Temperatur"
+  },
+
+  "witmotionSensor": {
+    "deskripsiSensor": "Modul ini menggabungkan giroskop presisi tinggi, akselerometer, dan sensor geomagnetik dengan mikroprosesor canggih dan penyaringan Kalman. Ini member deteksi postur gerakan real-time dengan akurasi 0,2°, stabil headig",
+    "witAccel": "Sensor Akselerometer",
+    "witAngle": "Sensor Sudut",
+    "witMagnetic": "Sensor Magnetik",
+    "witPressure": "Sensor Tekanan",
+    "witQuaternion": "Sensor Kuaternion",
+    "witVelocity": "Sensor Kecepatan"
+  },
+  "adxlSensor": {
+    "tanganKiri": "Tangan Kiri",
+    "tanganKanan": "Tangan Kanan",
+    "dekripsiSensor": "Sensor terdiri dari struktur mikro-mesin di wafer silikon. Struktur ini digantung oleh pegas polisilikon yang memungkinkannya untuk membengkok dengan mulus dalam arah apa pun ketika terkena percepatan di sumbu X, Y dan/atau Z."
+  },
+  "mpuSensor": {
+    "dekripsiSensor": "Di dalamnya terdapat dua sensor, satu adalah akselerometer 3-sumbu klasik, yang dapat memberi tahu Anda arah mana yang mengarah ke bawah Bumi (dengan mengukur gravitasi). Sensor lainnya adalah giroskop yang dapat merasakan seberapa cepat papan diputar. Dengan menggabungkan data ini, Anda dapat mengetahui bagaimana proyek Anda bergerak di luar angkasa "
+  },
+  "bmeSensor": {
+    "dekripsiSensor": "Sensor Lingkungan Terpadu Bosch Sensortec BME680 adalah dirancang untuk aplikasi seluler dan perangkat yang dapat dikenakan. BME680 menggabungkan sensor gas dengan tekanan udara, kelembapan, dan fungsi penginderaan suhu udara sekitar dalam satu"
+  },
+  "loadcellSensor": {
+    "dekripsiSensor": "Load Cell adalah sensor yang digunakan untuk mengukur berat atau gaya. Load Cell ini memiliki dua output, yaitu output analog dan output digital. Load Cell ini memiliki sensitivitas yang tinggi dan waktu respon yang cepat. Load Cell ini sangat cocok untuk aplikasi pengukuran berat atau gaya.",
+    "loadcell-leher": "Loadcell Leher",
+    "loadcell-leftThigh": "Loadcell Paha Kiri",
+    "loadcell-rightThigh": "Loadcell Paha Kanan",
+    "loadcell-leftFoot": "Loadcell Kaki Kiri",
+    "loadcell-rightFoot": "Loadcell Kaki Kanan"
+  },
+  "skinSensor": {
+    "deskripsiSensor": "Sensor Skin (Flex & Strain Gauge) memantau kelengkungan sendi dan regangan pada 8 titik tubuh (Depan & Belakang): Bahu Kanan/Kiri, Sikut Kanan/Kiri, Pinggang Samping Kanan/Kiri, dan Lutut Kanan/Kiri.",
+    "sensor1": "Bahu Kanan",
+    "sensor2": "Bahu Kiri",
+    "sensor3": "Sikut Kanan",
+    "sensor4": "Sikut Kiri",
+    "sensor5": "Pinggang Samping Kanan",
+    "sensor6": "Pinggang Samping Kiri",
+    "sensor7": "Lutut Kanan",
+    "sensor8": "Lutut Kiri"
+  },
+  "smartskinSensor": {
+    "temperature": "SmartSkin Suhu (MCP9808)",
+    "pressure": "SmartSkin Tekanan (FSR)",
+    "vibration": "SmartSkin Getaran (Piezo)",
+    "flex": "SmartSkin Flex & Strain Gauge",
+    "anatomy": "Anatomi Manekin",
+    "deskripsiSensor": "Smart Skin adalah sistem sensor multimodal yang terpasang pada permukaan manekin untuk mendeteksi berbagai stimulasi fisik secara real-time. Sistem ini mengintegrasikan sensor suhu (MCP9808) untuk pemantauan termal, sensor tekanan (FSR RP-S40-ST) untuk distribusi tekanan kontak, sensor getaran piezoelektrik untuk deteksi impak, dan flex & strain gauge untuk pemantauan artikulasi kelengkungan 8 titik sendi (Bahu, Sikut, Pinggang Samping, dan Lutut) baik sisi Depan maupun Belakang."
+  }
+}

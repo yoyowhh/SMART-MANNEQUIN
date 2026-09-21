@@ -1,0 +1,194 @@
+@import "./styles/neomorph.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer {
+  .trapezium-right {
+    clip-path: polygon(10% 0, 100% 0, 100% 100%, 10% 80%);
+  }
+  .trapezium-left {
+    clip-path: polygon(0 0, 90% 20%, 90% 100%, 0 100%);
+  }
+}
+
+/* scrollbar */
+body::-webkit-scrollbar {
+  width: 8px;
+  background-color: #f5f5f5;
+}
+
+body::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+  background-color: #f5f5f5;
+}
+
+body::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #555;
+}
+/* end scrollbar */
+
+svg {
+  display: inline;
+}
+
+/* Styling for the quarter circle */
+.quarter-circle {
+  width: 30%; /* 50% of the viewport's smaller dimension (width or height) */
+  height: 55vmin; /* 50% of the viewport's smaller dimension (width or height) */
+  background-color: rgb(209, 213, 219); /* Background color for visualization */
+  border-top-left-radius: 100%; /* Create a quarter circle shape */
+  position: absolute; /* Position it absolutely */
+  top: 0; /* Stick to the top of the viewport */
+  left: 0; /* Stick to the left of the viewport */
+  transform: rotate(180deg);
+  background-color: #c4c4c4;
+}
+
+.quarter-circle2 {
+  width: 30%; /* 50% of the viewport's smaller dimension (width or height) */
+  height: 55vmin; /* 50% of the viewport's smaller dimension (width or height) */
+  background-color: rgb(209, 213, 219); /* Background color for visualization */
+  border-top-left-radius: 100%; /* Create a quarter circle shape */
+  position: absolute; /* Position it absolutely */
+  right: 0; /* Stick to the top of the viewport */
+  bottom: 0; /* Stick to the left of the viewport */
+  /* transform: rotate(180deg); */
+  background-color: #c4c4c4;
+}
+
+/* Optional: Center the content within the quarter circle */
+.quarter-circle::before {
+  content: "";
+  display: block;
+  width: 50%; /* Center the content horizontally within the quarter circle */
+  height: 50%; /* Center the content vertically within the quarter circle */
+  margin: auto;
+}
+
+.quarter-circle2::before {
+  content: "";
+  display: block;
+  width: 50%; /* Center the content horizontally within the quarter circle */
+  height: 50%; /* Center the content vertically within the quarter circle */
+  margin: auto;
+}
+
+/* Media query untuk responsif */
+@media only screen and (max-width: 1024px) {
+  .quarter-circle {
+    width: 40%; /* Adjust the width for smaller screens */
+    height: 30vmin;
+  }
+}
+
+@media only screen and (max-width: 1024px) {
+  .quarter-circle {
+    width: 30%; /* Adjust the width for smaller screens */
+    height: 45vmin;
+  }
+
+  .quarter-circle2 {
+    width: 30%; /* Adjust the width for smaller screens */
+    height: 45vmin;
+  }
+}
+@media only screen and (max-width: 768px) {
+  .quarter-circle {
+    width: 30%; /* Adjust the width for smaller screens */
+    height: 35vmin;
+  }
+
+  .quarter-circle2 {
+    width: 30%; /* Adjust the width for smaller screens */
+    height: 35vmin;
+  }
+}
+
+@media only screen and (max-width: 480px) {
+  .quarter-circle {
+    width: 35%; /* Further adjust the width for even smaller screens */
+  }
+
+  .quarter-circle2 {
+    width: 35%; /* Further adjust the width for even smaller screens */
+  }
+}
+
+.arrow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: 220px;
+}
+
+.arrow span {
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-bottom: 5px solid #c4c4c4;
+  border-right: 5px solid #c4c4c4;
+  transform: rotate(45deg);
+  margin: -10px;
+  animation: scroll 2s infinite;
+}
+
+.arrow span:nth-child(2) {
+  animation-delay: -0.2s;
+}
+.arrow span:nth-child(3) {
+  animation-delay: -0.4s;
+}
+
+@keyframes scroll {
+  0% {
+    opacity: 0;
+    transform: rotate(45deg) translate(-20px, -20px);
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: rotate(45deg) translate(20px, 20px);
+  }
+}
+
+.card:before {
+  content: "";
+  position: absolute;
+  display: block;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 176, 155, 0.5),
+    rgba(150, 201, 61, 1)
+  );
+  z-index: 2;
+  transition: 0.5s all;
+  opacity: 0;
+}
+
+.card:hover:before {
+  opacity: 1;
+}
+
+.card p {
+  position: absolute;
+  z-index: 3;
+  color: #fff;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: 0.5s all;
+}
+
+.card:hover p {
+  opacity: 1;
+  transform: translateY(0px);
+}

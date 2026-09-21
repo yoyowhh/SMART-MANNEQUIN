@@ -1,0 +1,34 @@
+import { API_BASE_URL } from "./config";
+
+const url = API_BASE_URL;
+
+export const ApiKy601 = `${url}/sensor/ky/601`;
+export const ApiKy602 = `${url}/sensor/ky/602`;
+export const ApiBme = `${url}/sensor/bme/1001`;
+export const ApiLIDAR = `${url}/sensor/lidar/901`;
+export const ApiLoadCell_1 = `${url}/sensor/loadcell/801`;
+export const ApiLoadCell_2 = `${url}/sensor/loadcell/802`;
+export const ApiLoadCell_3 = `${url}/sensor/loadcell/803`;
+export const ApiLoadCell_4 = `${url}/sensor/loadcell/804`;
+export const ApiLoadCell_5 = `${url}/sensor/loadcell/805`;
+export const ApiLoadCell_6 = `${url}/sensor/loadcell/806`;
+export const ApiMPU = `${url}/sensor/mpu/1002`;
+export const ApiDFrobot = `${url}/sensor/mq/101`;
+export const ApiThermal = `${url}/sensor/thermal/702`;
+export const ApiWitAcceleration = `${url}/sensor/witsensor/acceleration`;
+export const ApiWitVelocity = `${url}/sensor/witsensor/velocity`;
+export const ApiWitAngle = `${url}/sensor/witsensor/angle`;
+export const ApiWitPressure = `${url}/sensor/witsensor/pressure`;
+export const ApiWitMagnetic = `${url}/sensor/witsensor/magnetic`;
+export const ApiWitQuaternion = `${url}/sensor/witsensor/quaternion`;
+export const ApiADXL1 = `${url}/sensor/adxl/201`;
+export const ApiADXL2 = `${url}/sensor/adxl/202`;
+export const ApiADXL3 = `${url}/sensor/adxl/203`;
+export const ApiADXL4 = `${url}/sensor/adxl/204`;
+export const ApiStatus = `${url}/status`;
+export const Api1101 = `${url}/sensor/skin/1101`;
+export const Api1102 = `${url}/sensor/skin/1102`;
+export const Api1103 = `${url}/sensor/skin/1103`;
+export const Api1104 = `${url}/sensor/skin/1104`;
+export const Api1105 = `${url}/sensor/skin/1105`;
+export const Api1106 = `${url}/sensor/skin/1106`;
