@@ -17,6 +17,7 @@ import LiveIndicatorBadge from "../../components/Dashboard/LiveIndicatorBadge";
 import SensorInfoCard from "../../components/Dashboard/SensorInfoCard";
 import moment from "moment";
 import Swal from "sweetalert2";
+import SoundLogsModal from "../../components/Sound/SoundLogsModal";
 import {
   Wifi,
   WifiOff,
@@ -32,6 +33,7 @@ import {
   Download,
   Headphones,
   Radio,
+  ScrollText,
 } from "lucide-react";
 
 const PERIOD_OPTIONS = [
@@ -56,6 +58,7 @@ const SoundSensorPage = () => {
   const [lastUpdateKy602, setLastUpdateKy602] = useState(null);
   const [ky601RawRows, setKy601RawRows] = useState([]);
   const [ky602RawRows, setKy602RawRows] = useState([]);
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
 
   // Connection & Health Status
   const [isConnected, setIsConnected] = useState(false);
@@ -499,38 +502,33 @@ const SoundSensorPage = () => {
               </button>
             ))}
           </div>
-
-          {/* Tombol Ekspor CSV */}
-          <button
-            onClick={handleExportCSV}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-xl bg-emerald-50 text-emerald-700 hover:bg-emerald-100/90 border border-emerald-200/80 shadow-2xs transition-all active:scale-95 cursor-pointer"
-            title="Unduh seluruh riwayat data suara periode ini ke file CSV">
-            <Download className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Ekspor CSV</span>
-          </button>
         </div>
       </div>
 
-      {/* Informasi Sensor Card */}
+      {/* Informasi Sensor Card (Sama Seperti di Sensor Gas) */}
       <SensorInfoCard
         title={t("informasiSensor") || "Informasi Sensor"}
-        sensorCode="KY-037 / KY-038 Dual-Channel Acoustic"
+        sensorCode="KY-037 / SOUND SENSOR"
         imageSrc="/images/information/sound-information.png"
         imageAlt="sound-information"
-        description="Sensor Suara KY-037/KY-038 dirancang untuk mendeteksi intensitas gelombang suara dan getaran akustik lingkungan pada manekin di dua titik anatomis (Telinga Kiri dan Telinga Kanan). Dilengkapi pembanding komparasi stereo, pemantau ambang batas kebisingan (Heartrate/Acoustic pulse), serta riwayat telemetri real-time.">
-        <div className="mt-3 flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-          <span className="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-mono">
-            Modul: KY-037 / KY-038
-          </span>
-          <span className="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-mono">
-            Kanal: KY-601 (Kanan), KY-602 (Kiri)
-          </span>
-          <span className="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md font-mono">
-            Satuan: dB / ADC
-          </span>
-          <span className="text-xs bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-md font-mono font-semibold">
-            Batas Aman: &lt; 75 dB
-          </span>
+        action={
+          <button
+            type="button"
+            onClick={() => setIsLogsModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+          >
+            <ScrollText size={14} />
+            <span>Lihat Log Riwayat Sensor</span>
+          </button>
+        }
+      >
+        <div className="flex flex-col gap-2">
+          <h4 className="font-bold text-slate-800 text-base">
+            Sistem Sensor Suara KY-037 & KY-038 (Dual-Channel Acoustic)
+          </h4>
+          <p className="text-slate-600 text-sm leading-relaxed text-justify">
+            Sensor Suara KY-037/KY-038 dirancang untuk mendeteksi intensitas gelombang suara dan getaran akustik lingkungan pada manekin di dua titik anatomis (Telinga Kiri dan Telinga Kanan). Dilengkapi pembanding komparasi stereo, pemantau ambang batas kebisingan (Heartrate/Acoustic pulse), serta riwayat telemetri real-time.
+          </p>
         </div>
       </SensorInfoCard>
 
@@ -1126,6 +1124,16 @@ const SoundSensorPage = () => {
           </div>
         </div>
       </BaseCard>
+
+      {/* Modal Log Riwayat Sensor Suara (Sama Seperti di Sensor Gas) */}
+      <SoundLogsModal
+        isOpen={isLogsModalOpen}
+        onClose={() => setIsLogsModalOpen(false)}
+        mannequinId={mannequinId}
+        ky601Rows={ky601RawRows}
+        ky602Rows={ky602RawRows}
+        onExportCsv={handleExportCSV}
+      />
     </div>
   );
 };

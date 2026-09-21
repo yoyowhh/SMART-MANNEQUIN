@@ -23,9 +23,11 @@ exports.index = async (req, res) => {
 
 exports.show = async (req, res) => {
   try {
+    const limit = parseInt(req.query.limit) || 10;
     const data = await Loadcell.show(
       req.params.id,
       parseInt(req.query.mid) || 1,
+      limit,
     );
     res.json(data);
   } catch (err) {

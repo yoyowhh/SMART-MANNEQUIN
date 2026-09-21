@@ -35,13 +35,14 @@ Mq.index = async (mannequinId) => {
   }
 }
 
-Mq.show = async (id, mannequinId) => {
+Mq.show = async (id, mannequinId, limit = 10) => {
   if(parseInt(id) !== 101 && parseInt(id) !== 102 && parseInt(id) !== 103){
     table = null
   }
 
   try {
-    const query = `SELECT * FROM ${table} WHERE sensor_id = ? AND mannequin_id = ? order by event_id DESC LIMIT 10`
+    const safeLimit = Math.max(1, parseInt(limit) || 10);
+    const query = `SELECT * FROM ${table} WHERE sensor_id = ? AND mannequin_id = ? order by event_id DESC LIMIT ${safeLimit}`
     const [rows] = await db.execute(query, [id, mannequinId])
 
     // if (!rows.length) {

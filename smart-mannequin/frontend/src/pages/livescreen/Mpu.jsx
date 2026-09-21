@@ -1,102 +1,667 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import BaseCard from "../../components/Elements/Card";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import ApexChart from "../../components/Elements/Chart";
-import {
-  createChartOptions,
-  processData,
-  useNewDataDetector,
-} from "../../helpers/utils";
+import { createChartOptions } from "../../helpers/utils";
 import { Skeleton } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useParams } from "react-router-dom";
 import { useFetchSensor } from "../../hooks/useSensor";
-import LiveIndicatorBadge from "../../components/Dashboard/LiveIndicatorBadge";
 import SensorInfoCard from "../../components/Dashboard/SensorInfoCard";
+import MpuLogsModal from "../../components/Mpu/MpuLogsModal";
+import moment from "moment";
+import Swal from "sweetalert2";
+import {
+  Clock,
+  Activity,
+  Layers,
+  Calendar,
+  Compass,
+  Navigation,
+  Zap,
+  ScrollText,
+  ShieldCheck,
+  Cpu,
+  Thermometer,
+} from "lucide-react";
+
+const PERIOD_OPTIONS = [
+  { label: "10 Data", value: 10 },
+  { label: "25 Data", value: 25 },
+  { label: "50 Data", value: 50 },
+  { label: "100 Data", value: 100 },
+];
 
 const MpuPage = () => {
-  const [series, setSeries] = useState([]);
-  const [options, setOptions] = useState([]);
-  const [loading, setLoading] = useState(true);
   const { t } = useTranslation();
-
   const params = useParams();
   const mannequinId = params?.id || 1;
 
-  useEffect(() => {
-    let intervalId;
+  // Data State
+  const [loading, setLoading] = useState(true);
+  const [rawRows, setRawRows] = useState([]);
+  const [latestX, setLatestX] = useState(0);
+  const [latestY, setLatestY] = useState(0);
+  const [latestZ, setLatestZ] = useState(0);
+  const [latestG, setLatestG] = useState(0);
+  const [latestTemp, setLatestTemp] = useState(0);
+  const [lastUpdateTime, setLastUpdateTime] = useState(null);
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
 
-    const FetchAndProcessData = async () => {
-      try {
-        const ApiMPUData = await useFetchSensor("MPU", 1002, mannequinId);
+  // Status Koneksi & Filter Periode
+  const [isConnected, setIsConnected] = useState(false);
+  const [lastFetchTime, setLastFetchTime] = useState(null);
+  const [limit, setLimit] = useState(10);
 
-        const processedData = processData(ApiMPUData, null, "MPU", "mpu");
-        setLoading(false);
+  // Status getaran / dinamika gerak MPU
+  const getMotionStatus = (gVal) => {
+    if (gVal >= 2.0) {
+      return {
+        label: "Impak Ekstrem",
+        badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
+        desc: "Akselerasi impak mendadak > 2.0G",
+      };
+    }
+    if (gVal >= 1.25 || gVal <= 0.75) {
+      return {
+        label: "Gerak Dinamis",
+        badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
+        desc: "Akselerasi orientasi sedang berfluktuasi",
+      };
+    }
+    return {
+      label: "Statik Normal",
+      badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
+      desc: "Gravitasi stabil 1.0G (Manekin diam)",
+    };
+  };
 
-        const createOptions = createChartOptions(
-          "mpu-1002",
-          "MPU Gyroscope & Orientation Chart",
-          processedData[0].categories,
-        );
+  const fetchAndProcessData = useCallback(async () => {
+    try {
+      const response = await useFetchSensor("MPU", 1002, mannequinId, true, limit);
+      setLoading(false);
+      setLastFetchTime(new Date());
 
-        setOptions(createOptions);
-        setSeries(processedData);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+      const rows = Array.isArray(response?.data?.data)
+        ? response.data.data
+        : Array.isArray(response?.data)
+        ? response.data
+        : Array.isArray(response)
+        ? response
+        : [];
+
+      setRawRows(rows);
+
+      if (rows.length > 0) {
+        setIsConnected(true);
+        const latest = rows[0];
+        const x = parseFloat(latest.x_acceleration) || 0;
+        const y = parseFloat(latest.y_acceleration) || 0;
+        const z = parseFloat(latest.z_acceleration) || 0;
+        const temp = parseFloat(latest.temperature) || 0;
+        const g = Math.sqrt(x * x + y * y + z * z);
+
+        setLatestX(x);
+        setLatestY(y);
+        setLatestZ(z);
+        setLatestG(g);
+        setLatestTemp(temp);
+        setLastUpdateTime(latest.inputed_at);
+      } else {
+        setIsConnected(false);
       }
+    } catch (error) {
+      console.error("Error fetching mpu data:", error);
+      setIsConnected(false);
+    }
+  }, [mannequinId, limit]);
+
+  useEffect(() => {
+    fetchAndProcessData();
+    const intervalId = setInterval(fetchAndProcessData, 3000);
+    return () => clearInterval(intervalId);
+  }, [fetchAndProcessData]);
+
+  // Ekspor CSV
+  const handleExportCSV = () => {
+    if (!rawRows || rawRows.length === 0) {
+      Swal.fire({
+        icon: "warning",
+        title: "Tidak Ada Data",
+        text: "Belum ada riwayat telemetri MPU-6050 yang dapat diekspor.",
+      });
+      return;
+    }
+
+    const headers = [
+      "No",
+      "Waktu Pencatatan (WIB)",
+      "Sensor ID",
+      "Nama Sensor",
+      "X-Acceleration (G)",
+      "Y-Acceleration (G)",
+      "Z-Acceleration (G)",
+      "Resultan (G)",
+      "Temperatur (°C)",
+    ];
+
+    const csvData = rawRows.map((item, idx) => {
+      const x = parseFloat(item.x_acceleration) || 0;
+      const y = parseFloat(item.y_acceleration) || 0;
+      const z = parseFloat(item.z_acceleration) || 0;
+      const g = Math.sqrt(x * x + y * y + z * z).toFixed(3);
+      const temp = parseFloat(item.temperature) || 0;
+
+      return [
+        idx + 1,
+        `"${moment(item.inputed_at).format("YYYY-MM-DD HH:mm:ss")}"`,
+        item.sensor_id || 1002,
+        `"MPU-6050 MotionTracking"`,
+        x.toFixed(3),
+        y.toFixed(3),
+        z.toFixed(3),
+        g,
+        temp.toFixed(1),
+      ].join(",");
+    });
+
+    const csvContent = [headers.join(","), ...csvData].join("\r\n");
+    const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", `Telemetri_MPU6050_Manekin_${mannequinId}_${moment().format("YYYYMMDD_HHmmss")}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // Konfigurasi Chart Area Spline Serba Hijau Emerald
+  const { chartSeries, chartOptions } = useMemo(() => {
+    const reversedRows = [...rawRows].reverse();
+    const categories = reversedRows.map((r) =>
+      moment(r.inputed_at).format("HH:mm:ss")
+    );
+
+    const xSeries = reversedRows.map((r) => Number((parseFloat(r.x_acceleration) || 0).toFixed(3)));
+    const ySeries = reversedRows.map((r) => Number((parseFloat(r.y_acceleration) || 0).toFixed(3)));
+    const zSeries = reversedRows.map((r) => Number((parseFloat(r.z_acceleration) || 0).toFixed(3)));
+    const gSeries = reversedRows.map((r) => {
+      const x = parseFloat(r.x_acceleration) || 0;
+      const y = parseFloat(r.y_acceleration) || 0;
+      const z = parseFloat(r.z_acceleration) || 0;
+      return Number(Math.sqrt(x * x + y * y + z * z).toFixed(3));
+    });
+
+    const seriesData = [
+      { name: "Sumbu X (X-Axis)", data: xSeries },
+      { name: "Sumbu Y (Y-Axis)", data: ySeries },
+      { name: "Sumbu Z (Z-Axis)", data: zSeries },
+      { name: "Resultan Dinamis (G)", data: gSeries },
+    ];
+
+    const baseOpt = createChartOptions("MPU-Monitor", "MPU-6050 Motion Chart", categories);
+
+    const optionsData = {
+      ...baseOpt,
+      title: { text: undefined },
+      chart: {
+        ...baseOpt.chart,
+        type: "area",
+        toolbar: { show: false }, // Hapus menu hamburger / download
+      },
+      colors: ["#00ba88", "#10b981", "#34d399", "#059669"], // Serba hijau emerald harmonis
+      fill: {
+        type: "gradient",
+        gradient: {
+          shadeIntensity: 1,
+          opacityFrom: 0.25,
+          opacityTo: 0.02,
+          stops: [0, 90, 100],
+        },
+      },
+      stroke: {
+        curve: "smooth",
+        width: [2.5, 2.5, 2.5, 2],
+      },
+      legend: {
+        show: true,
+        position: "top",
+        horizontalAlign: "left",
+        fontSize: "12px",
+        fontWeight: 600,
+        labels: { colors: "#475569" },
+        markers: { radius: 12, width: 10, height: 10 },
+        itemMargin: { horizontal: 10, vertical: 4 },
+      },
+      tooltip: {
+        ...baseOpt.tooltip,
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: (val) => (val !== undefined ? `${val} G` : "-"),
+        },
+      },
+      yaxis: {
+        ...baseOpt.yaxis,
+        title: {
+          text: "Akselerasi Gravitasi (G)",
+          style: { fontSize: "12px", fontWeight: "600", color: "#64748b" },
+        },
+        forceNiceScale: true,
+      },
     };
 
-    FetchAndProcessData();
-    intervalId = setInterval(FetchAndProcessData, 3000);
+    return { chartSeries: seriesData, chartOptions: optionsData };
+  }, [rawRows]);
 
-    return () => clearInterval(intervalId);
-  }, [mannequinId]);
+  const motionStatus = getMotionStatus(latestG);
 
-  const isNewData = useNewDataDetector(series.data);
+  const formattedUpdateTime = lastUpdateTime
+    ? moment(lastUpdateTime).format("DD/MM/YYYY, HH:mm:ss") + " WIB"
+    : lastFetchTime
+    ? moment(lastFetchTime).format("DD/MM/YYYY, HH:mm:ss") + " WIB"
+    : "-";
 
   return (
-    <div className="w-full">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-5">
-        {/* Informasi Sensor Card (Pindah ke Atas) */}
-        <SensorInfoCard
-          title={t("informasiSensor") || "Informasi Sensor"}
-          sensorCode="MPU-6050 6-Axis MotionTracking"
-          imageSrc="/images/information/mpu-information.png"
-          imageAlt="mpu-information"
-          description={t("mpuSensor.dekripsiSensor")}
-        />
-
-        {/* Row 1: Charts */}
-        {!loading ? (
-          series.map((seriesData, index) => {
-            return (
-              <div key={index} className="col-span-full">
-                <BaseCard>
-                  <div className="flex flex-col">
-                    <div className="flex justify-end mb-2">
-                      <LiveIndicatorBadge isLive={isNewData} label="TELEMETRI GYRO" />
-                    </div>
-                    <ApexChart
-                      options={options}
-                      series={seriesData.data}
-                      height="150%"
-                    />
-                  </div>
-                </BaseCard>
-              </div>
-            );
-          })
-        ) : (
-          <div className="col-span-full">
-            <BaseCard>
-              <Skeleton variant="rectangular" height={260} className="rounded-2xl" />
-            </BaseCard>
+    <div className="w-full pb-10 space-y-6">
+      {/* Control Toolbar: Status Koneksi & Filter Periode */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        {/* Status Koneksi & Waktu Update */}
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/80">
+            {isConnected ? (
+              <>
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                <span className="text-xs font-bold text-emerald-700 font-mono">
+                  ONLINE • TERHUBUNG
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="relative flex h-3 w-3">
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
+                </span>
+                <span className="text-xs font-bold text-slate-500 font-mono">
+                  STANDBY / OFFLINE
+                </span>
+              </>
+            )}
           </div>
-        )}
-        {/* End Row 1 */}
+
+          <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
+            <Clock className="w-3.5 h-3.5 text-slate-400" />
+            <span>Update Terakhir:</span>
+            <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
+          </div>
+        </div>
+
+        {/* Pilihan Periode Waktu */}
+        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
+          <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+            Periode:
+          </span>
+          {PERIOD_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setLimit(opt.value)}
+              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                limit === opt.value
+                  ? "bg-white text-[#00ba88] shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}>
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </div>
+
+      {/* Informasi Sensor Card */}
+      <SensorInfoCard
+        title={t("informasiSensor", "Informasi Sensor")}
+        sensorCode="MPU-6050 6-Axis MotionTracking"
+        imageSrc="/images/information/mpu-information.png"
+        imageAlt="mpu-information"
+        description={
+          t("mpuSensor.dekripsiSensor") ||
+          "Sensor MPU-6050 menggabungkan akselerometer 3-sumbu dan giroskop 3-sumbu dengan Digital Motion Processor (DMP) terintegrasi untuk melacak orientasi angular, akselerasi gravitasi, dan stabilitas dinamis manekin."
+        }>
+        <div className="flex flex-wrap items-center gap-3 mt-4">
+          <button
+            onClick={() => setIsLogsModalOpen(true)}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs hover:shadow cursor-pointer">
+            <ScrollText className="w-4 h-4 text-emerald-400" />
+            Lihat Log Riwayat Sensor
+          </button>
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-xs font-medium">
+            <ShieldCheck className="w-3.5 h-3.5" />
+            6-DoF I2C Telemetry Active
+          </div>
+        </div>
+      </SensorInfoCard>
+
+      {/* Row 1: 4 Cards Metrik Dinamik */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {/* Card 1: X-Axis */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
+              ACCELERATION X
+            </span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center font-bold text-xs">
+              X
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="text-3xl font-extrabold text-slate-800 tracking-tight font-mono">
+              {loading ? "--" : latestX.toFixed(3)}
+            </span>
+            <span className="text-xs font-semibold text-slate-400">G</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50">
+            <span>Sumbu Sagital</span>
+            <span className="font-mono text-emerald-600 font-semibold">Lateral Axis</span>
+          </div>
+        </div>
+
+        {/* Card 2: Y-Axis */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
+              ACCELERATION Y
+            </span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center font-bold text-xs">
+              Y
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="text-3xl font-extrabold text-slate-800 tracking-tight font-mono">
+              {loading ? "--" : latestY.toFixed(3)}
+            </span>
+            <span className="text-xs font-semibold text-slate-400">G</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50">
+            <span>Sumbu Longitudinal</span>
+            <span className="font-mono text-emerald-600 font-semibold">Vertical Axis</span>
+          </div>
+        </div>
+
+        {/* Card 3: Z-Axis */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
+              ACCELERATION Z
+            </span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center font-bold text-xs">
+              Z
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="text-3xl font-extrabold text-slate-800 tracking-tight font-mono">
+              {loading ? "--" : latestZ.toFixed(3)}
+            </span>
+            <span className="text-xs font-semibold text-slate-400">G</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50">
+            <span>Sumbu Transversal</span>
+            <span className="font-mono text-emerald-600 font-semibold">Frontal Axis</span>
+          </div>
+        </div>
+
+        {/* Card 4: Resultan G & Status */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
+              RESULTAN GRAVITASI
+            </span>
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center">
+              <Zap className="w-4 h-4" />
+            </div>
+          </div>
+          <div className="flex items-baseline gap-2 mb-2">
+            <span className="text-3xl font-extrabold text-slate-800 tracking-tight font-mono">
+              {loading ? "--" : latestG.toFixed(3)}
+            </span>
+            <span className="text-xs font-semibold text-slate-400">|G| Magnitude</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50">
+            <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${motionStatus.badgeClass}`}>
+              {motionStatus.label}
+            </span>
+            <span className="font-mono text-slate-400">
+              {latestTemp > 0 ? `${latestTemp.toFixed(1)}°C` : "1002"}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      {/* Row 2: Grafik Riwayat Telemetri MPU (Tanpa Download Menu & Tanpa Strip Stats) */}
+      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <div className="flex items-center gap-2">
+              <h3 className="text-base font-bold text-slate-800">
+                Grafik Akselerasi Dinamis MPU-6050
+              </h3>
+              <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-50 text-[#00ba88] font-bold">
+                REALTIME 6-DoF
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 mt-1">
+              Visualisasi tren akselerasi tri-aksial (X, Y, Z) dan vektor resultan gravitasi secara berkala.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-slate-500">
+              Sampel Ditampilkan:
+            </span>
+            <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-[#00ba88] font-bold font-mono text-xs">
+              {rawRows.length} Titik
+            </span>
+          </div>
+        </div>
+
+        {/* Container Chart */}
+        {!loading && chartSeries.length > 0 ? (
+          <div className="w-full">
+            <ApexChart
+              options={chartOptions}
+              series={chartSeries}
+              type="area"
+              height={320}
+            />
+          </div>
+        ) : (
+          <Skeleton variant="rectangular" height={320} className="rounded-xl" />
+        )}
+      </div>
+
+      {/* Row 3: Ringkasan Parameter & Ambang Batas Operasional */}
+      <div className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div>
+            <h3 className="text-base font-bold text-slate-800">
+              Ringkasan Parameter & Ambang Batas Sensor MPU
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Nilai pengukuran terkini pada kanal sensor 1002 (MPU-6050 MotionTracking).
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200/60">
+              <Cpu className="w-3.5 h-3.5" />
+              Sensor ID: 1002
+            </span>
+          </div>
+        </div>
+
+        {/* Tabel Ringkasan */}
+        <div className="overflow-x-auto rounded-xl border border-slate-100">
+          <table className="w-full text-left text-sm">
+            <thead className="bg-slate-50 text-slate-600 font-semibold text-xs border-b border-slate-100">
+              <tr>
+                <th className="py-3.5 px-4">Parameter Akselerasi</th>
+                <th className="py-3.5 px-4">Sensor ID</th>
+                <th className="py-3.5 px-4">Nilai Terkini</th>
+                <th className="py-3.5 px-4">Status Dinamik</th>
+                <th className="py-3.5 px-4">Frekuensi & Update</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 text-slate-700 text-xs">
+              <tr className="hover:bg-slate-50/60 transition-colors">
+                <td className="py-3.5 px-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#00ba88]"></span>
+                    <div>
+                      <span className="font-bold text-slate-800 block">Sumbu X (X-Axis)</span>
+                      <span className="text-[11px] text-slate-400">Lateral Tilt / Sideways</span>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-3.5 px-4 font-mono font-medium text-slate-500">1002</td>
+                <td className="py-3.5 px-4 font-mono font-bold text-slate-800">
+                  {latestX.toFixed(3)} G
+                </td>
+                <td className="py-3.5 px-4">
+                  <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200/80">
+                    Normal
+                  </span>
+                </td>
+                <td className="py-3.5 px-4 font-mono text-slate-500">{formattedUpdateTime}</td>
+              </tr>
+
+              <tr className="hover:bg-slate-50/60 transition-colors">
+                <td className="py-3.5 px-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span>
+                    <div>
+                      <span className="font-bold text-slate-800 block">Sumbu Y (Y-Axis)</span>
+                      <span className="text-[11px] text-slate-400">Longitudinal / Front-Back</span>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-3.5 px-4 font-mono font-medium text-slate-500">1002</td>
+                <td className="py-3.5 px-4 font-mono font-bold text-slate-800">
+                  {latestY.toFixed(3)} G
+                </td>
+                <td className="py-3.5 px-4">
+                  <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200/80">
+                    Normal
+                  </span>
+                </td>
+                <td className="py-3.5 px-4 font-mono text-slate-500">{formattedUpdateTime}</td>
+              </tr>
+
+              <tr className="hover:bg-slate-50/60 transition-colors">
+                <td className="py-3.5 px-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#34d399]"></span>
+                    <div>
+                      <span className="font-bold text-slate-800 block">Sumbu Z (Z-Axis)</span>
+                      <span className="text-[11px] text-slate-400">Vertical Axis / Normal Gravity</span>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-3.5 px-4 font-mono font-medium text-slate-500">1002</td>
+                <td className="py-3.5 px-4 font-mono font-bold text-slate-800">
+                  {latestZ.toFixed(3)} G
+                </td>
+                <td className="py-3.5 px-4">
+                  <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200/80">
+                    Normal
+                  </span>
+                </td>
+                <td className="py-3.5 px-4 font-mono text-slate-500">{formattedUpdateTime}</td>
+              </tr>
+
+              <tr className="hover:bg-slate-50/60 transition-colors">
+                <td className="py-3.5 px-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#059669]"></span>
+                    <div>
+                      <span className="font-bold text-slate-800 block">Resultan Vektor Gravitasi</span>
+                      <span className="text-[11px] text-slate-400">Total Magnitude Vector |G|</span>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-3.5 px-4 font-mono font-medium text-slate-500">1002</td>
+                <td className="py-3.5 px-4 font-mono font-bold text-slate-800">
+                  {latestG.toFixed(3)} G
+                </td>
+                <td className="py-3.5 px-4">
+                  <span className={`px-2.5 py-1 rounded-md text-[11px] font-semibold border ${motionStatus.badgeClass}`}>
+                    {motionStatus.label}
+                  </span>
+                </td>
+                <td className="py-3.5 px-4 font-mono text-slate-500">{formattedUpdateTime}</td>
+              </tr>
+
+              {latestTemp > 0 && (
+                <tr className="hover:bg-slate-50/60 transition-colors">
+                  <td className="py-3.5 px-4">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
+                      <div>
+                        <span className="font-bold text-slate-800 block">Suhu Internal Chip</span>
+                        <span className="text-[11px] text-slate-400">MPU Die Temperature</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td className="py-3.5 px-4 font-mono font-medium text-slate-500">1002</td>
+                  <td className="py-3.5 px-4 font-mono font-bold text-slate-800">
+                    {latestTemp.toFixed(1)} °C
+                  </td>
+                  <td className="py-3.5 px-4">
+                    <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200/80">
+                      Normal
+                    </span>
+                  </td>
+                  <td className="py-3.5 px-4 font-mono text-slate-500">{formattedUpdateTime}</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Legend Informasi Status */}
+        <div className="mt-4 p-3 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
+          <div className="flex items-center gap-2">
+            <span className="font-bold text-slate-700">Panduan Status Akselerasi:</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-4">
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>Statik Normal (~1.0G)</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+              <span>Gerak Dinamis (1.25G - 2.0G)</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-rose-500"></span>
+              <span>Impak Ekstrem (&gt; 2.0G)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal Log Riwayat */}
+      <MpuLogsModal
+        isOpen={isLogsModalOpen}
+        onClose={() => setIsLogsModalOpen(false)}
+        mannequinId={mannequinId}
+        initialRows={rawRows}
+        onExportCsv={handleExportCSV}
+      />
     </div>
   );
 };
 
 export default MpuPage;
-

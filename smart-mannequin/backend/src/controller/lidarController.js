@@ -20,7 +20,8 @@ exports.index = async (req, res) => {
 
 exports.show = async (req, res) => {
   try {
-    const data = await Lidar.show(req.params.id, parseInt(req.query.mid) || 1)
+    const limit = parseInt(req.query.limit) || 10
+    const data = await Lidar.show(req.params.id, parseInt(req.query.mid) || 1, limit)
     res.json(data)
   } catch (err) {
     if (err.kind === 'not_found') {

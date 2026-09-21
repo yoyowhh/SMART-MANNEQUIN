@@ -33,13 +33,14 @@ Bme.index = async (mannequinId) => {
   }
 };
 
-Bme.show = async (id, mannequinId) => {
+Bme.show = async (id, mannequinId, limit = 10) => {
   if (parseInt(id) !== 1001) {
     throw err;
   }
 
   try {
-    const query = `SELECT * FROM ${table} WHERE sensor_id = ? AND mannequin_id = ? order by event_id DESC LIMIT 10`;
+    const safeLimit = Math.max(1, Math.min(parseInt(limit) || 10, 1000));
+    const query = `SELECT * FROM ${table} WHERE sensor_id = ? AND mannequin_id = ? order by event_id DESC LIMIT ${safeLimit}`;
     const [rows, fields] = await db.execute(query, [id, mannequinId]);
 
     return {
