@@ -137,21 +137,95 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
     }
   };
 
-  // Title halaman untuk breadcrumbs
-  const getPageTitle = () => {
+  // Breadcrumb items generator
+  const getBreadcrumbs = () => {
     const path = location.pathname.toLowerCase();
-    if (path.includes("/team")) return "Informasi Tim";
-    if (path.includes("/mannequin") || path.includes("/manekin")) return "Visualisasi Manekin";
-    if (path.includes("/sensor/loadcell")) return "Sensor Load Cell";
-    if (path.includes("/sensor/smartskin")) return "Sensor Smart Skin";
-    if (path.includes("/sensor/sound")) return "Sensor Suara";
-    if (path.includes("/sensor/gas")) return "Sensor Gas";
-    if (path.includes("/sensor/lidar")) return "Sensor Lidar";
-    if (path.includes("/sensor/camera")) return "Kamera Thermal";
-    if (path.includes("/sensor/adxl")) return "Sensor ADXL345";
-    if (path.includes("/sensor/mpu6050")) return "Sensor MPU6050";
-    if (path.includes("/sensor/bme")) return "Sensor BME280";
-    return "Dashboard Overview";
+    const homePath = mannequinId ? `/${mannequinId}` : "/";
+    const smartskinPath = mannequinId ? `/${mannequinId}/sensor/smartskin` : "/sensor/smartskin";
+
+    const crumbs = [
+      { label: "STAS RG", path: homePath }
+    ];
+
+    // Detail sensor smartskin (sub-sensor)
+    if (path.includes("/sensor/smartskin/")) {
+      crumbs.push({ label: "SmartSkin", path: smartskinPath });
+      if (path.includes("/temp")) {
+        crumbs.push({ label: "SmartSkin Suhu" });
+      } else if (path.includes("/press")) {
+        crumbs.push({ label: "SmartSkin Tekanan" });
+      } else if (path.includes("/vib")) {
+        crumbs.push({ label: "SmartSkin Getaran" });
+      } else if (path.includes("/flex")) {
+        crumbs.push({ label: "SmartSkin Flex" });
+      } else {
+        crumbs.push({ label: "SmartSkin Detail" });
+      }
+      return crumbs;
+    }
+
+    if (path.includes("/sensor/smartskin")) {
+      crumbs.push({ label: "SmartSkin" });
+      return crumbs;
+    }
+
+    if (path.includes("/sensor/loadcell")) {
+      crumbs.push({ label: "Sensor Load Cell" });
+      return crumbs;
+    }
+
+    if (path.includes("/sensor/sound")) {
+      crumbs.push({ label: "Sensor Suara" });
+      return crumbs;
+    }
+
+    if (path.includes("/sensor/gas")) {
+      crumbs.push({ label: "Sensor Gas" });
+      return crumbs;
+    }
+
+    if (path.includes("/sensor/lidar")) {
+      crumbs.push({ label: "Sensor LiDAR" });
+      return crumbs;
+    }
+
+    if (path.includes("/sensor/camera")) {
+      crumbs.push({ label: "Kamera Thermal" });
+      return crumbs;
+    }
+
+    if (path.includes("/sensor/adxl")) {
+      crumbs.push({ label: "Sensor ADXL345" });
+      return crumbs;
+    }
+
+    if (path.includes("/sensor/mpu6050")) {
+      crumbs.push({ label: "Sensor MPU6050" });
+      return crumbs;
+    }
+
+    if (path.includes("/sensor/bme")) {
+      crumbs.push({ label: "Sensor BME280" });
+      return crumbs;
+    }
+
+    if (path.includes("/sensor/wit")) {
+      crumbs.push({ label: "Sensor Wit Motion" });
+      return crumbs;
+    }
+
+    if (path.includes("/team")) {
+      crumbs.push({ label: "Informasi Tim" });
+      return crumbs;
+    }
+
+    if (path.includes("/mannequin") || path.includes("/manekin")) {
+      crumbs.push({ label: "Visualisasi Manekin" });
+      return crumbs;
+    }
+
+    crumbs.push({ label: "Dashboard Overview" });
+    return crumbs;
   };
 
   return (
@@ -196,16 +270,28 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
           </svg>
         </button>
 
-        {/* Breadcrumb */}
-        <div className="hidden md:flex items-center gap-2 text-sm ml-1">
-          <Link
-            to="/"
-            className="font-semibold text-[#0284c7] hover:underline transition">
-            STAS RG
-          </Link>
-          <span className="text-slate-400 font-normal">›</span>
-          <span className="font-bold text-slate-800">{getPageTitle()}</span>
-        </div>
+        {/* Breadcrumb Navigation */}
+        <nav aria-label="Breadcrumb" className="hidden md:flex items-center gap-2 text-sm ml-1">
+          {getBreadcrumbs().map((crumb, idx, arr) => {
+            const isLast = idx === arr.length - 1;
+            return (
+              <React.Fragment key={crumb.label + idx}>
+                {idx > 0 && <span className="text-slate-400 font-normal">›</span>}
+                {crumb.path && !isLast ? (
+                  <Link
+                    to={crumb.path}
+                    className="font-semibold text-[#0284c7] hover:underline transition">
+                    {crumb.label}
+                  </Link>
+                ) : (
+                  <span className={isLast ? "font-bold text-slate-800" : "font-medium text-slate-500"}>
+                    {crumb.label}
+                  </span>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </nav>
       </div>
 
       {/* Bagian Kanan: Pill Manekin, Bahasa, Mode, Notifikasi, & Profil */}

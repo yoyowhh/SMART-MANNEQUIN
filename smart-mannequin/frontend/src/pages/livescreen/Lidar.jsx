@@ -164,6 +164,7 @@ const LidarPage = () => {
         : moment().format("HH:mm:ss")
     );
     const distData = reversed.map((item) => parseFloat(item.value) || 0);
+    const kalmanData = reversed.map((item) => parseFloat(item.kalmanvalue) || parseFloat(item.value) || 0);
 
     const baseOpt = createChartOptions(
       "LiDAR-Monitor",
@@ -178,18 +179,43 @@ const LidarPage = () => {
         ...baseOpt.chart,
         type: "area",
         toolbar: { show: false },
+        animations: {
+          enabled: true,
+          easing: "easeinout",
+          speed: 800,
+          dynamicAnimation: {
+            enabled: true,
+            speed: 1000,
+          },
+        },
       },
-      colors: ["#00ba88"],
+      colors: ["#00ba88", "#0ea5e9"], // 2 warna berbeda: Hijau Emerald (Raw) & Biru Langit (Kalman)
       fill: {
         type: "gradient",
         gradient: {
           shadeIntensity: 1,
-          opacityFrom: 0.35,
-          opacityTo: 0.05,
+          opacityFrom: 0.30,
+          opacityTo: 0.03,
           stops: [0, 90, 100],
         },
       },
-      stroke: { curve: "smooth", width: 3 },
+      stroke: { curve: "smooth", width: [2.5, 2] },
+      legend: {
+        show: true,
+        position: "top",
+        horizontalAlign: "left",
+        fontSize: "12px",
+        fontWeight: 600,
+        labels: { colors: "#475569" },
+      },
+      tooltip: {
+        ...baseOpt.tooltip,
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: (val) => (val !== undefined ? `${val} cm` : "-"),
+        },
+      },
       yaxis: {
         ...baseOpt.yaxis,
         title: {
@@ -201,7 +227,10 @@ const LidarPage = () => {
       },
     };
 
-    const series = [{ name: "Jarak LiDAR (cm)", data: distData }];
+    const series = [
+      { name: "Jarak Sensor (Raw)", data: distData },
+      { name: "Jarak Terfilter (Kalman)", data: kalmanData },
+    ];
     return { options, series };
   }, [rawRows]);
 
@@ -213,7 +242,7 @@ const LidarPage = () => {
     : "-";
 
   return (
-    <div className="w-full pb-10 space-y-6">
+    <div className="w-full pb-2 space-y-6">
       {/* Control Toolbar: Status Koneksi & Filter Periode */}
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div className="flex flex-wrap items-center gap-4">

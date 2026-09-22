@@ -144,7 +144,7 @@ const Sidebar2 = ({ collapsed, handleCollapsedChange, isMobileView }) => {
           )}
         </div>
       ) : (
-        <ProSidebar collapsed={collapsed} className="h-[130vh]">
+        <ProSidebar collapsed={collapsed} className="min-h-full">
           <Menu
             className="overflow-y-auto"
             menuItemStyles={{

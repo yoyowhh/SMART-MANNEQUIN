@@ -5,7 +5,7 @@ export const AuthLayout = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex flex-grow">
-        <div className="w-full">
+        <div className="w-full animate-page-enter">
           <Outlet />
         </div>
       </div>

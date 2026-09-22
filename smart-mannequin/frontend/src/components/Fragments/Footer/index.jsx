@@ -3,7 +3,7 @@ import { MapPin } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer className="main-footer bg-white border-t border-slate-200/80 text-slate-700 py-10 px-6 sm:px-10 lg:px-12">
+    <footer className="main-footer bg-white border-t border-slate-200/80 text-slate-700 py-6 sm:py-7 px-6 sm:px-10 lg:px-12">
       <div className="footer-content max-w-[1700px] mx-auto flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
         {/* Column 1: Brand, Address, and Social Links */}
         <div className="footer-brand flex flex-col gap-4 max-w-xl">

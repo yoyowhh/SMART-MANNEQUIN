@@ -6,6 +6,7 @@ import ApexChart from '../../components/Elements/Chart';
 import MannequinHotspotSVG from '../../components/SmartSkin/MannequinSVG';
 import { useSensorWebSocket } from '../../hooks/smartskin/useSensorWebSocket';
 import { createChartOptions } from '../../helpers/utils';
+import SmartskinLogsModal from '../../components/SmartSkin/SmartskinLogsModal';
 import {
   ArrowLeft,
   Thermometer,
@@ -16,6 +17,7 @@ import {
   WifiOff,
   Activity,
   Calendar,
+  ScrollText,
 } from 'lucide-react';
 
 const SENSOR_CONFIGS = {
@@ -177,6 +179,7 @@ export default function SmartskinDetailPage() {
   const IconComponent = config.icon;
 
   const [activeLocation, setActiveLocation] = useState(config.locations[0]);
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
   const [locationValues, setLocationValues] = useState(() => {
     const init = {};
     config.locations.forEach((loc) => {
@@ -288,6 +291,22 @@ export default function SmartskinDetailPage() {
     );
     return {
       ...baseOpts,
+      title: {
+        text: undefined,
+      },
+      chart: {
+        ...baseOpts.chart,
+        parentHeightOffset: 0,
+        toolbar: { show: false },
+      },
+      grid: {
+        padding: {
+          top: 0,
+          bottom: 15,
+          left: 15,
+          right: 15,
+        },
+      },
       colors: ['#10b981', '#ef4444'], // Green for Depan, Red for Belakang
       stroke: {
         width: [3, 3],
@@ -302,12 +321,25 @@ export default function SmartskinDetailPage() {
       legend: {
         show: true,
         position: 'top',
-        horizontalAlign: 'right',
-        offsetY: -22,
-        fontSize: '11px',
+        horizontalAlign: 'left',
+        offsetX: -6,
+        offsetY: -6,
+        fontSize: '12px',
         fontWeight: 600,
         markers: {
+          width: 10,
+          height: 10,
           radius: 12,
+        },
+        itemMargin: {
+          horizontal: 10,
+          vertical: 2,
+        },
+        onItemHover: {
+          highlightDataSeries: true,
+        },
+        onItemClick: {
+          toggleDataSeries: true,
         },
       },
       ...(config.key === 'temp' && {
@@ -337,11 +369,11 @@ export default function SmartskinDetailPage() {
   const chartSeries = useMemo(
     () => [
       {
-        name: 'Depan (Front)',
+        name: 'Depan',
         data: history.frontData || [],
       },
       {
-        name: 'Belakang (Back)',
+        name: 'Belakang',
         data: history.backData || [],
       },
     ],
@@ -349,14 +381,14 @@ export default function SmartskinDetailPage() {
   );
 
   return (
-    <div className="w-full pb-10">
+    <div className="w-full pb-2">
       {/* Top Bar / Navigation */}
       <div className="w-full bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-wrap items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-4">
           <button
             type="button"
             onClick={() => navigate(`/${mannequinId}/sensor/smartskin`)}
-            className="w-10 h-10 rounded-2xl bg-slate-50 hover:bg-[#00ba88]/10 hover:text-[#00ba88] border border-slate-200/80 text-slate-700 flex items-center justify-center transition-all shadow-xs shrink-0"
+            className="w-10 h-10 rounded-2xl bg-slate-50 hover:bg-[#00ba88]/10 hover:text-[#00ba88] border border-slate-200/80 text-slate-700 flex items-center justify-center transition-all shadow-xs shrink-0 cursor-pointer"
             title="Kembali ke Ringkasan SmartSkin"
           >
             <ArrowLeft size={18} className="stroke-[2.2]" />
@@ -375,30 +407,33 @@ export default function SmartskinDetailPage() {
                   {config.sensorName}
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mt-0.5 font-medium">
-                {config.desc} • Manekin #{mannequinId}
-              </p>
             </div>
           </div>
         </div>
+
+        {/* Tombol Log Riwayat Sensor di Kanan Atas Card */}
+        <button
+          type="button"
+          onClick={() => setIsLogsModalOpen(true)}
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer shrink-0"
+        >
+          <ScrollText size={15} />
+          <span>Lihat Log Riwayat Sensor</span>
+        </button>
       </div>
 
       {/* Main Grid: Chart + Anatomy SVG */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 items-stretch">
         {/* Left: Real-time Chart (2 cols) */}
         <div className="lg:col-span-2">
-          <BaseCard>
-            <div className="flex flex-col h-full justify-between pb-2">
-              <div className="flex flex-wrap justify-between items-center mb-3 gap-2">
-                <div>
-                  <h3 className="font-bold text-sm text-slate-800">
-                    Grafik Real-time: {LOCATION_LABELS[activeLocation] || activeLocation}
-                  </h3>
-                  <p className="text-xs text-slate-400">
-                    Pembacaan sensor waktu nyata pada titik aktif terpilih
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
+          <BaseCard height="h-[460px]" mobileHeight="min-h-[420px]" className="h-full flex flex-col justify-between">
+            <div className="flex flex-col h-full justify-between pb-1">
+              {/* Header: Kiri ada Judul, Kanan ada Badge Nilai Data Sensor */}
+              <div className="flex flex-wrap justify-between items-center mb-1 gap-2">
+                <h3 className="font-bold text-base text-slate-800 tracking-tight">
+                  {config.title} - {LOCATION_LABELS[activeLocation] || activeLocation}
+                </h3>
+                <div className="flex items-center gap-2 flex-wrap">
                   <div className="flex items-center gap-1.5 bg-emerald-50 border border-emerald-300 text-emerald-800 px-2.5 py-1 rounded-lg text-xs font-mono font-bold shadow-xs">
                     <span className="w-2 h-2 rounded-full bg-emerald-500" />
                     <span>
@@ -426,11 +461,11 @@ export default function SmartskinDetailPage() {
                 </div>
               </div>
 
-              <div className="w-full">
+              <div className="w-full flex-1">
                 <ApexChart
                   options={chartOptions}
                   series={chartSeries}
-                  height="260px"
+                  height={320}
                   type="line"
                 />
               </div>
@@ -438,29 +473,31 @@ export default function SmartskinDetailPage() {
           </BaseCard>
         </div>
 
-        {/* Right: Mannequin SVG Hotspot (1 col) */}
+        {/* Right: Mannequin SVG Hotspot (1 col) - Disamakan Tingginya */}
         <div>
-          <BaseCard>
-            <div className="flex flex-col h-full justify-between items-center text-center pb-2">
+          <BaseCard height="h-[460px]" mobileHeight="min-h-[420px]" className="h-full flex flex-col justify-between">
+            <div className="flex flex-col h-full justify-between items-center text-center pb-1">
               <div className="w-full flex justify-between items-center mb-2">
                 <p className="font-bold text-sm text-slate-800">Pilih Titik Anatomi</p>
                 <span className="text-[10px] font-semibold text-slate-400">Interaktif</span>
               </div>
 
-              <div className="w-[170px] h-[190px] flex items-center justify-center my-2">
-                <MannequinHotspotSVG
-                  className="w-full h-full object-contain"
-                  activePart={activeLocation}
-                  onClickPart={(part) => {
-                    if (config.locations.includes(part)) {
-                      setActiveLocation(part);
-                    }
-                  }}
-                  imageHref="/mannequin-back.png"
-                />
+              <div className="flex-1 w-full flex items-center justify-center my-1">
+                <div className="w-[185px] h-[260px] flex items-center justify-center">
+                  <MannequinHotspotSVG
+                    className="w-full h-full object-contain"
+                    activePart={activeLocation}
+                    onClickPart={(part) => {
+                      if (config.locations.includes(part)) {
+                        setActiveLocation(part);
+                      }
+                    }}
+                    imageHref="/images/mannequin/Mannequin Back Full Body.png"
+                  />
+                </div>
               </div>
 
-              <div className="w-full bg-slate-50 border border-slate-100 rounded-xl p-2.5 mt-1">
+              <div className="w-full bg-slate-50 border border-slate-100 rounded-xl p-2.5 mt-auto">
                 <p className="text-[11px] text-slate-500 font-medium">
                   Titik Aktif Terpilih:
                 </p>
@@ -474,15 +511,12 @@ export default function SmartskinDetailPage() {
       </div>
 
       {/* Grid: Details Per Body Location */}
-      <div className="mb-6">
+      <div className="mt-8 mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
             <h3 className="font-bold text-base text-slate-800">
               Rincian Bacaan Sensor per Titik Lokasi ({config.locations.length} Titik)
             </h3>
-            <p className="text-xs text-slate-500">
-              Menampilkan grafik real-time 2 garis (Tampak Depan & Tampak Belakang) per titik lokasi
-            </p>
           </div>
         </div>
 
@@ -501,7 +535,7 @@ export default function SmartskinDetailPage() {
                 className={`p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between ${
                   isSelected
                     ? 'bg-emerald-50/70 border-emerald-500 shadow-md scale-[1.02]'
-                    : 'bg-white border-slate-200/80 hover:border-emerald-300 hover:shadow-sm'
+                    : 'bg-white border-slate-200/80 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-1.5 transition-all duration-300'
                 }`}
               >
                 <div className="flex items-start justify-between mb-2">
@@ -567,6 +601,13 @@ export default function SmartskinDetailPage() {
           })}
         </div>
       </div>
+
+      {/* Modal Log Riwayat Sensor Smart Skin */}
+      <SmartskinLogsModal
+        isOpen={isLogsModalOpen}
+        onClose={() => setIsLogsModalOpen(false)}
+        mannequinId={mannequinId}
+      />
     </div>
   );
 }

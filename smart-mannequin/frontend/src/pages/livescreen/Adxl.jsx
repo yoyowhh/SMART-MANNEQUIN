@@ -17,8 +17,6 @@ import {
   Layers,
   Calendar,
   Hand,
-  ArrowRightLeft,
-  Zap,
   ScrollText,
 } from "lucide-react";
 
@@ -204,29 +202,43 @@ const AdxlPage = () => {
     const rev202 = [...rawRows202].reverse();
 
     const maxLen = Math.max(rev201.length, rev202.length);
-    const categories = [];
-    for (let i = 0; i < maxLen; i++) {
-      const item = rev201[i] || rev202[i];
-      categories.push(
-        item?.inputed_at
-          ? moment(item.inputed_at).format("HH:mm:ss")
-          : moment().format("HH:mm:ss")
-      );
+    if (maxLen === 0) {
+      const emptyBase = createChartOptions("ADXL-Chart", "ADXL Telemetry", []);
+      return {
+        options: {
+          ...emptyBase,
+          title: { text: undefined },
+          colors: ["#00ba88", "#0ea5e9"],
+        },
+        series: [
+          { name: "Tangan Kanan (ADXL-201)", data: [] },
+          { name: "Tangan Kiri (ADXL-202)", data: [] },
+        ],
+      };
     }
 
-    const g201Series = rev201.map((item) => {
-      const x = parseFloat(item.x_axis) || 0;
-      const y = parseFloat(item.y_axis) || 0;
-      const z = parseFloat(item.z_axis) || 0;
-      return parseFloat(Math.sqrt(x * x + y * y + z * z).toFixed(2));
-    });
+    const refRows = rev201.length >= rev202.length ? rev201 : rev202;
+    const categories = refRows.map((item) =>
+      item?.inputed_at
+        ? moment(item.inputed_at).format("HH:mm:ss")
+        : moment().format("HH:mm:ss")
+    );
 
-    const g202Series = rev202.map((item) => {
-      const x = parseFloat(item.x_axis) || 0;
-      const y = parseFloat(item.y_axis) || 0;
-      const z = parseFloat(item.z_axis) || 0;
-      return parseFloat(Math.sqrt(x * x + y * y + z * z).toFixed(2));
-    });
+    const getAlignedSeries = (rows) => {
+      const data = rows.map((item) => {
+        const x = parseFloat(item.x_axis) || 0;
+        const y = parseFloat(item.y_axis) || 0;
+        const z = parseFloat(item.z_axis) || 0;
+        return parseFloat(Math.sqrt(x * x + y * y + z * z).toFixed(2));
+      });
+      while (data.length < categories.length) {
+        data.unshift(data[0] ?? 0);
+      }
+      return data.slice(data.length - categories.length);
+    };
+
+    const g201Series = getAlignedSeries(rev201);
+    const g202Series = getAlignedSeries(rev202);
 
     const baseOpt = createChartOptions(
       "ADXL-Chart",
@@ -241,8 +253,17 @@ const AdxlPage = () => {
         ...baseOpt.chart,
         type: "area",
         toolbar: { show: false },
+        animations: {
+          enabled: true,
+          easing: "easeinout",
+          speed: 800,
+          dynamicAnimation: {
+            enabled: true,
+            speed: 1000,
+          },
+        },
       },
-      colors: ["#00ba88", "#0d9488"],
+      colors: ["#00ba88", "#0ea5e9"], // Tangan Kanan: Hijau Emerald, Tangan Kiri: Biru Langit (Berbeda)
       fill: {
         type: "gradient",
         gradient: {
@@ -260,6 +281,16 @@ const AdxlPage = () => {
         fontSize: "12px",
         fontWeight: 600,
         labels: { colors: "#475569" },
+        markers: { radius: 12, width: 10, height: 10 },
+        itemMargin: { horizontal: 10, vertical: 4 },
+      },
+      tooltip: {
+        ...baseOpt.tooltip,
+        shared: true,
+        intersect: false,
+        y: {
+          formatter: (val) => (val !== undefined ? `${val} G` : "-"),
+        },
       },
       yaxis: {
         ...baseOpt.yaxis,
@@ -282,7 +313,6 @@ const AdxlPage = () => {
 
   const status201 = getMotionStatus(latest201.g);
   const status202 = getMotionStatus(latest202.g);
-  const diffG = Math.abs(latest201.g - latest202.g).toFixed(2);
   const formattedUpdateTime = lastUpdateTime
     ? moment(lastUpdateTime).format("DD/MM/YYYY, HH:mm:ss") + " WIB"
     : lastFetchTime
@@ -290,7 +320,7 @@ const AdxlPage = () => {
     : "-";
 
   return (
-    <div className="w-full pb-10 space-y-6">
+    <div className="w-full pb-2 space-y-6">
       {/* Control Toolbar */}
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <div className="flex flex-wrap items-center gap-4">
@@ -375,206 +405,112 @@ const AdxlPage = () => {
         </div>
       </SensorInfoCard>
 
-      {/* Row 1: 4 Cards Khusus Parameter ADXL */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      {/* Row 1: 2 Cards Khusus Parameter ADXL (Tangan Kanan & Tangan Kiri) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {/* Card 1: Tangan Kanan (ADXL-201) */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
+        <BaseCard className="relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300">
           <div className="flex flex-col gap-3 justify-between h-full">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-emerald-50 text-[#00ba88]">
-                  <Hand className="w-4 h-4" />
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-emerald-50 text-[#00ba88] group-hover:scale-110 transition-transform duration-300">
+                  <Hand className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-slate-800 text-sm">
-                    Tangan Kanan
+                  <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                    Tangan Kanan (Lengan)
                   </h3>
-                  <p className="text-[10px] text-slate-400 font-mono">ADXL-201 • G-Force</p>
+                  <p className="text-[11px] text-slate-400 font-mono">Sensor ID: ADXL-201 • Tri-Axis G-Force</p>
                 </div>
               </div>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs ${status201.badgeClass}`}>
+              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border shadow-2xs ${status201.badgeClass}`}>
                 {status201.label}
               </span>
             </div>
 
-            <div className="py-2">
-              <div className="flex items-baseline gap-1 font-mono">
+            <div className="py-2.5">
+              <div className="flex items-baseline gap-1.5 font-mono">
                 <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
                   {latest201.g.toFixed(2)}
                 </span>
-                <span className="text-sm font-bold text-slate-400">G</span>
+                <span className="text-base font-bold text-slate-400">G</span>
               </div>
-              <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                X: {latest201.x.toFixed(2)} | Y: {latest201.y.toFixed(2)} | Z: {latest201.z.toFixed(2)}
-              </span>
+              <div className="flex items-center gap-2.5 mt-2 text-[11px] text-slate-500 font-mono flex-wrap">
+                <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/60">X: <strong className="text-slate-800">{latest201.x.toFixed(2)}</strong></span>
+                <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/60">Y: <strong className="text-slate-800">{latest201.y.toFixed(2)}</strong></span>
+                <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/60">Z: <strong className="text-slate-800">{latest201.z.toFixed(2)}</strong></span>
+              </div>
             </div>
 
-            <div className="space-y-1 pt-1">
-              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>Intensitas Gerakan</span>
+            <div className="space-y-1.5 pt-1">
+              <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                <span>Intensitas Gerakan Kinematik</span>
                 <span className="text-emerald-700 font-semibold">{Math.min(100, Math.round(latest201.g * 40))}%</span>
               </div>
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-emerald-300 to-[#00ba88] rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-emerald-400 to-[#00ba88] rounded-full transition-all duration-500"
                   style={{ width: `${Math.min(100, Math.max(5, latest201.g * 40))}%` }}
                 />
               </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Batas Impak:</span>
-              <span className="font-semibold text-emerald-700 font-mono">&lt; 2.0 G</span>
+            <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span className="text-slate-400">Ambang Batas Impak:</span>
+              <span className="font-semibold text-emerald-700 font-mono">&lt; 2.0 G (Optimal)</span>
             </div>
           </div>
         </BaseCard>
 
         {/* Card 2: Tangan Kiri (ADXL-202) */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
+        <BaseCard className="relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300">
           <div className="flex flex-col gap-3 justify-between h-full">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-emerald-50 text-[#00ba88]">
-                  <Hand className="w-4 h-4 scale-x-[-1]" />
+              <div className="flex items-center gap-2.5">
+                <div className="p-2 rounded-xl bg-emerald-50 text-[#00ba88] group-hover:scale-110 transition-transform duration-300">
+                  <Hand className="w-5 h-5 scale-x-[-1]" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-slate-800 text-sm">
-                    Tangan Kiri
+                  <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                    Tangan Kiri (Lengan)
                   </h3>
-                  <p className="text-[10px] text-slate-400 font-mono">ADXL-202 • G-Force</p>
+                  <p className="text-[11px] text-slate-400 font-mono">Sensor ID: ADXL-202 • Tri-Axis G-Force</p>
                 </div>
               </div>
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs ${status202.badgeClass}`}>
+              <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border shadow-2xs ${status202.badgeClass}`}>
                 {status202.label}
               </span>
             </div>
 
-            <div className="py-2">
-              <div className="flex items-baseline gap-1 font-mono">
+            <div className="py-2.5">
+              <div className="flex items-baseline gap-1.5 font-mono">
                 <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
                   {latest202.g.toFixed(2)}
                 </span>
-                <span className="text-sm font-bold text-slate-400">G</span>
+                <span className="text-base font-bold text-slate-400">G</span>
               </div>
-              <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                X: {latest202.x.toFixed(2)} | Y: {latest202.y.toFixed(2)} | Z: {latest202.z.toFixed(2)}
-              </span>
+              <div className="flex items-center gap-2.5 mt-2 text-[11px] text-slate-500 font-mono flex-wrap">
+                <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/60">X: <strong className="text-slate-800">{latest202.x.toFixed(2)}</strong></span>
+                <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/60">Y: <strong className="text-slate-800">{latest202.y.toFixed(2)}</strong></span>
+                <span className="px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200/60">Z: <strong className="text-slate-800">{latest202.z.toFixed(2)}</strong></span>
+              </div>
             </div>
 
-            <div className="space-y-1 pt-1">
-              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>Intensitas Gerakan</span>
+            <div className="space-y-1.5 pt-1">
+              <div className="flex justify-between text-[11px] text-slate-500 font-mono">
+                <span>Intensitas Gerakan Kinematik</span>
                 <span className="text-emerald-700 font-semibold">{Math.min(100, Math.round(latest202.g * 40))}%</span>
               </div>
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-gradient-to-r from-emerald-300 to-[#00ba88] rounded-full transition-all duration-500"
+                  className="h-full bg-gradient-to-r from-emerald-400 to-[#00ba88] rounded-full transition-all duration-500"
                   style={{ width: `${Math.min(100, Math.max(5, latest202.g * 40))}%` }}
                 />
               </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Batas Impak:</span>
-              <span className="font-semibold text-emerald-700 font-mono">&lt; 2.0 G</span>
-            </div>
-          </div>
-        </BaseCard>
-
-        {/* Card 3: Diferensial Kinematik */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
-          <div className="flex flex-col gap-3 justify-between h-full">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-emerald-50 text-[#00ba88]">
-                  <ArrowRightLeft className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-slate-800 text-sm">
-                    Simetri Gerak
-                  </h3>
-                  <p className="text-[10px] text-slate-400 font-mono">Selisih Kanan-Kiri</p>
-                </div>
-              </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
-                Simetris
-              </span>
-            </div>
-
-            <div className="py-2">
-              <div className="flex items-baseline gap-1 font-mono">
-                <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
-                  {diffG}
-                </span>
-                <span className="text-sm font-bold text-slate-400">Δ G</span>
-              </div>
-              <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                {latest201.g > latest202.g ? "Dominan Lengan Kanan" : latest202.g > latest201.g ? "Dominan Lengan Kiri" : "Gerakan Seimbang"}
-              </span>
-            </div>
-
-            <div className="space-y-1 pt-1">
-              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>Toleransi Asimetri</span>
-                <span className="text-emerald-700 font-semibold">&lt; 0.50 G</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-emerald-400 rounded-full w-full" />
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Resolusi ADC:</span>
-              <span className="font-semibold text-emerald-700 font-mono">13-bit (~4mg/LSB)</span>
-            </div>
-          </div>
-        </BaseCard>
-
-        {/* Card 4: Deteksi Getaran Maksimal */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
-          <div className="flex flex-col gap-3 justify-between h-full">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-emerald-50 text-[#00ba88]">
-                  <Zap className="w-4 h-4" />
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-slate-800 text-sm">
-                    Puncak Getaran
-                  </h3>
-                  <p className="text-[10px] text-slate-400 font-mono">Peak Amplitude</p>
-                </div>
-              </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
-                Aktif
-              </span>
-            </div>
-
-            <div className="py-2">
-              <div className="flex items-baseline gap-1 font-mono">
-                <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
-                  {Math.max(latest201.g, latest202.g).toFixed(2)}
-                </span>
-                <span className="text-sm font-bold text-slate-400">PEAK G</span>
-              </div>
-              <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                Nilai percepatan ekstremitas tertinggi
-              </span>
-            </div>
-
-            <div className="space-y-1 pt-1">
-              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>Tingkat Getaran</span>
-                <span className="text-emerald-700 font-semibold">{Math.max(latest201.g, latest202.g) >= 2.0 ? "Tinggi" : "Aman"}</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div className="h-full bg-gradient-to-r from-emerald-300 to-[#00ba88] rounded-full w-3/4" />
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Batas Skala Sensor:</span>
-              <span className="font-semibold text-emerald-700 font-mono">± 16 G</span>
+            <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+              <span className="text-slate-400">Ambang Batas Impak:</span>
+              <span className="font-semibold text-emerald-700 font-mono">&lt; 2.0 G (Optimal)</span>
             </div>
           </div>
         </BaseCard>

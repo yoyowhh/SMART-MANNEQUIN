@@ -219,16 +219,9 @@ const GasPage = () => {
     // Balik urutan agar kronologis dari kiri ke kanan
     const chronological = [...rawRows].reverse();
 
-    const categories = chronological.map((item) => {
-      try {
-        const d = new Date(item.inputed_at);
-        return isNaN(d.getTime())
-          ? "-"
-          : d.toISOString().split(".")[0].replace("T", " ");
-      } catch {
-        return "-";
-      }
-    });
+    const categories = chronological.map((item) =>
+      item?.inputed_at ? moment(item.inputed_at).format("HH:mm:ss") : moment().format("HH:mm:ss")
+    );
 
     const smokeSeries = chronological.map((item) => parseFloat(item.smoke) || 0);
     const nh3Series = chronological.map((item) => parseFloat(item.nh3) || 0);
@@ -265,8 +258,17 @@ const GasPage = () => {
         toolbar: {
           show: false,
         },
+        animations: {
+          enabled: true,
+          easing: "easeinout",
+          speed: 800,
+          dynamicAnimation: {
+            enabled: true,
+            speed: 1000,
+          },
+        },
       },
-      colors: ["#00ba88", "#10b981", "#34d399", "#6ee7b7"], // Harmonis serba hijau emerald
+      colors: ["#00ba88", "#0ea5e9", "#f59e0b", "#ef4444"], // 4 warna berbeda: Hijau Emerald (Asap), Biru (NH3), Amber (CO2), Merah (CO)
       fill: {
         type: "gradient",
         gradient: {
@@ -338,7 +340,7 @@ const GasPage = () => {
     : "-";
 
   return (
-    <div className="w-full pb-10 space-y-6">
+    <div className="w-full pb-2 space-y-6">
       {/* Control Toolbar: Status Koneksi & Filter Periode Waktu (Paling Atas, tanpa tombol Ekspor CSV) */}
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         {/* Status Koneksi & Waktu Update */}

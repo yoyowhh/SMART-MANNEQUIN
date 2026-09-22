@@ -22,6 +22,7 @@ exports.show = async (req, res) => {
     const data = await Thermal.show(
       req.params.id,
       parseInt(req.query.mid) || 1,
+      parseInt(req.query.limit) || 10,
     );
     res.json(data);
   } catch (err) {

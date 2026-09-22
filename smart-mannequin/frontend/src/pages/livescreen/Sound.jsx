@@ -320,14 +320,27 @@ const SoundSensorPage = () => {
 
   // Hitung data series gabungan (Multi-parameter chart)
   const combinedChartData = useMemo(() => {
-    if (!series[0] || !series[1]) return null;
+    const rev601 = [...ky601RawRows].reverse();
+    const rev602 = [...ky602RawRows].reverse();
 
-    const cat1 = series[0]?.categories || [];
-    const cat2 = series[1]?.categories || [];
-    const categories = cat1.length >= cat2.length ? cat1 : cat2;
+    const maxLen = Math.max(rev601.length, rev602.length);
+    if (maxLen === 0) return null;
 
-    const data601 = series[0]?.data || [];
-    const data602 = series[1]?.data || [];
+    const refRows = rev601.length >= rev602.length ? rev601 : rev602;
+    const categories = refRows.map((r) =>
+      r?.inputed_at ? moment(r.inputed_at).format("HH:mm:ss") : moment().format("HH:mm:ss")
+    );
+
+    const getAlignedData = (rows) => {
+      const data = rows.map((r) => parseFloat(r.value) || 0);
+      while (data.length < categories.length) {
+        data.unshift(data[0] ?? 0);
+      }
+      return data.slice(data.length - categories.length);
+    };
+
+    const data601 = getAlignedData(rev601);
+    const data602 = getAlignedData(rev602);
 
     // Hitung rata-rata tiap titik
     const avgData = categories.map((_, i) => {
@@ -373,12 +386,21 @@ const SoundSensorPage = () => {
       title: {
         text: undefined, // Hapus judul ganda internal ApexCharts
       },
-      colors: ["#00ba88", "#3b82f6", "#f59e0b"],
+      colors: ["#00ba88", "#0ea5e9", "#f59e0b"], // 3 warna berbeda: Hijau Emerald, Biru Langit, Amber
       chart: {
         ...baseOpt.chart,
         type: "area",
         toolbar: {
           show: false,
+        },
+        animations: {
+          enabled: true,
+          easing: "easeinout",
+          speed: 800,
+          dynamicAnimation: {
+            enabled: true,
+            speed: 1000,
+          },
         },
       },
       fill: {
@@ -439,13 +461,13 @@ const SoundSensorPage = () => {
     };
 
     return { multiSeries, multiOptions, stats: { peakVal, minVal, meanVal } };
-  }, [series]);
+  }, [ky601RawRows, ky602RawRows]);
 
   const statusKy601 = getSoundStatus(gaugeDataKy601, ky601IsHigh);
   const statusKy602 = getSoundStatus(gaugeDataKy602, ky602IsHigh);
 
   return (
-    <div className="w-full pb-10 space-y-6">
+    <div className="w-full pb-2 space-y-6">
       {/* Control Toolbar: Status Koneksi, Filter Periode Waktu & Mode Grafik (Paling Atas) */}
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         {/* Status Koneksi & Waktu Update */}

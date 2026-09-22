@@ -237,7 +237,7 @@ export default function MannequinBlueprint({
           {/* Authentic Fullbody Mannequin Model Graphic - Fixed & Static */}
           <g className="mannequin-body-layer">
             <image
-              href="/images/img-manekin.png"
+              href="/images/mannequin/Mannequin Full Body.png"
               x="80"
               y="15"
               width="240"

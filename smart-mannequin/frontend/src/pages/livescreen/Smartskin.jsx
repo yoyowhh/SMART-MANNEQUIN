@@ -4,11 +4,18 @@ import { useParams, useNavigate } from "react-router-dom";
 import BaseCard from "../../components/Elements/Card";
 import ApexChart from "../../components/Elements/Chart";
 import { createChartOptions } from "../../helpers/utils";
-import MannequinHotspotSVG from "../../components/SmartSkin/MannequinSVG";
 import SmartskinLogsModal from "../../components/SmartSkin/SmartskinLogsModal";
 import { useSensorWebSocket } from "../../hooks/smartskin/useSensorWebSocket";
-import { Wifi, WifiOff, ScrollText } from "lucide-react";
+import { Wifi, WifiOff, ScrollText, Clock, Calendar } from "lucide-react";
 import SensorInfoCard from "../../components/Dashboard/SensorInfoCard";
+import moment from "moment";
+
+const PERIOD_OPTIONS = [
+  { label: "10 Data", value: 10 },
+  { label: "25 Data", value: 25 },
+  { label: "50 Data", value: 50 },
+  { label: "100 Data", value: 100 },
+];
 
 const SENSORS_DEF = [
   {
@@ -97,6 +104,9 @@ export default function SmartskinPage() {
 
   const [activePart, setActivePart] = useState("back");
   const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
+  const [limit, setLimit] = useState(10);
+  const [lastUpdateTime, setLastUpdateTime] = useState(null);
+
   const [latestValues, setLatestValues] = useState({
     temp: { front: 32.5, back: 33.2 },
     press: { front: 34.0, back: 36.5 },
@@ -116,7 +126,7 @@ export default function SmartskinPage() {
       const frontData = [];
       const backData = [];
       const cats = [];
-      for (let i = 8; i >= 0; i--) {
+      for (let i = 25; i >= 0; i--) {
         const d = new Date(now - i * 3000);
         cats.push(d.toISOString().split(".")[0].replace("T", " "));
         const base = s.initialVal;
@@ -138,6 +148,7 @@ export default function SmartskinPage() {
     if (!latestBatch || latestBatch.length === 0) return;
 
     const timeStr = new Date().toISOString().split(".")[0].replace("T", " ");
+    setLastUpdateTime(new Date());
 
     setLatestValues((prev) => {
       const next = { ...prev };
@@ -171,7 +182,7 @@ export default function SmartskinPage() {
       return next;
     });
 
-    // Append to charts history
+    // Append to charts history (buffered up to 100 entries for period switching)
     setChartHistories((prev) => {
       const next = { ...prev };
 
@@ -190,9 +201,9 @@ export default function SmartskinPage() {
           const oldCats = prev[s.key]?.categories || [];
 
           next[s.key] = {
-            frontData: [...oldFront.slice(-14), fVal],
-            backData: [...oldBack.slice(-14), bVal],
-            categories: [...oldCats.slice(-14), timeStr],
+            frontData: [...oldFront.slice(-100), fVal],
+            backData: [...oldBack.slice(-100), bVal],
+            categories: [...oldCats.slice(-100), timeStr],
           };
         }
       });
@@ -215,13 +226,88 @@ export default function SmartskinPage() {
     };
   }, []);
 
+  const formattedUpdateTime = lastUpdateTime
+    ? moment(lastUpdateTime).format("DD/MM/YYYY, HH:mm:ss") + " WIB"
+    : moment().format("DD/MM/YYYY, HH:mm:ss") + " WIB";
+
   return (
-    <div className="w-full">
+    <div className="w-full pb-2">
+      {/* Control Toolbar: Status Koneksi & Filter Periode */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
+        {/* Status Koneksi & Waktu Update */}
+        <div className="flex flex-wrap items-center gap-4">
+          <div className="flex items-center gap-2.5 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/80">
+            {isConnected ? (
+              <>
+                <span className="relative flex h-3 w-3">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                </span>
+                <span className="text-xs font-bold text-emerald-700 font-mono">
+                  ONLINE • TERHUBUNG
+                </span>
+              </>
+            ) : (
+              <>
+                <span className="relative flex h-3 w-3">
+                  <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
+                </span>
+                <span className="text-xs font-bold text-slate-500 font-mono">
+                  STANDBY / OFFLINE
+                </span>
+              </>
+            )}
+          </div>
+
+          <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
+            <Clock className="w-3.5 h-3.5 text-slate-400" />
+            <span>Update Terakhir:</span>
+            <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
+          </div>
+        </div>
+
+        {/* Pilihan Periode Waktu */}
+        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
+          <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+            Periode:
+          </span>
+          {PERIOD_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setLimit(opt.value)}
+              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                limit === opt.value
+                  ? "bg-white text-[#00ba88] shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {/* Informasi Sensor (Di Atas) */}
       <div className="mb-5">
         <SensorInfoCard
           title={t("informasiSensor", "Informasi Sensor")}
           sensorCode="SMARTSKIN / MULTIMODAL"
+          imageSlot={
+            <div className="flex flex-row items-center justify-center gap-4 shrink-0 bg-slate-50/70 p-3 rounded-2xl border border-slate-100">
+              <img
+                src="/images/mannequin/Mannequin Full Body.png"
+                alt="Mannequin Full Body"
+                className="w-24 sm:w-28 lg:w-[130px] object-contain max-h-[175px] mix-blend-multiply transition-transform duration-300 hover:scale-105"
+              />
+              <img
+                src="/images/mannequin/Mannequin Back Full Body.png"
+                alt="Mannequin Back Full Body"
+                className="w-24 sm:w-28 lg:w-[130px] object-contain max-h-[175px] mix-blend-multiply transition-transform duration-300 hover:scale-105"
+              />
+            </div>
+          }
           action={
             <button
               type="button"
@@ -233,111 +319,22 @@ export default function SmartskinPage() {
             </button>
           }
         >
-          <div className="flex flex-col sm:flex-row gap-6 items-center w-full">
-            <div className="flex flex-row justify-center gap-3 shrink-0">
-              <img
-                src="/mannequin-back.png"
-                alt="SmartSkin Mannequin Diagram"
-                className="w-28 sm:w-36 lg:w-[150px] object-contain max-h-[190px] mix-blend-multiply"
-              />
-              <img
-                src="/manequin.png"
-                alt="SmartSkin Mannequin Sensor Placement"
-                className="w-28 sm:w-36 lg:w-[150px] object-contain max-h-[190px] mix-blend-multiply"
-              />
-            </div>
-
-            <div className="flex flex-col gap-2 flex-1">
-              <h4 className="font-bold text-slate-800 text-base">
-                Sistem Sensor Cerdas Smart Skin (STAS-RG)
-              </h4>
-              <p className="text-slate-600 text-sm leading-relaxed text-justify">
-                {t(
-                  "smartskinSensor.deskripsiSensor",
-                  "Smart Skin adalah sistem sensor multimodal yang terpasang pada permukaan manekin untuk mendeteksi berbagai stimulasi fisik secara real-time. Sistem ini mengintegrasikan sensor suhu (MCP9808) untuk pemantauan termal, sensor tekanan (FSR RP-S40-ST) untuk distribusi tekanan kontak, sensor getaran piezoelektrik untuk deteksi impak, dan flex sensor untuk pemantauan artikulasi kelengkungan sendi (bahu, siku, pinggang, dan lutut)."
-                )}
-              </p>
-            </div>
+          <div className="flex flex-col gap-2.5 flex-1">
+            <h4 className="font-bold text-slate-800 text-base sm:text-lg">
+              Sistem Sensor Cerdas Smart Skin (STAS-RG)
+            </h4>
+            <p className="text-slate-600 text-sm leading-relaxed text-justify">
+              {t(
+                "smartskinSensor.deskripsiSensor",
+                "Smart Skin adalah sistem sensor multimodal yang terpasang pada permukaan manekin untuk mendeteksi berbagai stimulasi fisik secara real-time. Sistem ini mengintegrasikan sensor suhu (MCP9808) untuk pemantauan termal, sensor tekanan (FSR RP-S40-ST) untuk distribusi tekanan kontak, sensor getaran piezoelektrik untuk deteksi impak, dan flex sensor untuk pemantauan artikulasi kelengkungan sendi (bahu, siku, pinggang, dan lutut)."
+              )}
+            </p>
           </div>
         </SensorInfoCard>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-5">
-        {/* ================= COLUMN 1 (1): Anatomi Manekin (Tinggi ke bawah, makan 2 row) ================= */}
-        <div className="col-span-full md:col-span-2 lg:col-span-1 lg:row-span-2 flex flex-col">
-          <BaseCard
-            height="h-full min-h-[580px] lg:min-h-[780px]"
-            mobileHeight="min-h-[520px]"
-            className="h-full flex flex-col justify-between"
-          >
-            <div className="flex flex-col h-full justify-between items-center pb-2">
-              <div className="w-full flex justify-between items-center mb-1">
-                <p className="font-bold text-sm lg:text-base text-slate-800 truncate">
-                  {t("smartskinSensor.anatomy", "Anatomi Manekin")}
-                </p>
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-full ${
-                      isConnected
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-slate-200 text-slate-600"
-                    }`}
-                  >
-                    {isConnected ? <Wifi size={11} /> : <WifiOff size={11} />}
-                    <span>{isConnected ? "Live" : "Offline"}</span>
-                  </span>
-                  <div
-                    className={`w-4 h-4 rounded-full transition-colors duration-300 ${
-                      newDataFlags[4]
-                        ? "bg-green-600 shadow-[0_0_8px_rgba(22,163,74,0.8)]"
-                        : "bg-slate-400"
-                    }`}
-                  />
-                </div>
-              </div>
-
-              {/* Interactive SVG hotspot - Big and Prominent */}
-              <div className="flex-1 flex items-center justify-center relative py-2 w-full">
-                <div className="w-[230px] h-[340px] lg:w-[270px] lg:h-[420px] flex items-center justify-center">
-                  <MannequinHotspotSVG
-                    className="w-full h-full object-contain"
-                    activePart={activePart}
-                    onClickPart={(part) => setActivePart(part)}
-                    imageHref="/mannequin-back.png"
-                  />
-                </div>
-              </div>
-
-              {/* Active part label and quick selector buttons */}
-              <div className="w-full flex flex-col gap-1.5 mt-2 bg-slate-50/80 border border-slate-200/80 rounded-xl p-2.5">
-                <div className="text-xs font-bold text-center text-slate-700 truncate">
-                  Lokasi Aktif:{" "}
-                  <span className="text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded border border-emerald-300">
-                    {PART_LABEL[activePart] || activePart}
-                  </span>
-                </div>
-                <div className="flex flex-wrap justify-center gap-1 max-h-[85px] overflow-y-auto pt-1">
-                  {Object.keys(PART_LABEL).map((part) => (
-                    <button
-                      key={part}
-                      type="button"
-                      onClick={() => setActivePart(part)}
-                      className={`text-[10px] px-2 py-0.5 rounded-md transition-all font-medium ${
-                        activePart === part
-                          ? "bg-emerald-600 text-white font-bold shadow-xs"
-                          : "bg-white hover:bg-slate-100 text-slate-700 border border-slate-200"
-                      }`}
-                    >
-                      {PART_LABEL[part].split(" ")[0]}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </BaseCard>
-        </div>
-
-        {/* ================= COLUMN 2 & 3 (2 2): 4 Card Sensor (2 atas, 2 bawah) ================= */}
+      {/* 4 Card Sensor SmartSkin: Grid 2x2 Simetris & Lega */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
         {SENSORS_DEF.map((sensor, index) => {
           const title = t(sensor.titleKey, sensor.defaultTitle);
           const valObj = latestValues[sensor.key] || {};
@@ -359,14 +356,21 @@ export default function SmartskinPage() {
               : "--";
 
           const hist = chartHistories[sensor.key] || { frontData: [], backData: [], categories: [] };
+          const sliceFront = (hist.frontData || []).slice(-limit);
+          const sliceBack = (hist.backData || []).slice(-limit);
+          const sliceCats = (hist.categories || []).slice(-limit);
+
           const baseChartOpts = createChartOptions(
             sensor.id,
             title,
-            hist.categories
+            sliceCats
           );
 
           const chartOptions = {
             ...baseChartOpts,
+            title: {
+              text: undefined,
+            },
             colors: ["#10b981", "#ef4444"], // Green for Depan, Red for Belakang
             stroke: {
               width: [2.5, 2.5],
@@ -375,12 +379,25 @@ export default function SmartskinPage() {
             legend: {
               show: true,
               position: "top",
-              horizontalAlign: "right",
-              offsetY: -22,
-              fontSize: "10px",
+              horizontalAlign: "left",
+              offsetX: -6,
+              offsetY: -6,
+              fontSize: "12px",
               fontWeight: 600,
               markers: {
+                width: 10,
+                height: 10,
                 radius: 12,
+              },
+              itemMargin: {
+                horizontal: 10,
+                vertical: 2,
+              },
+              onItemHover: {
+                highlightDataSeries: true,
+              },
+              onItemClick: {
+                toggleDataSeries: true,
               },
             },
           };
@@ -388,11 +405,11 @@ export default function SmartskinPage() {
           const series = [
             {
               name: "Depan",
-              data: hist.frontData || [],
+              data: sliceFront,
             },
             {
               name: "Belakang",
-              data: hist.backData || [],
+              data: sliceBack,
             },
           ];
 
@@ -400,46 +417,58 @@ export default function SmartskinPage() {
             <div
               key={sensor.key}
               onClick={() => navigate(`/${mannequinId}/sensor/smartskin/${sensor.key}`)}
-              className="col-span-full md:col-span-1 lg:col-span-1 h-full flex flex-col cursor-pointer group transition-all duration-300 hover:-translate-y-1"
+              className="col-span-1 h-full flex flex-col cursor-pointer group transition-all duration-300 hover:-translate-y-2"
               title={`Klik untuk melihat rincian ${title} per titik lokasi tubuh`}
             >
               <BaseCard
                 height="h-full min-h-[380px]"
                 mobileHeight="h-full min-h-[320px]"
-                className="h-full flex flex-col"
+                className="h-full flex flex-col hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15"
               >
                 <div className="flex flex-col h-full">
-                  <div className="flex justify-between items-center mb-0.5">
-                    <div className="flex items-center gap-1.5 flex-wrap">
-                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-300 text-emerald-800 shadow-xs flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        D: {displayF} {sensor.unit}
-                      </span>
-                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-50 border border-rose-300 text-rose-800 shadow-xs flex items-center gap-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                        B: {displayB} {sensor.unit}
-                      </span>
-                      <span className="text-[10px] text-emerald-700 font-semibold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 ml-0.5">
-                        Detail →
-                      </span>
+                  {/* Card Header: Kiri ada Judul Sensor, Kanan ada Badge D: / B: & Status Dot */}
+                  <div className="flex flex-wrap justify-between items-center mb-1 gap-2">
+                    {/* Sisi Kiri: Judul di atas */}
+                    <div className="flex flex-col">
+                      <h3 className="font-bold text-sm sm:text-base text-slate-800 tracking-tight flex items-center gap-1.5">
+                        {title}
+                        <span className="text-[10px] text-emerald-700 font-semibold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 ml-1">
+                          Detail →
+                        </span>
+                      </h3>
                     </div>
-                    <div
-                      title={newDataFlags[index] ? "Receiving live data" : "Idle"}
-                      className={`w-4 h-4 rounded-full transition-colors duration-300 shrink-0 ${
-                        newDataFlags[index]
-                          ? "bg-green-600 shadow-[0_0_8px_rgba(22,163,74,0.8)]"
-                          : isConnected
-                          ? "bg-emerald-400"
-                          : "bg-slate-400"
-                      }`}
-                    />
+
+                    {/* Sisi Kanan: Badge D: dan B: serta live indicator dot */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-300 text-emerald-800 shadow-xs flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          D: {displayF} {sensor.unit}
+                        </span>
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-50 border border-rose-300 text-rose-800 shadow-xs flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                          B: {displayB} {sensor.unit}
+                        </span>
+                      </div>
+
+                      <div
+                        title={newDataFlags[index] ? "Receiving live data" : "Idle"}
+                        className={`w-3.5 h-3.5 rounded-full transition-colors duration-300 shrink-0 ${
+                          newDataFlags[index]
+                            ? "bg-green-600 shadow-[0_0_8px_rgba(22,163,74,0.8)]"
+                            : isConnected
+                            ? "bg-emerald-400"
+                            : "bg-slate-400"
+                        }`}
+                      />
+                    </div>
                   </div>
 
-                  <div className="w-full flex-1 -mt-1">
+                  <div className="w-full flex-1">
                     <ApexChart
                       options={chartOptions}
                       series={series}
-                      height={285}
+                      height={275}
                       type="line"
                     />
                   </div>

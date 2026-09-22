@@ -239,7 +239,7 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
       ) : (
         <ProSidebar
           collapsed={collapsed}
-          className="h-[130vh]"
+          className="min-h-full"
           rootStyles={{
             borderRight: "1px solid #f1f5f9",
             backgroundColor: "#ffffff",

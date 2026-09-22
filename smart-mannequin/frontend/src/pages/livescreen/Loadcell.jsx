@@ -13,13 +13,8 @@ import moment from "moment";
 import Swal from "sweetalert2";
 import {
   Clock,
-  Activity,
-  Layers,
   Calendar,
-  Scale,
   ScrollText,
-  ShieldCheck,
-  Cpu,
 } from "lucide-react";
 
 const PERIOD_OPTIONS = [
@@ -30,11 +25,11 @@ const PERIOD_OPTIONS = [
 ];
 
 const LOADCELL_CONFIG = [
-  { id: 801, name: "Leher (Neck)", code: "CH-01", desc: "Kompresi Servikal", maxSafe: 25 },
-  { id: 802, name: "Paha Kiri (L-Thigh)", code: "CH-02", desc: "Distribusi Femur Kiri", maxSafe: 40 },
-  { id: 803, name: "Paha Kanan (R-Thigh)", code: "CH-03", desc: "Distribusi Femur Kanan", maxSafe: 40 },
-  { id: 804, name: "Kaki Kiri (L-Foot)", code: "CH-04", desc: "Tumpuan Telapak Kiri", maxSafe: 50 },
-  { id: 805, name: "Kaki Kanan (R-Foot)", code: "CH-05", desc: "Tumpuan Telapak Kanan", maxSafe: 50 },
+  { id: 801, name: "Leher", desc: "Kompresi Servikal", maxSafe: 25 },
+  { id: 802, name: "Paha Kiri", desc: "Distribusi Femur Kiri", maxSafe: 40 },
+  { id: 803, name: "Paha Kanan", desc: "Distribusi Femur Kanan", maxSafe: 40 },
+  { id: 804, name: "Kaki Kiri", desc: "Tumpuan Telapak Kiri", maxSafe: 50 },
+  { id: 805, name: "Kaki Kanan", desc: "Tumpuan Telapak Kanan", maxSafe: 50 },
 ];
 
 const LoadcellPage = () => {
@@ -202,11 +197,11 @@ const LoadcellPage = () => {
     };
 
     const seriesData = [
-      { name: "Titik #1: Leher (801)", data: getSeries(rows801) },
-      { name: "Titik #2: Paha Kiri (802)", data: getSeries(rows802) },
-      { name: "Titik #3: Paha Kanan (803)", data: getSeries(rows803) },
-      { name: "Titik #4: Kaki Kiri (804)", data: getSeries(rows804) },
-      { name: "Titik #5: Kaki Kanan (805)", data: getSeries(rows805) },
+      { name: "Leher", data: getSeries(rows801) },
+      { name: "Paha Kiri", data: getSeries(rows802) },
+      { name: "Paha Kanan", data: getSeries(rows803) },
+      { name: "Kaki Kiri", data: getSeries(rows804) },
+      { name: "Kaki Kanan", data: getSeries(rows805) },
     ];
 
     const baseOpt = createChartOptions("Loadcell-Monitor", "Loadcell Distribution Chart", categories);
@@ -219,7 +214,7 @@ const LoadcellPage = () => {
         type: "area",
         toolbar: { show: false }, // Hapus menu hamburger / download
       },
-      colors: ["#00ba88", "#10b981", "#34d399", "#059669", "#6ee7b7"], // Serba hijau emerald harmonis
+      colors: ["#00ba88", "#0ea5e9", "#f59e0b", "#8b5cf6", "#ec4899"], // 5 warna berbeda untuk tiap titik beban
       fill: {
         type: "gradient",
         gradient: {
@@ -231,7 +226,7 @@ const LoadcellPage = () => {
       },
       stroke: {
         curve: "smooth",
-        width: 2.5,
+        width: [2.5, 2.5, 2.5, 2.5, 2.5],
       },
       legend: {
         show: true,
@@ -272,7 +267,7 @@ const LoadcellPage = () => {
     : "-";
 
   return (
-    <div className="w-full pb-10 space-y-6">
+    <div className="w-full pb-2 space-y-6">
       {/* Control Toolbar: Status Koneksi & Filter Periode */}
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         {/* Status Koneksi & Waktu Update */}
@@ -330,43 +325,47 @@ const LoadcellPage = () => {
 
       {/* Informasi Sensor Card */}
       <SensorInfoCard
-        title={t("informasiSensor", "Informasi Sensor")}
-        sensorCode="Load Cell Transducers (801 - 805)"
-        description={
-          t("loadcellSensor.dekripsiSensor") ||
-          "Sensor Load Cell mengukur distribusi beban mekanis dan gaya kontak pada 5 titik anatomis manekin: Leher, Paha Kiri, Paha Kanan, Kaki Kiri, dan Kaki Kanan secara kontinu untuk evaluasi biomekanis komprehensif."
-        }>
-        {/* Gambar Anatomi Sensor Load Cell */}
-        <div className="flex flex-wrap items-center justify-center gap-6 mt-4 p-3 bg-slate-50/60 rounded-xl border border-slate-100">
-          <div className="flex flex-col items-center">
-            <img
-              src="/images/information/loadcell-leher-information.png"
-              alt="loadcell-leher"
-              className="max-h-36 max-w-[180px] w-auto object-contain mix-blend-multiply"
-            />
-            <span className="text-[11px] font-mono font-bold text-slate-500 mt-1">Sensor Leher (801)</span>
+        title={t("informasiSensor") || "Informasi Sensor"}
+        sensorCode="LOAD CELL TRANSDUCERS"
+        imageSlot={
+          <div className="flex flex-row items-center gap-4 sm:gap-6 bg-slate-50/90 p-3 sm:p-4 rounded-2xl border border-slate-100 shrink-0 shadow-2xs">
+            <div className="flex flex-col items-center">
+              <img
+                src="/images/information/loadcell-leher-information.png"
+                alt="loadcell-leher"
+                className="max-h-40 sm:max-h-48 max-w-[130px] sm:max-w-[160px] w-auto object-contain mix-blend-multiply transition-transform duration-300 hover:scale-105"
+              />
+              <span className="text-xs font-mono font-bold text-slate-600 mt-2">Sensor Leher</span>
+            </div>
+            <div className="flex flex-col items-center">
+              <img
+                src="/images/information/loadcell-kaki-information.png"
+                alt="loadcell-kaki"
+                className="max-h-40 sm:max-h-48 max-w-[130px] sm:max-w-[160px] w-auto object-contain mix-blend-multiply transition-transform duration-300 hover:scale-105"
+              />
+              <span className="text-xs font-mono font-bold text-slate-600 mt-2">Sensor Kaki & Paha</span>
+            </div>
           </div>
-          <div className="flex flex-col items-center">
-            <img
-              src="/images/information/loadcell-kaki-information.png"
-              alt="loadcell-kaki"
-              className="max-h-36 max-w-[180px] w-auto object-contain mix-blend-multiply"
-            />
-            <span className="text-[11px] font-mono font-bold text-slate-500 mt-1">Sensor Kaki & Paha (802-805)</span>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-3 mt-4">
+        }
+        action={
           <button
+            type="button"
             onClick={() => setIsLogsModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs hover:shadow cursor-pointer">
-            <ScrollText className="w-4 h-4 text-emerald-400" />
-            Lihat Log Riwayat Sensor
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer">
+            <ScrollText size={14} />
+            <span>Lihat Log Riwayat Sensor</span>
           </button>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-xs font-medium">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            5 Kanal Transduser Beban Aktif
-          </div>
+        }>
+        <div className="flex flex-col gap-2.5">
+          <h4 className="font-bold text-slate-800 text-base sm:text-lg">
+            Sistem Distribusi Beban Mekanis Load Cell
+          </h4>
+          <p className="text-slate-600 text-sm leading-relaxed text-justify">
+            {t(
+              "loadcellSensor.dekripsiSensor",
+              "Sensor Load Cell mengukur distribusi beban mekanis dan gaya kontak pada 5 titik anatomis manekin: Leher, Paha Kiri, Paha Kanan, Kaki Kiri, dan Kaki Kanan secara kontinu untuk evaluasi biomekanis komprehensif."
+            )}
+          </p>
         </div>
       </SensorInfoCard>
 
@@ -379,36 +378,42 @@ const LoadcellPage = () => {
           return (
             <div
               key={item.id}
-              className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all flex flex-col justify-between">
+              className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
-                    {item.code}
+                  <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                    {item.name}
+                  </h3>
+                  <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs ${status.badgeClass}`}>
+                    {status.label}
                   </span>
-                  <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center font-bold text-xs">
-                    {item.id}
-                  </div>
                 </div>
 
-                <div className="text-xs font-bold text-slate-700 mb-1 truncate" title={item.name}>
-                  {item.name}
-                </div>
-
-                <div className="flex items-baseline gap-1.5 mb-2">
-                  <span className="text-2xl font-extrabold text-slate-800 tracking-tight font-mono">
+                <div className="flex items-baseline gap-1.5 py-1 mb-1">
+                  <span className="text-3xl font-black text-[#00ba88] tracking-tight font-mono">
                     {loading ? "--" : val.toFixed(2)}
                   </span>
-                  <span className="text-xs font-semibold text-slate-400">kg</span>
+                  <span className="text-sm font-bold text-slate-400">kg</span>
+                </div>
+
+                <div className="text-[11px] text-slate-500 mb-2">
+                  {item.desc}
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50">
-                <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${status.badgeClass}`}>
-                  {status.label}
-                </span>
-                <span className="text-[10px] font-mono text-slate-400">
-                  Maks: {item.maxSafe}kg
-                </span>
+              <div className="space-y-1.5 pt-2 border-t border-slate-50">
+                <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                  <span>Kapasitas Maks</span>
+                  <span className="font-semibold text-slate-600">{item.maxSafe} kg</span>
+                </div>
+                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-gradient-to-r from-emerald-400 to-[#00ba88] rounded-full transition-all duration-500"
+                    style={{
+                      width: `${Math.min(100, Math.max(5, Math.round((val / item.maxSafe) * 100)))}%`,
+                    }}
+                  />
+                </div>
               </div>
             </div>
           );
@@ -468,13 +473,6 @@ const LoadcellPage = () => {
               Nilai pengukuran beban statik dan dinamik pada seluruh titik anatomis manekin.
             </p>
           </div>
-
-          <div className="flex items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 text-xs font-medium border border-emerald-200/60">
-              <Scale className="w-3.5 h-3.5" />
-              Load Cell Transducers
-            </span>
-          </div>
         </div>
 
         {/* Tabel Ringkasan */}
@@ -494,7 +492,7 @@ const LoadcellPage = () => {
               {LOADCELL_CONFIG.map((item, idx) => {
                 const val = latestValues[item.id] || 0;
                 const status = getLoadStatus(val, item.maxSafe);
-                const dotColors = ["#00ba88", "#10b981", "#34d399", "#059669", "#6ee7b7"];
+                const dotColors = ["#00ba88", "#0ea5e9", "#f59e0b", "#8b5cf6", "#ec4899"];
 
                 return (
                   <tr key={item.id} className="hover:bg-slate-50/60 transition-colors">

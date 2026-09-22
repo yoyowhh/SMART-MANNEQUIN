@@ -1,5 +1,77 @@
 import { useMemo, useState } from "react";
 
+const DEFAULT_LABELS = {
+    back: "Punggung",
+    "left-shoulder": "Bahu Kiri",
+    "right-shoulder": "Bahu Kanan",
+    "left-arm": "Lengan Kiri",
+    "right-arm": "Lengan Kanan",
+    "left-elbow": "Sikut Kiri",
+    "right-elbow": "Sikut Kanan",
+    "left-waist": "Pinggang Kiri",
+    "right-waist": "Pinggang Kanan",
+    "left-knee": "Lutut Kiri",
+    "right-knee": "Lutut Kanan",
+    "left-leg": "Kaki Kiri",
+    "right-leg": "Kaki Kanan",
+};
+
+// Palet warna per anatomi tubuh (Kiri dan Kanan berwarna sama)
+const PART_THEMES = {
+    back: {
+        color: "#ef4444", // Crimson Red
+        rgb: "239, 68, 68",
+    },
+    "left-shoulder": {
+        color: "#0284c7", // Sky Blue
+        rgb: "2, 132, 199",
+    },
+    "right-shoulder": {
+        color: "#0284c7", // Sky Blue (sama dengan kiri)
+        rgb: "2, 132, 199",
+    },
+    "left-arm": {
+        color: "#8b5cf6", // Purple
+        rgb: "139, 92, 246",
+    },
+    "right-arm": {
+        color: "#8b5cf6", // Purple (sama dengan kiri)
+        rgb: "139, 92, 246",
+    },
+    "left-elbow": {
+        color: "#f59e0b", // Amber Orange
+        rgb: "245, 158, 11",
+    },
+    "right-elbow": {
+        color: "#f59e0b", // Amber Orange (sama dengan kiri)
+        rgb: "245, 158, 11",
+    },
+    "left-waist": {
+        color: "#ec4899", // Pink Rose
+        rgb: "236, 72, 153",
+    },
+    "right-waist": {
+        color: "#ec4899", // Pink Rose (sama dengan kiri)
+        rgb: "236, 72, 153",
+    },
+    "left-knee": {
+        color: "#10b981", // Emerald Green
+        rgb: "16, 185, 129",
+    },
+    "right-knee": {
+        color: "#10b981", // Emerald Green (sama dengan kiri)
+        rgb: "16, 185, 129",
+    },
+    "left-leg": {
+        color: "#6366f1", // Indigo
+        rgb: "99, 102, 241",
+    },
+    "right-leg": {
+        color: "#6366f1", // Indigo (sama dengan kiri)
+        rgb: "99, 102, 241",
+    },
+};
+
 export default function MannequinHotspotSVG({
     className = "",
     activePart,
@@ -8,6 +80,7 @@ export default function MannequinHotspotSVG({
     onLeavePart,
     imageHref = "/mannequin-back.png",
     visibleParts = null,
+    labels = DEFAULT_LABELS,
 }) {
     const [hoverId, setHoverId] = useState(null);
 
@@ -38,26 +111,16 @@ export default function MannequinHotspotSVG({
     const isHover = (id) => hoverId === id;
 
     // ======== ukuran ========
-    const DOT_R = 2;
-    const HALO_R = 6;
+    const DOT_R = 2.4;
+    const HALO_R = 6.5;
 
     // ======== pulse ========
     const PULSE_R_FROM = HALO_R - 1;
     const PULSE_R_TO = HALO_R + 7;
     const PULSE_DUR = "1.2s";
 
-    // ======== palet warna ========
-    const ACTIVE_DOT = "rgba(16,185,129,1)";
-    const ACTIVE_RING = "rgba(16,185,129,0.75)";
-    const ACTIVE_HALO = "rgba(16,185,129,0.24)";
-
-    const IDLE_DOT = "rgba(16,185,129,0.85)";
-    const IDLE_RING = "rgba(16,185,129,0.45)";
-    const IDLE_HALO = "rgba(16,185,129,0.14)";
-
-    const DIM_DOT = "rgba(16,185,129,0.60)";
-    const DIM_RING = "rgba(16,185,129,0.35)";
-    const DIM_HALO = "rgba(16,185,129,0.14)";
+    const hoveredSensor = hoverId ? visibleSensors.find((s) => s.id === hoverId) : null;
+    const activeHoverSensor = hoveredSensor || (activePart ? visibleSensors.find((s) => s.id === activePart) : null);
 
     return (
         <svg
@@ -68,33 +131,11 @@ export default function MannequinHotspotSVG({
         >
             <defs>
                 <filter id="neonGlow" x="-50%" y="-50%" width="200%" height="200%">
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="2.2" result="blur1" />
-                    <feColorMatrix
-                        in="blur1"
-                        type="matrix"
-                        values="
-                            0 0 0 0 0.06
-                            0 0 0 0 0.85
-                            0 0 0 0 0.55
-                            0 0 0 0.95 0
-                        "
-                        result="glow1"
-                    />
-                    <feGaussianBlur in="SourceGraphic" stdDeviation="4.8" result="blur2" />
-                    <feColorMatrix
-                        in="blur2"
-                        type="matrix"
-                        values="
-                            0 0 0 0 0.06
-                            0 0 0 0 0.85
-                            0 0 0 0 0.55
-                            0 0 0 0.55 0
-                        "
-                        result="glow2"
-                    />
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur1" />
+                    <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="blur2" />
                     <feMerge>
-                        <feMergeNode in="glow2" />
-                        <feMergeNode in="glow1" />
+                        <feMergeNode in="blur2" />
+                        <feMergeNode in="blur1" />
                         <feMergeNode in="SourceGraphic" />
                     </feMerge>
                 </filter>
@@ -112,37 +153,45 @@ export default function MannequinHotspotSVG({
             {visibleSensors.map((s) => {
                 const active = isActive(s.id);
                 const hover = isHover(s.id);
-                const dimOthers = Boolean(activePart) && !active;
+                const dimOthers = Boolean(hoverId || activePart) && !active && !hover;
 
-                const dotFill = active ? ACTIVE_DOT : dimOthers ? DIM_DOT : IDLE_DOT;
-                const ringStroke = active ? ACTIVE_RING : dimOthers ? DIM_RING : IDLE_RING;
-                const haloFill = active ? ACTIVE_HALO : dimOthers ? DIM_HALO : IDLE_HALO;
-                const haloOpacity = active ? 0.45 : hover ? 0.28 : dimOthers ? 0.12 : 0.18;
-                const ringOpacity = active ? 1 : hover ? 0.65 : dimOthers ? 0.35 : 0.5;
-                const dotOpacity = active ? 1 : hover ? 0.9 : dimOthers ? 0.55 : 0.85;
+                const theme = PART_THEMES[s.id] || { color: "#10b981", rgb: "16, 185, 129" };
+
+                const dotFill = `rgb(${theme.rgb})`;
+                const ringStroke = theme.color;
+                const haloFill = `rgba(${theme.rgb}, 0.28)`;
+
+                const haloOpacity = active ? 0.75 : hover ? 0.85 : dimOthers ? 0.18 : 0.4;
+                const ringOpacity = active ? 1 : hover ? 1 : dimOthers ? 0.35 : 0.8;
+                const dotOpacity = active ? 1 : hover ? 1 : dimOthers ? 0.5 : 0.95;
 
                 return (
                     <g
                         key={s.id}
-                        onMouseEnter={() => { setHoverId(s.id); onHoverPart?.(s.id); }}
-                        onMouseLeave={() => { setHoverId(null); onLeavePart?.(); }}
+                        onMouseEnter={() => {
+                            setHoverId(s.id);
+                            onHoverPart?.(s.id);
+                        }}
+                        onMouseLeave={() => {
+                            setHoverId(null);
+                            onLeavePart?.();
+                        }}
                         onClick={() => onClickPart?.(s.id)}
                         style={{
                             cursor: "pointer",
-                            transition: "opacity 160ms ease",
-                            opacity: dimOthers ? 0.85 : 1,
-                            filter: active ? "url(#neonGlow)" : "none",
+                            transition: "all 180ms ease",
+                            opacity: dimOthers ? 0.65 : 1,
                         }}
                     >
-                        {active && (
+                        {(active || hover) && (
                             <circle
                                 cx={s.x}
                                 cy={s.y}
                                 r={PULSE_R_FROM}
                                 fill="transparent"
-                                stroke="rgba(16,185,129,0.55)"
-                                strokeWidth="2"
-                                opacity="0.7"
+                                stroke={theme.color}
+                                strokeWidth="1.6"
+                                opacity="0.8"
                                 pointerEvents="none"
                             >
                                 <animate
@@ -153,42 +202,94 @@ export default function MannequinHotspotSVG({
                                 />
                                 <animate
                                     attributeName="opacity"
-                                    values="0.65;0"
+                                    values="0.8;0"
                                     dur={PULSE_DUR}
                                     repeatCount="indefinite"
                                 />
                             </circle>
                         )}
 
-                        {/* halo */}
+                        {/* Halo glow */}
                         <circle
                             cx={s.x}
                             cy={s.y}
-                            r={HALO_R}
+                            r={hover ? HALO_R + 1.5 : HALO_R}
                             fill={haloFill}
                             opacity={haloOpacity}
+                            style={{ transition: "all 180ms ease" }}
                         />
-                        {/* ring */}
+                        {/* Outer ring */}
                         <circle
                             cx={s.x}
                             cy={s.y}
-                            r={HALO_R - 2}
+                            r={hover ? HALO_R - 0.5 : HALO_R - 1.8}
                             fill="transparent"
                             stroke={ringStroke}
-                            strokeWidth="1.4"
+                            strokeWidth={hover ? "1.8" : "1.4"}
                             opacity={ringOpacity}
+                            style={{ transition: "all 180ms ease" }}
                         />
-                        {/* dot */}
+                        {/* Central dot */}
                         <circle
                             cx={s.x}
                             cy={s.y}
-                            r={DOT_R}
+                            r={hover ? DOT_R + 0.8 : DOT_R}
                             fill={dotFill}
                             opacity={dotOpacity}
+                            filter={hover || active ? "url(#neonGlow)" : "none"}
+                            style={{ transition: "all 180ms ease" }}
                         />
                     </g>
                 );
             })}
+
+            {/* Hover Tooltip Popup with Part Name (Rendered on top) */}
+            {hoverId && activeHoverSensor && (() => {
+                const labelText = labels[activeHoverSensor.id] || DEFAULT_LABELS[activeHoverSensor.id] || activeHoverSensor.id;
+                const theme = PART_THEMES[activeHoverSensor.id] || { color: "#10b981" };
+                const textLen = labelText.length;
+                const boxW = Math.max(22, textLen * 2.3 + 6);
+                const boxH = 6.8;
+
+                let tx = activeHoverSensor.x - boxW / 2;
+                if (tx < 2) tx = 2;
+                if (tx + boxW > 98) tx = 98 - boxW;
+
+                let ty = activeHoverSensor.y - 10;
+                if (ty < 2) {
+                    ty = activeHoverSensor.y + 6;
+                }
+
+                return (
+                    <g pointerEvents="none" className="transition-all duration-150">
+                        {/* Tooltip Background */}
+                        <rect
+                            x={tx}
+                            y={ty}
+                            width={boxW}
+                            height={boxH}
+                            rx="2.2"
+                            fill="#0f172a"
+                            stroke={theme.color}
+                            strokeWidth="0.8"
+                            opacity="0.96"
+                        />
+                        {/* Tooltip Text */}
+                        <text
+                            x={tx + boxW / 2}
+                            y={ty + 4.6}
+                            fill="#ffffff"
+                            fontSize="3"
+                            fontWeight="700"
+                            textAnchor="middle"
+                            fontFamily="system-ui, -apple-system, sans-serif"
+                            letterSpacing="0.2"
+                        >
+                            {labelText}
+                        </text>
+                    </g>
+                );
+            })()}
         </svg>
     );
 }

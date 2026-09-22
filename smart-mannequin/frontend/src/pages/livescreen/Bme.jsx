@@ -13,15 +13,12 @@ import moment from "moment";
 import Swal from "sweetalert2";
 import {
   Clock,
-  Activity,
-  Layers,
   Calendar,
   Thermometer,
   Droplets,
   Gauge,
   Mountain,
   ScrollText,
-  ShieldCheck,
   Cpu,
 } from "lucide-react";
 
@@ -30,14 +27,6 @@ const PERIOD_OPTIONS = [
   { label: "25 Data", value: 25 },
   { label: "50 Data", value: 50 },
   { label: "100 Data", value: 100 },
-];
-
-const CHART_PARAM_TABS = [
-  { id: "all", label: "Multi-Parameter" },
-  { id: "temp", label: "Suhu (°C)" },
-  { id: "humidity", label: "Kelembaban (%)" },
-  { id: "pressure", label: "Tekanan (hPa)" },
-  { id: "altitude", label: "Ketinggian (m)" },
 ];
 
 const BmePage = () => {
@@ -54,7 +43,6 @@ const BmePage = () => {
   const [latestAltitude, setLatestAltitude] = useState(0);
   const [lastUpdateTime, setLastUpdateTime] = useState(null);
   const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
-  const [selectedParamTab, setSelectedParamTab] = useState("all");
 
   // Status Koneksi & Filter Periode
   const [isConnected, setIsConnected] = useState(false);
@@ -218,36 +206,16 @@ const BmePage = () => {
     const pressSeries = reversedRows.map((r) => Number((parseFloat(r.pressure) || 0).toFixed(1)));
     const altSeries = reversedRows.map((r) => Number((parseFloat(r.approximate_altitude) || 0).toFixed(1)));
 
-    let seriesData = [];
-    let colors = [];
-    let yAxisTitle = "Nilai Pengukuran";
+    // 4 Metrik Lingkungan Terpadu: Temperatur, Kelembaban, Tekanan Udara, dan Ketinggian
+    const seriesData = [
+      { name: "Temperatur (°C)", data: tempSeries },
+      { name: "Kelembaban (%RH)", data: humSeries },
+      { name: "Tekanan Udara (hPa)", data: pressSeries },
+      { name: "Estimasi Ketinggian (m)", data: altSeries },
+    ];
 
-    if (selectedParamTab === "temp") {
-      seriesData = [{ name: "Temperatur (°C)", data: tempSeries }];
-      colors = ["#00ba88"];
-      yAxisTitle = "Suhu Lingkungan (°C)";
-    } else if (selectedParamTab === "humidity") {
-      seriesData = [{ name: "Kelembaban Relatif (%)", data: humSeries }];
-      colors = ["#10b981"];
-      yAxisTitle = "Kelembaban Relatif (%RH)";
-    } else if (selectedParamTab === "pressure") {
-      seriesData = [{ name: "Tekanan Barometrik (hPa)", data: pressSeries }];
-      colors = ["#34d399"];
-      yAxisTitle = "Tekanan Udara (hPa)";
-    } else if (selectedParamTab === "altitude") {
-      seriesData = [{ name: "Ketinggian Estimasi (m)", data: altSeries }];
-      colors = ["#059669"];
-      yAxisTitle = "Ketinggian Barometrik (m dpl)";
-    } else {
-      // Multi-Parameter (Standardized dual/multi display)
-      seriesData = [
-        { name: "Temperatur (°C)", data: tempSeries },
-        { name: "Kelembaban (%)", data: humSeries },
-        { name: "Ketinggian (m)", data: altSeries },
-      ];
-      colors = ["#00ba88", "#10b981", "#34d399"];
-      yAxisTitle = "Parameter Termal & Ketinggian";
-    }
+    // Warna masing-masing metrik: Emerald (Suhu), Biru Langit (Kelembaban), Amber (Tekanan Udara), Ungu (Ketinggian)
+    const colors = ["#00ba88", "#0ea5e9", "#f59e0b", "#8b5cf6"];
 
     const baseOpt = createChartOptions("BME-Monitor", "BME280 Environmental Chart", categories);
 
@@ -271,7 +239,7 @@ const BmePage = () => {
       },
       stroke: {
         curve: "smooth",
-        width: 2.5,
+        width: [2.5, 2.5, 2.5, 2.5],
       },
       legend: {
         show: true,
@@ -287,19 +255,56 @@ const BmePage = () => {
         ...baseOpt.tooltip,
         shared: true,
         intersect: false,
-      },
-      yaxis: {
-        ...baseOpt.yaxis,
-        title: {
-          text: yAxisTitle,
-          style: { fontSize: "12px", fontWeight: "600", color: "#64748b" },
+        y: {
+          formatter: (val, { seriesIndex }) => {
+            if (val === undefined || val === null) return "-";
+            if (seriesIndex === 0) return `${val} °C`;
+            if (seriesIndex === 1) return `${val} %RH`;
+            if (seriesIndex === 2) return `${val} hPa`;
+            if (seriesIndex === 3) return `${val} m`;
+            return `${val}`;
+          },
         },
-        forceNiceScale: true,
       },
+      yaxis: [
+        {
+          seriesName: "Temperatur (°C)",
+          title: {
+            text: "Suhu (°C) / RH (%) / Ketinggian (m)",
+            style: { fontSize: "11px", fontWeight: "600", color: "#64748b" },
+          },
+          labels: {
+            style: { colors: "#64748b" },
+            formatter: (val) => (val !== undefined ? `${Number(val).toFixed(0)}` : ""),
+          },
+          forceNiceScale: true,
+        },
+        {
+          seriesName: "Kelembaban (%RH)",
+          show: false,
+        },
+        {
+          seriesName: "Tekanan Udara (hPa)",
+          opposite: true,
+          title: {
+            text: "Tekanan Udara (hPa)",
+            style: { fontSize: "11px", fontWeight: "600", color: "#f59e0b" },
+          },
+          labels: {
+            style: { colors: "#f59e0b" },
+            formatter: (val) => (val !== undefined ? `${Number(val).toFixed(0)} hPa` : ""),
+          },
+          forceNiceScale: true,
+        },
+        {
+          seriesName: "Estimasi Ketinggian (m)",
+          show: false,
+        },
+      ],
     };
 
     return { chartSeries: seriesData, chartOptions: optionsData };
-  }, [rawRows, selectedParamTab]);
+  }, [rawRows]);
 
   const tempStatus = getTempStatus(latestTemp);
   const humStatus = getHumidityStatus(latestHumidity);
@@ -311,7 +316,7 @@ const BmePage = () => {
     : "-";
 
   return (
-    <div className="w-full pb-10 space-y-6">
+    <div className="w-full pb-2 space-y-6">
       {/* Control Toolbar: Status Koneksi & Filter Periode */}
       <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         {/* Status Koneksi & Waktu Update */}
@@ -369,32 +374,36 @@ const BmePage = () => {
 
       {/* Informasi Sensor Card */}
       <SensorInfoCard
-        title={t("informasiSensor", "Informasi Sensor")}
-        sensorCode="BME280 Environmental Sensor"
+        title={t("informasiSensor") || "Informasi Sensor"}
+        sensorCode="BME280 ENVIRONMENTAL SENSOR"
         imageSrc="/images/information/bme-information.png"
         imageAlt="bme-information"
-        description={
-          t("bmeSensor.dekripsiSensor") ||
-          "Sensor BME280 merupakan sensor lingkungan digital presisi tinggi buatan Bosch Sensortec yang mengukur suhu ambient, kelembaban relatif, tekanan atmosferik, dan estimasi ketinggian di sekitar manekin secara komprehensif."
-        }>
-        <div className="flex flex-wrap items-center gap-3 mt-4">
+        action={
           <button
+            type="button"
             onClick={() => setIsLogsModalOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all shadow-xs hover:shadow cursor-pointer">
-            <ScrollText className="w-4 h-4 text-emerald-400" />
-            Lihat Log Riwayat Sensor
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer">
+            <ScrollText size={14} />
+            <span>Lihat Log Riwayat Sensor</span>
           </button>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-50 border border-emerald-200/80 text-emerald-700 text-xs font-medium">
-            <ShieldCheck className="w-3.5 h-3.5" />
-            Bosch Environmental Unit Active
-          </div>
+        }>
+        <div className="flex flex-col gap-2">
+          <h4 className="font-bold text-slate-800 text-base">
+            Sistem Pemantauan Mikroklimat BME280
+          </h4>
+          <p className="text-slate-600 text-sm leading-relaxed text-justify">
+            {t(
+              "bmeSensor.dekripsiSensor",
+              "Sensor BME280 merupakan sensor lingkungan digital presisi tinggi buatan Bosch Sensortec yang mengukur suhu ambient, kelembaban relatif, tekanan atmosferik, dan estimasi ketinggian di sekitar manekin secara komprehensif."
+            )}
+          </p>
         </div>
       </SensorInfoCard>
 
       {/* Row 1: 4 Cards Metrik Lingkungan */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Suhu */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
               TEMPERATUR
@@ -418,7 +427,7 @@ const BmePage = () => {
         </div>
 
         {/* Card 2: Kelembaban */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
               KELEMBABAN
@@ -442,7 +451,7 @@ const BmePage = () => {
         </div>
 
         {/* Card 3: Tekanan Udara */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
               TEKANAN UDARA
@@ -466,7 +475,7 @@ const BmePage = () => {
         </div>
 
         {/* Card 4: Ketinggian */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300">
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
               ESTIMASI KETINGGIAN
@@ -499,28 +508,21 @@ const BmePage = () => {
                 Grafik Telemetri Lingkungan BME280
               </h3>
               <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-50 text-[#00ba88] font-bold">
-                REALTIME
+                REALTIME MULTI-PARAM
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              Pantau fluktuasi parameter mikroklimat lingkungan di sekitar manekin secara komprehensif.
+              Pantau fluktuasi parameter mikroklimat lingkungan (suhu, kelembaban, tekanan udara, dan ketinggian) secara terpadu.
             </p>
           </div>
 
-          {/* Parameter View Switcher */}
-          <div className="flex flex-wrap items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
-            {CHART_PARAM_TABS.map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setSelectedParamTab(tab.id)}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                  selectedParamTab === tab.id
-                    ? "bg-white text-[#00ba88] shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}>
-                {tab.label}
-              </button>
-            ))}
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-medium text-slate-500">
+              Sampel Ditampilkan:
+            </span>
+            <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-[#00ba88] font-bold font-mono text-xs">
+              {rawRows.length} Titik
+            </span>
           </div>
         </div>
 

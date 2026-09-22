@@ -7,6 +7,7 @@ export default function SensorInfoCard({
   sensorCode = "",
   imageSrc = "",
   imageAlt = "",
+  imageSlot = null,
   description = "",
   action = null,
   children = null,
@@ -39,13 +40,17 @@ export default function SensorInfoCard({
           </div>
 
           <div className="flex flex-col sm:flex-row items-center gap-6 pt-1">
-            {imageSrc && (
+            {(imageSlot || imageSrc) && (
               <div className="shrink-0 flex items-center justify-center">
-                <img
-                  src={imageSrc}
-                  alt={imageAlt || "sensor-info"}
-                  className="max-h-48 max-w-[260px] w-auto object-contain mix-blend-multiply"
-                />
+                {imageSlot ? (
+                  imageSlot
+                ) : (
+                  <img
+                    src={imageSrc}
+                    alt={imageAlt || "sensor-info"}
+                    className="max-h-48 max-w-[260px] w-auto object-contain mix-blend-multiply"
+                  />
+                )}
               </div>
             )}
             <div className="text-slate-600 text-sm leading-relaxed font-medium flex-1 text-justify">
