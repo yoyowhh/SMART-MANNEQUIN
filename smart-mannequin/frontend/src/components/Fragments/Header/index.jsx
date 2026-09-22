@@ -141,6 +141,7 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
   const getPageTitle = () => {
     const path = location.pathname.toLowerCase();
     if (path.includes("/team")) return "Informasi Tim";
+    if (path.includes("/mannequin") || path.includes("/manekin")) return "Visualisasi Manekin";
     if (path.includes("/sensor/loadcell")) return "Sensor Load Cell";
     if (path.includes("/sensor/smartskin")) return "Sensor Smart Skin";
     if (path.includes("/sensor/sound")) return "Sensor Suara";

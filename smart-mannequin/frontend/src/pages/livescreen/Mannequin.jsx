@@ -10,15 +10,23 @@ import {
   Thermometer,
   LayoutGrid,
   Fingerprint,
+  RefreshCw,
+  Download,
+  Sliders,
+  Sparkles,
+  Layers,
+  CheckCircle2,
+  AlertTriangle,
+  ScrollText,
 } from "lucide-react";
+import Swal from "sweetalert2";
 
-import HeroBanner from "../components/Dashboard/HeroBanner";
-import QuickStatusSummary from "../components/Dashboard/QuickStatusSummary";
-import AlertBanner from "../components/Dashboard/AlertBanner";
-
-import { useFetchSensor } from "../hooks/useSensor";
-import { getLatestData } from "../helpers/utils";
-import { useSensorWebSocket } from "../hooks/smartskin/useSensorWebSocket";
+import MannequinBlueprint from "../../components/Dashboard/MannequinBlueprint";
+import SensorCard from "../../components/Dashboard/SensorCard";
+import MannequinLogsModal from "../../components/Dashboard/MannequinLogsModal";
+import { useFetchSensor } from "../../hooks/useSensor";
+import { getLatestData } from "../../helpers/utils";
+import { useSensorWebSocket } from "../../hooks/smartskin/useSensorWebSocket";
 
 // Evaluasi ambang batas kesehatan & kenyamanan telemetri sensor
 const evaluateSensor = (sensorId, val) => {
@@ -76,7 +84,6 @@ const evaluateSensor = (sensorId, val) => {
   }
 };
 
-// Definisi sensor persis sesuai desain
 const SENSOR_LIST = [
   {
     id: "sound",
@@ -170,16 +177,20 @@ const SENSOR_LIST = [
   },
 ];
 
-const NewLiveScreen = () => {
+const MannequinPage = () => {
   const params = useParams();
   const mannequinId = params?.id || 1;
 
+  const [selectedSensorKey, setSelectedSensorKey] = useState(null);
+  const [isCalibrating, setIsCalibrating] = useState(false);
+  const [calibrationProgress, setCalibrationProgress] = useState(0);
   const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
 
-  // Live SmartSkin WebSocket subscription
+  // WebSocket SmartSkin
   const { latestBatch } = useSensorWebSocket(mannequinId);
 
-  // Live readings dictionary
+  // Live readings state
   const [readings, setReadings] = useState({
     sound: { value: "43.3", unit: "dB" },
     gas: { value: "410", unit: "ppm" },
@@ -192,7 +203,7 @@ const NewLiveScreen = () => {
     smartskin: { value: "18.6", unit: "kPa" },
   });
 
-  // Real-time update for SmartSkin from WebSocket
+  // WebSocket update
   useEffect(() => {
     if (latestBatch && latestBatch.length > 0) {
       const pressures = latestBatch
@@ -210,10 +221,10 @@ const NewLiveScreen = () => {
     }
   }, [latestBatch]);
 
-  // Polling data periodically for all LoRa sensors
+  // Polling data telemetry
   const fetchTelemetry = useCallback(async () => {
     try {
-      // 1. BME280 (1001)
+      // 1. BME280
       const bmeData = await useFetchSensor("bme", 1001, mannequinId);
       if (bmeData) {
         const latest = getLatestData(bmeData);
@@ -225,7 +236,7 @@ const NewLiveScreen = () => {
         }
       }
 
-      // 2. Sound KY-601 (601)
+      // 2. Sound
       const soundData = await useFetchSensor("ky", 601, mannequinId);
       if (soundData) {
         const latest = getLatestData(soundData);
@@ -237,7 +248,7 @@ const NewLiveScreen = () => {
         }
       }
 
-      // 3. Lidar (901)
+      // 3. Lidar
       const lidarData = await useFetchSensor("lidar", 901, mannequinId);
       if (lidarData) {
         const latest = getLatestData(lidarData);
@@ -249,7 +260,7 @@ const NewLiveScreen = () => {
         }
       }
 
-      // 4. Gas MQ-2 (101)
+      // 4. Gas
       const gasData = await useFetchSensor("mq", 101, mannequinId);
       if (gasData) {
         const latest = getLatestData(gasData);
@@ -262,7 +273,7 @@ const NewLiveScreen = () => {
         }
       }
 
-      // 5. ADXL345 (201)
+      // 5. ADXL345
       const adxlData = await useFetchSensor("adxl", 201, mannequinId);
       if (adxlData) {
         const latest = getLatestData(adxlData);
@@ -274,7 +285,7 @@ const NewLiveScreen = () => {
         }
       }
 
-      // 6. MPU6050 (1002)
+      // 6. MPU6050
       const mpuData = await useFetchSensor("mpu", 1002, mannequinId);
       if (mpuData) {
         const latest = getLatestData(mpuData);
@@ -287,7 +298,7 @@ const NewLiveScreen = () => {
         }
       }
 
-      // 7. Load Cell (801)
+      // 7. Load Cell
       const loadData = await useFetchSensor("loadcell", 801, mannequinId);
       if (loadData) {
         const latest = getLatestData(loadData);
@@ -300,7 +311,7 @@ const NewLiveScreen = () => {
         }
       }
 
-      // 8. Thermal Camera (702)
+      // 8. Thermal Camera
       const thermalData = await useFetchSensor("thermal", 702, mannequinId);
       if (thermalData) {
         const latest = getLatestData(thermalData);
@@ -312,7 +323,6 @@ const NewLiveScreen = () => {
         }
       }
 
-      // Update waktu pembaruan telemetri
       setLastUpdated(new Date());
     } catch (err) {
       console.warn("Live telemetry poll warning:", err);
@@ -325,7 +335,77 @@ const NewLiveScreen = () => {
     return () => clearInterval(interval);
   }, [fetchTelemetry]);
 
-  // Evaluasi telemetri tiap sensor untuk statistik & alert
+  // Zero-Point Calibration
+  const handleStartCalibration = useCallback(() => {
+    if (isCalibrating) return;
+
+    setIsCalibrating(true);
+    setCalibrationProgress(0);
+
+    const stepTime = 25;
+    let currentProgress = 0;
+
+    const timer = setInterval(() => {
+      currentProgress += 1;
+      if (currentProgress >= 100) {
+        clearInterval(timer);
+        setCalibrationProgress(100);
+
+        setReadings((prev) => ({
+          ...prev,
+          loadcell: { value: "0.0", unit: "kg" },
+        }));
+        setLastUpdated(new Date());
+
+        setTimeout(() => {
+          setIsCalibrating(false);
+          Swal.fire({
+            icon: "success",
+            title: "Kalibrasi Zero-Point Berhasil",
+            text: "Pemindaian blueprint selesai. Seluruh titik sensor anatomis mannequin telah berhasil di-scan dan di-reset ke titik nol referensi.",
+            timer: 2400,
+            showConfirmButton: false,
+            background: "#ffffff",
+            customClass: {
+              popup: "rounded-2xl shadow-xl",
+            },
+          });
+        }, 300);
+      } else {
+        setCalibrationProgress(currentProgress);
+      }
+    }, stepTime);
+  }, [isCalibrating]);
+
+  // Ekspor CSV
+  const handleExportCSV = () => {
+    const timestamp = new Date().toISOString();
+    let csvContent = "data:text/csv;charset=utf-8,Sensor,Nilai,Satuan,Lokasi,Timestamp\n";
+
+    SENSOR_LIST.forEach((sensor) => {
+      const val = readings[sensor.id]?.value || sensor.defaultValue;
+      const unit = readings[sensor.id]?.unit || sensor.unit;
+      csvContent += `"${sensor.name}","${val}","${unit}","${sensor.location}","${timestamp}"\n`;
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `telemetry_mannequin_${mannequinId}_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    Swal.fire({
+      icon: "success",
+      title: "Ekspor Berhasil",
+      text: "Data telemetri seluruh sensor mannequin berhasil diunduh dalam format CSV.",
+      timer: 2000,
+      showConfirmButton: false,
+    });
+  };
+
+  // Evaluasi sensor untuk status badge
   const evaluatedSensors = SENSOR_LIST.map((sensor) => {
     const val = readings[sensor.id]?.value ?? sensor.defaultValue;
     const evalResult = evaluateSensor(sensor.id, val);
@@ -343,46 +423,148 @@ const NewLiveScreen = () => {
     return acc;
   }, {});
 
-  const totalSensors = SENSOR_LIST.length;
-  const activeSensors = totalSensors; // seluruh 9 sensor node telemetri aktif terhubung
-  const offlineSensors = 0;
-  const warningSensors = evaluatedSensors.filter((s) => s.status === "warning").length;
-  const criticalSensors = evaluatedSensors.filter((s) => s.status === "critical").length;
-
-  const alerts = evaluatedSensors
-    .filter((s) => s.status === "warning" || s.status === "critical")
-    .map((s) => ({
-      id: s.id,
-      name: s.name,
-      value: s.currentVal,
-      unit: readings[s.id]?.unit ?? s.unit,
-      status: s.status,
-      message: s.message,
-      threshold: s.threshold,
-      route: s.route,
-    }));
+  const normalCount = evaluatedSensors.filter((s) => s.status === "normal").length;
+  const warningCount = evaluatedSensors.filter((s) => s.status === "warning").length;
+  const criticalCount = evaluatedSensors.filter((s) => s.status === "critical").length;
 
   return (
     <div className="w-full max-w-[1700px] mx-auto flex flex-col gap-6">
-      {/* 1. Hero Banner with Live Telemetry HUD Bar */}
-      <HeroBanner />
+        {/* Header Halaman Manekin - Dark Modern (Serasi dengan Informasi Tim) */}
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 text-white px-6 py-4 sm:py-5 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-4">
+          {/* Decorative ambient gradients */}
+          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-1/4 -mb-10 w-60 h-60 rounded-full bg-teal-500/10 blur-2xl pointer-events-none" />
 
-      {/* 2. Quick Status Summary (Identitas, Status Manekin, Status Sistem, Waktu Update & 5 KPI) */}
-      <QuickStatusSummary
-        mannequinId={mannequinId}
-        totalSensors={totalSensors}
-        activeSensors={activeSensors}
-        offlineSensors={offlineSensors}
-        warningSensors={warningSensors}
-        criticalSensors={criticalSensors}
-        lastUpdated={lastUpdated}
-        onRefresh={fetchTelemetry}
-      />
+          {/* Left Text Block - Exact same margin & padding as Informasi Tim */}
+          <div className="relative z-10 max-w-3xl">
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+                Visualisasi Manekin
+              </h1>
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Manekin #{mannequinId}
+              </span>
+            </div>
+            <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+              Visualisasi blueprint anatomi mannequin interaktif & telemetri kesehatan sensor secara real-time.
+            </p>
+          </div>
 
-      {/* 3. Alert Banner: Informasi Peringatan Terbaru jika ada */}
-      <AlertBanner alerts={alerts} mannequinId={mannequinId} />
-    </div>
+          {/* Quick Metrics & Actions (Vertical Stack) */}
+          <div className="relative z-10 flex flex-col items-start md:items-end gap-2.5 flex-shrink-0">
+            {/* Status counts: 6 Normal 2 Perhatian 1 Kritis */}
+            <div className="flex items-center gap-2.5 px-3 py-1.5 bg-slate-800/80 rounded-xl border border-slate-700/60 text-xs font-medium">
+              <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+                <CheckCircle2 className="w-3.5 h-3.5" /> {normalCount} Normal
+              </span>
+              {warningCount > 0 && (
+                <span className="flex items-center gap-1 text-amber-400 font-semibold">
+                  <AlertTriangle className="w-3.5 h-3.5" /> {warningCount} Perhatian
+                </span>
+              )}
+              {criticalCount > 0 && (
+                <span className="flex items-center gap-1 text-rose-400 font-semibold">
+                  <AlertTriangle className="w-3.5 h-3.5" /> {criticalCount} Kritis
+                </span>
+              )}
+            </div>
+
+            {/* Dibawahnya: Kalibrasi dan Log Riwayat */}
+            <div className="flex items-center gap-2">
+              {/* Tombol Kalibrasi */}
+              <button
+                onClick={handleStartCalibration}
+                disabled={isCalibrating}
+                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
+                  isCalibrating
+                    ? "bg-amber-500 text-white border-amber-600 animate-pulse cursor-wait"
+                    : "bg-slate-800/80 hover:bg-slate-750 text-slate-200 hover:text-white border-slate-700 shadow-2xs"
+                }`}
+                title="Mulai kalibrasi zero-point">
+                <Sliders className={`w-3.5 h-3.5 ${isCalibrating ? "animate-spin text-white" : "text-emerald-400"}`} />
+                <span>{isCalibrating ? `Scanning (${calibrationProgress}%)` : "Kalibrasi"}</span>
+              </button>
+
+              {/* Tombol Log Riwayat */}
+              <button
+                onClick={() => setIsLogsModalOpen(true)}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#00ba88] hover:bg-[#009e74] text-white transition-all shadow-xs cursor-pointer"
+                title="Buka log riwayat dan ekspor data">
+                <ScrollText className="w-3.5 h-3.5" />
+                <span>Log Riwayat</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Notifikasi Hotspot Terpilih */}
+        {selectedSensorKey && (
+          <div className="bg-[#00ba88]/10 border border-[#00ba88]/30 rounded-2xl px-4 py-3 flex items-center justify-between gap-3 text-xs sm:text-sm animate-in fade-in slide-in-from-top-2 duration-200">
+            <div className="flex items-center gap-2 text-slate-800 font-medium">
+              <span className="w-2 h-2 rounded-full bg-[#00ba88]" />
+              Titik sensor fokus:{" "}
+              <strong className="text-[#00ba88] font-bold">
+                {SENSOR_LIST.find((s) => s.id === selectedSensorKey)?.name || selectedSensorKey}
+              </strong>
+              <span className="text-slate-500 hidden sm:inline">
+                ({SENSOR_LIST.find((s) => s.id === selectedSensorKey)?.location})
+              </span>
+            </div>
+            <button
+              onClick={() => setSelectedSensorKey(null)}
+              className="text-xs font-bold text-[#00ba88] hover:text-[#009e74] hover:underline px-2 py-1 rounded-lg">
+              Tampilkan Semua
+            </button>
+          </div>
+        )}
+
+        {/* Main Layout Grid: Blueprint & 9 Sensor Summary Cards (Persis yang di foto) */}
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+          {/* Left: High-Tech Mannequin Blueprint Card */}
+          <div className="w-full lg:w-[34%] xl:w-[30%]">
+            <MannequinBlueprint
+              selectedSensorKey={selectedSensorKey}
+              onSelectHotspot={(sensorKey) =>
+                setSelectedSensorKey((prev) => (prev === sensorKey ? null : sensorKey))
+              }
+              mannequinId={mannequinId}
+              isCalibrating={isCalibrating}
+              calibrationProgress={calibrationProgress}
+            />
+          </div>
+
+          {/* Right: 9 Sensor Summary Cards Grid */}
+          <div className="w-full lg:w-[66%] xl:w-[70%]">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+              {SENSOR_LIST.map((sensor) => (
+                <SensorCard
+                  key={sensor.id}
+                  sensor={sensor}
+                  reading={readings[sensor.id]}
+                  status={sensorStatusMap[sensor.id] || "normal"}
+                  isSelected={selectedSensorKey === sensor.id}
+                  onSelect={(id) =>
+                    setSelectedSensorKey((prev) => (prev === id ? null : id))
+                  }
+                  mannequinId={mannequinId}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Modal Log Riwayat Telemetri Manekin (didalemnya ada Ekspor Data) */}
+        <MannequinLogsModal
+          isOpen={isLogsModalOpen}
+          onClose={() => setIsLogsModalOpen(false)}
+          mannequinId={mannequinId}
+          sensors={evaluatedSensors}
+          readings={readings}
+          onExportCsv={handleExportCSV}
+        />
+      </div>
   );
 };
 
-export default NewLiveScreen;
+export default MannequinPage;

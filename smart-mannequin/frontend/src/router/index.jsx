@@ -17,6 +17,7 @@ import LoadcellPage from "../pages/livescreen/Loadcell";
 import SmartskinPage from "../pages/livescreen/Smartskin";
 import SmartskinDetailPage from "../pages/livescreen/SmartskinDetail";
 import TeamPage from "../pages/livescreen/Team";
+import MannequinPage from "../pages/livescreen/Mannequin";
 import PageNotFound from "../pages/error/NotFound";
 
 const sensorChildren = [
@@ -144,6 +145,18 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: "mannequin",
+        element: (
+          <ProtectedRoute>
+            <MannequinPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "manekin",
+        element: <Navigate to="/mannequin" replace />,
+      },
+      {
         path: "team",
         element: (
           <ProtectedRoute>
@@ -169,6 +182,18 @@ const router = createBrowserRouter([
             <NewLiveScreen />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "mannequin",
+        element: (
+          <ProtectedRoute>
+            <MannequinPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "manekin",
+        element: <Navigate to="../mannequin" replace />,
       },
       {
         path: "team",

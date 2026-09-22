@@ -14,7 +14,7 @@ const LivescreenLayout = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#f8fafc]">
+    <div className="flex flex-col min-h-screen bg-[#f8fafc] overflow-x-hidden">
       <HeaderPage
         isCollapse={isCollapse}
         handleCollapsedChange={handleCollapsedChange}
@@ -29,7 +29,7 @@ const LivescreenLayout = () => {
       )}
 
       {/* Content */}
-      <div className="flex flex-grow">
+      <div className="flex flex-grow min-w-0 overflow-x-hidden">
         {!isMobile && (
           <Sidebar
             className="z-30 fixed overflow-scroll"
@@ -38,7 +38,7 @@ const LivescreenLayout = () => {
             isMobileView={false}
           />
         )}
-        <div className="p-6 sm:p-8 w-full bg-[#f8fafc]">
+        <div className="p-6 sm:p-8 flex-1 min-w-0 bg-[#f8fafc] overflow-x-hidden">
           <Outlet />
         </div>
       </div>

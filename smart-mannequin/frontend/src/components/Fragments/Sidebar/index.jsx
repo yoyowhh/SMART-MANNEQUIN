@@ -24,7 +24,7 @@ import {
 } from "react-icons/bi";
 
 import React, { useState, useCallback } from "react";
-import { LayoutDashboard, Users } from "lucide-react";
+import { LayoutDashboard, Users, Bot } from "lucide-react";
 
 const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
   const { t } = useTranslation();
@@ -40,6 +40,9 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
     pathname === `/${mannequinId}` ||
     pathname === "/1" ||
     pathname === "/2";
+
+  const isMannequinActive =
+    pathname.includes("/mannequin") || pathname.includes("/manekin");
 
   const isTeamActive = pathname.includes("/team");
 
@@ -154,6 +157,21 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
                 </MenuItem>
 
                 <MenuItem
+                  active={isMannequinActive}
+                  component={<Link to={mannequinId ? `/${mannequinId}/mannequin` : "/mannequin"} />}
+                  icon={
+                    <Bot
+                      className={`w-5 h-5 transition-colors duration-200 ${
+                        isMannequinActive ? "text-white" : "text-slate-500"
+                      }`}
+                    />
+                  }
+                  onClick={toggleMobileMenu}
+                  style={{ margin: "4px 0" }}>
+                  Visualisasi Manekin
+                </MenuItem>
+
+                <MenuItem
                   active={isTeamActive}
                   component={<Link to={mannequinId ? `/${mannequinId}/team` : "/team"} />}
                   icon={
@@ -247,6 +265,26 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
               onMouseLeave={() => setHoveredItem(null)}
               style={{ margin: "4px 0" }}>
               Dashboard
+            </MenuItem>
+
+            <MenuItem
+              active={isMannequinActive}
+              component={<Link to={mannequinId ? `/${mannequinId}/mannequin` : "/mannequin"} />}
+              icon={
+                <Bot
+                  className={`w-5 h-5 transition-colors duration-200 ${
+                    isMannequinActive
+                      ? "text-white"
+                      : hoveredItem === "mannequin"
+                      ? "text-[#00ba88]"
+                      : "text-slate-500"
+                  }`}
+                />
+              }
+              onMouseEnter={() => setHoveredItem("mannequin")}
+              onMouseLeave={() => setHoveredItem(null)}
+              style={{ margin: "4px 0" }}>
+              Visualisasi Manekin
             </MenuItem>
 
             <MenuItem
