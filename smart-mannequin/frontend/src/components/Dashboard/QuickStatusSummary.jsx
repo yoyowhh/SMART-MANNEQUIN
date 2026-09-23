@@ -95,15 +95,16 @@ export default function QuickStatusSummary({
   return (
     <div className="w-full flex flex-col gap-4">
       {/* Baris Status Sistem & Waktu Update Terakhir */}
-      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col md:flex-row md:items-center justify-between gap-4">
-        {/* Identitas Manekin & Status Manekin */}
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-sm shadow-sm">
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col gap-3.5">
+        {/* Baris Atas: Identitas Manekin di Kiri & (Status Sistem + Update Terakhir Sejajar di Kanan) */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          {/* Identitas Manekin */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center font-black text-sm shadow-sm shrink-0">
               #{mannequinId}
             </div>
             <div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-extrabold text-slate-800 text-sm sm:text-base">
                   Manekin #{mannequinId}
                 </span>
@@ -117,62 +118,60 @@ export default function QuickStatusSummary({
             </div>
           </div>
 
-          <div className="h-6 w-[1px] bg-slate-200 hidden sm:block mx-1" />
+          {/* Status Sistem & Waktu Update Terakhir (Sejajar di Atas Card) */}
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Status Sistem */}
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs shrink-0">
+              <Radio className="w-3.5 h-3.5 text-[#00ba88]" />
+              <div className="flex flex-col">
+                <span className="text-[10px] text-slate-400 font-semibold uppercase leading-none">
+                  Status Sistem
+                </span>
+                <span className="text-xs font-bold text-slate-700 leading-tight">
+                  LoRa & WebSocket Aktif
+                </span>
+              </div>
+            </div>
 
-          {/* Status Manekin Badge */}
-          <div className="flex items-center gap-1.5">
-            <span className="text-xs text-slate-400 font-medium">Status:</span>
-            <div
-              className={`flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-bold ${mannequinStatus.color}`}>
-              <span
-                className={`w-2 h-2 rounded-full ${mannequinStatus.dotColor} ${
-                  mannequinStatus.pulse ? "animate-ping" : ""
-                }`}
-              />
-              <span>{mannequinStatus.label}</span>
+            {/* Waktu Update Terakhir */}
+            <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs shrink-0">
+              <Clock className="w-3.5 h-3.5 text-slate-500" />
+              <div className="flex flex-col">
+                <span className="text-[10px] text-slate-400 font-semibold uppercase leading-none">
+                  Update Terakhir
+                </span>
+                <div className="flex items-center gap-1.5 leading-tight">
+                  <span className="font-mono font-bold text-slate-800">
+                    {formatTimestamp(lastUpdated)}
+                  </span>
+                  <span className="text-[10px] font-medium text-slate-400">
+                    ({timeAgo})
+                  </span>
+                </div>
+              </div>
+              {onRefresh && (
+                <button
+                  onClick={onRefresh}
+                  className="ml-1 p-1 hover:bg-slate-200 rounded-lg transition text-slate-500 cursor-pointer"
+                  title="Refresh Telemetri">
+                  <RefreshCw className="w-3 h-3" />
+                </button>
+              )}
             </div>
           </div>
         </div>
 
-        {/* Status Sistem & Waktu Update Data Terakhir */}
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Status Sistem */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs">
-            <Radio className="w-3.5 h-3.5 text-[#00ba88]" />
-            <div className="flex flex-col">
-              <span className="text-[10px] text-slate-400 font-semibold uppercase leading-none">
-                Status Sistem
-              </span>
-              <span className="text-xs font-bold text-slate-700 leading-tight">
-                LoRa & WebSocket Aktif
-              </span>
-            </div>
-          </div>
-
-          {/* Waktu Update Terakhir */}
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs">
-            <Clock className="w-3.5 h-3.5 text-slate-500" />
-            <div className="flex flex-col">
-              <span className="text-[10px] text-slate-400 font-semibold uppercase leading-none">
-                Update Terakhir
-              </span>
-              <div className="flex items-center gap-1.5 leading-tight">
-                <span className="font-mono font-bold text-slate-800">
-                  {formatTimestamp(lastUpdated)}
-                </span>
-                <span className="text-[10px] font-medium text-slate-400">
-                  ({timeAgo})
-                </span>
-              </div>
-            </div>
-            {onRefresh && (
-              <button
-                onClick={onRefresh}
-                className="ml-1 p-1 hover:bg-slate-200 rounded-lg transition text-slate-500"
-                title="Refresh Telemetri">
-                <RefreshCw className="w-3 h-3" />
-              </button>
-            )}
+        {/* Baris Bawah: Status Manekin Badge */}
+        <div className="flex items-center gap-2 pl-0.5">
+          <span className="text-xs text-slate-400 font-medium">Status:</span>
+          <div
+            className={`flex items-center gap-2 px-3 py-1 rounded-full border text-xs font-bold ${mannequinStatus.color}`}>
+            <span
+              className={`w-2 h-2 rounded-full ${mannequinStatus.dotColor} ${
+                mannequinStatus.pulse ? "animate-ping" : ""
+              }`}
+            />
+            <span>{mannequinStatus.label}</span>
           </div>
         </div>
       </div>

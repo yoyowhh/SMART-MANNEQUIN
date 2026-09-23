@@ -8,13 +8,17 @@ const http = require('http');
 
 const TARGET_PORT = process.env.PORT || 4013;
 const INTERVAL_MS = 2500;
-const MANNEQUIN_ID = 1;
+
+// Ambil daftar mannequin ID dari argumen CLI (misal: --mid=1 atau --mid=1,2)
+const args = process.argv.slice(2);
+const midArg = args.find((a) => a.startsWith('--mid='));
+const TARGET_MIDS = midArg ? midArg.split('=')[1].split(',').map(Number) : [1, 2];
 
 console.log('================================================================');
 console.log('🚀 MEMULAI SIMULASI SEMUA SENSOR REAL-TIME (ALL-IN-ONE)');
 console.log(`📡 Target Backend: http://localhost:${TARGET_PORT}`);
 console.log(`⏱️  Interval pengiriman: ${INTERVAL_MS} ms`);
-console.log(`🤖 Mannequin ID: ${MANNEQUIN_ID}`);
+console.log(`🤖 Target Mannequin ID: ${TARGET_MIDS.join(', ')}`);
 console.log('================================================================\n');
 
 let step = 0;
@@ -253,35 +257,41 @@ async function simulateCycle() {
     { id: 805, name: 'Kaki Kanan', val: Number((33.20 + wave * 1.8 + rand(-0.3, 0.3)).toFixed(2)) },
   ];
 
-  // Send all in parallel
-  const sendPromises = [
-    postJson('/sensor-reading/batch', { mannequinId: MANNEQUIN_ID, readings: skinReadings }),
-    postJson(`/sensor/lora?mid=${MANNEQUIN_ID}`, loraMicro1),
-    postJson(`/sensor/lora?mid=${MANNEQUIN_ID}`, loraMicro2),
-    postJson(`/sensor/lora?mid=${MANNEQUIN_ID}`, loraMicro3),
-    postJson(`/sensor/thermal?mid=${MANNEQUIN_ID}`, {
-      value: Number((34.0 + wave * 1.5).toFixed(2)),
-      center_temp: Number((34.0 + wave * 1.5).toFixed(2)),
-      low_temp: Number((31.5 + wave * 1.2).toFixed(2)),
-      high_temp: Number((36.5 + wave * 1.8).toFixed(2)),
-      sensor_id: 702,
-    }),
-    ...loadcellReadings.map((lc) =>
-      postJson(`/sensor/loadcell?mid=${MANNEQUIN_ID}`, {
-        sensor_id: lc.id,
-        value: lc.val,
-        kalmanvalue: lc.val,
-        lateral: 0,
-        extension: lc.val,
-        flexion: 0,
-      }),
-    ),
-  ];
+  // Send to all target mannequin IDs
+  for (const mid of TARGET_MIDS) {
+    const lora1 = { ...loraMicro1, mid };
+    const lora2 = { ...loraMicro2, mid };
+    const lora3 = { ...loraMicro3, mid };
 
-  await Promise.all(sendPromises);
+    const sendPromises = [
+      postJson('/sensor-reading/batch', { mannequinId: mid, readings: skinReadings }),
+      postJson(`/sensor/lora?mid=${mid}`, lora1),
+      postJson(`/sensor/lora?mid=${mid}`, lora2),
+      postJson(`/sensor/lora?mid=${mid}`, lora3),
+      postJson(`/sensor/thermal?mid=${mid}`, {
+        value: Number((34.0 + wave * 1.5).toFixed(2)),
+        center_temp: Number((34.0 + wave * 1.5).toFixed(2)),
+        low_temp: Number((31.5 + wave * 1.2).toFixed(2)),
+        high_temp: Number((36.5 + wave * 1.8).toFixed(2)),
+        sensor_id: 702,
+      }),
+      ...loadcellReadings.map((lc) =>
+        postJson(`/sensor/loadcell?mid=${mid}`, {
+          sensor_id: lc.id,
+          value: lc.val,
+          kalmanvalue: lc.val,
+          lateral: 0,
+          extension: lc.val,
+          flexion: 0,
+        }),
+      ),
+    ];
+
+    await Promise.all(sendPromises);
+  }
 
   console.log(
-    `[${now}] Step #${step} dikirim: ` +
+    `[${now}] Step #${step} dikirim ke Mannequin [${TARGET_MIDS.join(', ')}]: ` +
     `SmartSkin (${skinReadings.length} titik) | ` +
     `LoRa (BME, MPU, Sound, ADXL, Lidar, Gas, FSR) | ` +
     `Loadcell (Leher: ${loadcellReadings[0].val}, Paha: ${loadcellReadings[1].val}/${loadcellReadings[2].val}, Kaki: ${loadcellReadings[3].val}/${loadcellReadings[4].val})`,

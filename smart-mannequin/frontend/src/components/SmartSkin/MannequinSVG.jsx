@@ -14,6 +14,22 @@ const DEFAULT_LABELS = {
     "right-knee": "Lutut Kanan",
     "left-leg": "Kaki Kiri",
     "right-leg": "Kaki Kanan",
+
+    // 14 Titik Hotspot Smart Skin (Suhu, Tekanan, Getaran)
+    "back-1": "Punggung Kiri Atas",
+    "back-2": "Punggung Kiri Bawah",
+    "back-3": "Punggung Kanan Atas",
+    "back-4": "Punggung Kanan Bawah",
+    "arm-left-1": "Lengan Kiri Atas",
+    "arm-left-2": "Lengan Kiri Bawah",
+    "arm-right-1": "Lengan Kanan Atas",
+    "arm-right-2": "Lengan Kanan Bawah",
+    "leg-left-1": "Paha Kiri Atas",
+    "leg-left-2": "Paha Kiri Tengah",
+    "leg-left-3": "Paha Kiri Bawah",
+    "leg-right-1": "Paha Kanan Atas",
+    "leg-right-2": "Paha Kanan Tengah",
+    "leg-right-3": "Paha Kanan Bawah",
 };
 
 // Palet warna per anatomi tubuh (Kiri dan Kanan berwarna sama)
@@ -22,6 +38,26 @@ const PART_THEMES = {
         color: "#ef4444", // Crimson Red
         rgb: "239, 68, 68",
     },
+    // 4 Titik Punggung (Hijau Emerald)
+    "back-1": { color: "#00ba88", rgb: "0, 186, 136" },
+    "back-2": { color: "#00ba88", rgb: "0, 186, 136" },
+    "back-3": { color: "#00ba88", rgb: "0, 186, 136" },
+    "back-4": { color: "#00ba88", rgb: "0, 186, 136" },
+
+    // 4 Titik Lengan (Hijau Emerald)
+    "arm-left-1": { color: "#00ba88", rgb: "0, 186, 136" },
+    "arm-left-2": { color: "#00ba88", rgb: "0, 186, 136" },
+    "arm-right-1": { color: "#00ba88", rgb: "0, 186, 136" },
+    "arm-right-2": { color: "#00ba88", rgb: "0, 186, 136" },
+
+    // 6 Titik Kaki / Paha (Hijau Emerald)
+    "leg-left-1": { color: "#00ba88", rgb: "0, 186, 136" },
+    "leg-left-2": { color: "#00ba88", rgb: "0, 186, 136" },
+    "leg-left-3": { color: "#00ba88", rgb: "0, 186, 136" },
+    "leg-right-1": { color: "#00ba88", rgb: "0, 186, 136" },
+    "leg-right-2": { color: "#00ba88", rgb: "0, 186, 136" },
+    "leg-right-3": { color: "#00ba88", rgb: "0, 186, 136" },
+
     "left-shoulder": {
         color: "#0284c7", // Sky Blue
         rgb: "2, 132, 199",
@@ -86,6 +122,28 @@ export default function MannequinHotspotSVG({
 
     const SENSORS = useMemo(
         () => [
+            // --- 14 Titik SmartSkin Sesuai Gambar Manekin ---
+            // 4 Titik Punggung
+            { id: "back-1",       x: 40.7, y: 25.5 },
+            { id: "back-2",       x: 40.7, y: 31.6 },
+            { id: "back-3",       x: 57.7, y: 25.5 },
+            { id: "back-4",       x: 57.7, y: 31.6 },
+
+            // 4 Titik Lengan
+            { id: "arm-left-1",   x: 31.2, y: 37.2 },
+            { id: "arm-left-2",   x: 30.3, y: 44.7 },
+            { id: "arm-right-1",  x: 66.7, y: 36.0 },
+            { id: "arm-right-2",  x: 68.6, y: 44.7 },
+
+            // 6 Titik Kaki / Paha
+            { id: "leg-left-1",   x: 39.4, y: 79.3 },
+            { id: "leg-left-2",   x: 38.4, y: 86.8 },
+            { id: "leg-left-3",   x: 38.4, y: 94.3 },
+            { id: "leg-right-1",  x: 58.7, y: 79.3 },
+            { id: "leg-right-2",  x: 60.6, y: 86.8 },
+            { id: "leg-right-3",  x: 60.6, y: 94.3 },
+
+            // --- Titik Standar / Flex & Strain ---
             { id: "back",           x: 50,   y: 30  },
             { id: "left-arm",       x: 34,   y: 45  },
             { id: "right-arm",      x: 67,   y: 45  },
@@ -111,12 +169,12 @@ export default function MannequinHotspotSVG({
     const isHover = (id) => hoverId === id;
 
     // ======== ukuran ========
-    const DOT_R = 2.4;
-    const HALO_R = 6.5;
+    const DOT_R = 2.0;
+    const HALO_R = 4.8;
 
     // ======== pulse ========
-    const PULSE_R_FROM = HALO_R - 1;
-    const PULSE_R_TO = HALO_R + 7;
+    const PULSE_R_FROM = HALO_R - 0.5;
+    const PULSE_R_TO = HALO_R + 3.5;
     const PULSE_DUR = "1.2s";
 
     const hoveredSensor = hoverId ? visibleSensors.find((s) => s.id === hoverId) : null;

@@ -17,10 +17,12 @@ let mannequinRouter = require("./routes/mannequin");
 let sensorReadingRouter = require("./routes/sensorReading");
 const { initSmartskinTables } = require("./src/migration/smartskinMigration");
 const { seedLoadcellData } = require("./src/migration/loadcellSeeder");
+const { seedMannequin2Data } = require("./src/migration/mannequin2Seeder");
 
-// Initialize Smart Skin database tables & seed loadcell if needed
+// Initialize Smart Skin database tables & seed loadcell and mannequin 2 if needed
 initSmartskinTables();
 seedLoadcellData();
+seedMannequin2Data();
 
 const { verifyToken, cLogger } = require("./src/middleware");
 
