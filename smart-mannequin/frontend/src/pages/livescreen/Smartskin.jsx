@@ -277,11 +277,10 @@ export default function SmartskinPage() {
               key={opt.value}
               type="button"
               onClick={() => setLimit(opt.value)}
-              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                limit === opt.value
+              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${limit === opt.value
                   ? "bg-white text-[#00ba88] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
-              }`}
+                }`}
             >
               {opt.label}
             </button>
@@ -453,13 +452,12 @@ export default function SmartskinPage() {
 
                       <div
                         title={newDataFlags[index] ? "Receiving live data" : "Idle"}
-                        className={`w-3.5 h-3.5 rounded-full transition-colors duration-300 shrink-0 ${
-                          newDataFlags[index]
+                        className={`w-3.5 h-3.5 rounded-full transition-colors duration-300 shrink-0 ${newDataFlags[index]
                             ? "bg-green-600 shadow-[0_0_8px_rgba(22,163,74,0.8)]"
                             : isConnected
-                            ? "bg-emerald-400"
-                            : "bg-slate-400"
-                        }`}
+                              ? "bg-emerald-400"
+                              : "bg-slate-400"
+                          }`}
                       />
                     </div>
                   </div>

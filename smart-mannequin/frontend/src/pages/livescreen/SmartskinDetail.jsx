@@ -520,10 +520,40 @@ export default function SmartskinDetailPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {config.locations.map((loc) => {
+        <div
+          className={
+            config.locations.length === 5
+              ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4"
+              : "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+          }
+        >
+          {config.locations.map((loc, index) => {
             const valObj = locationValues[loc] || {};
             const isSelected = activeLocation === loc;
+            const isOmega = config.unit === 'Ω' || config.unit === 'µε / Ω';
+
+            const displayF =
+              valObj.front !== undefined
+                ? isOmega
+                  ? Number(valObj.front).toLocaleString()
+                  : Number(valObj.front).toFixed(2)
+                : '--';
+
+            const displayB =
+              valObj.back !== undefined
+                ? isOmega
+                  ? Number(valObj.back).toLocaleString()
+                  : Number(valObj.back).toFixed(2)
+                : '--';
+
+            const colSpanClass =
+              config.locations.length === 5
+                ? index < 3
+                  ? "sm:col-span-1 lg:col-span-2"
+                  : index === 4
+                  ? "sm:col-span-2 lg:col-span-3"
+                  : "sm:col-span-1 lg:col-span-3"
+                : "col-span-1";
 
             return (
               <div
@@ -532,69 +562,88 @@ export default function SmartskinDetailPage() {
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && setActiveLocation(loc)}
-                className={`p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between ${
+                className={`${colSpanClass} bg-white rounded-2xl p-5 border shadow-sm relative overflow-hidden transition-all duration-300 cursor-pointer flex flex-col justify-between ${
                   isSelected
-                    ? 'bg-emerald-50/70 border-emerald-500 shadow-md scale-[1.02]'
-                    : 'bg-white border-slate-200/80 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-1.5 transition-all duration-300'
+                    ? 'border-emerald-500 shadow-md ring-2 ring-emerald-500/20 bg-emerald-50/15'
+                    : 'border-slate-100 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-1'
                 }`}
               >
-                <div className="flex items-start justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span
-                      className={`w-2.5 h-2.5 rounded-full ${
-                        isSelected ? 'bg-emerald-600 animate-pulse' : 'bg-slate-300'
-                      }`}
-                    />
-                    <h4 className="font-bold text-xs text-slate-800 truncate max-w-[140px]">
-                      {LOCATION_LABELS[loc] || loc}
-                    </h4>
-                  </div>
+                {/* Header Titik Lokasi: Nama Titik di kiri & Icon Sensor di kanan (Persis Gambar 1) */}
+                <div className="flex items-center justify-between mb-3">
                   <span
-                    className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${
+                    className="text-xs font-bold text-slate-500 tracking-wider font-mono uppercase truncate pr-2"
+                    title={LOCATION_LABELS[loc] || loc}
+                  >
+                    {LOCATION_LABELS[loc] || loc}
+                  </span>
+                  <div
+                    className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
                       isSelected
-                        ? 'bg-emerald-600 text-white'
-                        : 'bg-slate-100 text-slate-500'
+                        ? 'bg-emerald-500 text-white shadow-2xs'
+                        : 'bg-emerald-50 text-[#00ba88]'
                     }`}
                   >
-                    {isSelected ? 'AKTIF' : 'PILIH'}
-                  </span>
+                    <IconComponent className="w-4 h-4" />
+                  </div>
                 </div>
 
-                <div className="my-2 grid grid-cols-2 gap-2 bg-slate-50/80 p-2.5 rounded-xl border border-slate-100">
-                  <div className="flex flex-col">
-                    <span className="text-[10px] text-emerald-700 font-bold flex items-center gap-1">
+                {/* Nilai Utama Depan & Belakang: Bersih, Rapi & Proporsional (Tidak Mepet) */}
+                <div className="grid grid-cols-2 gap-3 py-1 mb-3">
+                  {/* Sisi Depan */}
+                  <div>
+                    <span className="text-[10px] font-bold text-emerald-600 uppercase font-mono tracking-wider flex items-center gap-1 mb-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                       Depan
                     </span>
-                    <span className="text-base font-extrabold font-mono text-slate-800 mt-0.5">
-                      {valObj.front !== undefined
-                        ? config.unit === 'Ω'
-                          ? Number(valObj.front).toLocaleString()
-                          : Number(valObj.front).toFixed(2)
-                        : '--'}{' '}
-                      <span className="text-[10px] font-normal text-slate-500">{config.unit}</span>
-                    </span>
+                    <div className="flex items-baseline gap-1 font-mono">
+                      <span
+                        className={`font-black text-slate-800 tracking-tight ${
+                          isOmega ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl'
+                        }`}
+                      >
+                        {displayF}
+                      </span>
+                      <span className="text-xs font-medium text-slate-400 font-sans">
+                        {config.unit}
+                      </span>
+                    </div>
                   </div>
 
-                  <div className="flex flex-col border-l border-slate-200 pl-2">
-                    <span className="text-[10px] text-rose-700 font-bold flex items-center gap-1">
+                  {/* Sisi Belakang */}
+                  <div className="border-l border-slate-100 pl-3">
+                    <span className="text-[10px] font-bold text-rose-600 uppercase font-mono tracking-wider flex items-center gap-1 mb-1">
                       <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
                       Belakang
                     </span>
-                    <span className="text-base font-extrabold font-mono text-slate-800 mt-0.5">
-                      {valObj.back !== undefined
-                        ? config.unit === 'Ω'
-                          ? Number(valObj.back).toLocaleString()
-                          : Number(valObj.back).toFixed(2)
-                        : '--'}{' '}
-                      <span className="text-[10px] font-normal text-slate-500">{config.unit}</span>
-                    </span>
+                    <div className="flex items-baseline gap-1 font-mono">
+                      <span
+                        className={`font-black text-slate-800 tracking-tight ${
+                          isOmega ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl'
+                        }`}
+                      >
+                        {displayB}
+                      </span>
+                      <span className="text-xs font-medium text-slate-400 font-sans">
+                        {config.unit}
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[10px] text-slate-400">
-                  <span>Hardware: {config.sensorName}</span>
-                  <span className="font-medium text-emerald-700">Depan & Belakang</span>
+                {/* Footer Card: Badge Status & Nama Hardware Sensor */}
+                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2.5 border-t border-slate-50 mt-auto">
+                  <span
+                    className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${
+                      isSelected
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                        : 'bg-slate-50 text-slate-500 border-slate-200'
+                    }`}
+                  >
+                    {isSelected ? 'Titik Aktif' : 'Pilih Titik'}
+                  </span>
+                  <span className="font-mono text-slate-400 text-[11px] truncate pl-1">
+                    {config.sensorName}
+                  </span>
                 </div>
               </div>
             );

@@ -1,5 +1,5 @@
 import BaseCard from "../../components/Elements/Card";
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import ApexChart from "../../components/Elements/Chart";
 import {
   createChartOptions,
@@ -30,6 +30,17 @@ import {
   TrendingDown,
   TrendingUp,
   Target,
+  Maximize2,
+  Minimize2,
+  Camera as CameraIcon,
+  CameraOff,
+  Wifi,
+  WifiOff,
+  AlertTriangle,
+  RefreshCw,
+  Loader2,
+  RotateCcw,
+  Edit2,
 } from "lucide-react";
 
 const PERIOD_OPTIONS = [
@@ -46,13 +57,47 @@ const ThermalPage = () => {
   const params = useParams();
   const mannequinId = params?.id || 1;
 
-  // Video URL State (Disimpan di localStorage agar persisten)
+  // Video URL & Camera Name State (Disimpan di localStorage agar persisten)
   const [cameraUrl, setCameraUrl] = useState(() => {
     return localStorage.getItem("smart_mannequin_cam_url") || "";
   });
+  const [cameraName, setCameraName] = useState(() => {
+    return localStorage.getItem("smart_mannequin_cam_name") || "Kamera Utama Manekin (Front Cam)";
+  });
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [inputUrl, setInputUrl] = useState(cameraUrl);
+  const [inputCameraName, setInputCameraName] = useState(cameraName);
   const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
+
+  // Status Koneksi Kamera: "online" | "loading" | "offline" | "error"
+  const [streamStatus, setStreamStatus] = useState(() => {
+    return localStorage.getItem("smart_mannequin_cam_url") ? "online" : "offline";
+  });
+  const [streamErrorMsg, setStreamErrorMsg] = useState("");
+
+  // Fullscreen Viewport Handling
+  const videoViewportRef = useRef(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      if (videoViewportRef.current?.requestFullscreen) {
+        videoViewportRef.current.requestFullscreen().catch(() => {});
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+  };
+
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
 
   // Sensor Telemetry State
   const [rawRows, setRawRows] = useState([]);
@@ -225,18 +270,32 @@ const ThermalPage = () => {
 
   const isNewData = useNewDataDetector(chartSeries?.[0]?.data);
 
-  // Simpan URL streaming baru
+  // Simpan URL streaming dan Nama Kamera baru
   const handleSaveUrl = (e) => {
     e.preventDefault();
     const cleanUrl = inputUrl.trim();
+    const cleanName = inputCameraName.trim() || "Kamera Utama Manekin";
     setCameraUrl(cleanUrl);
+    setCameraName(cleanName);
     localStorage.setItem("smart_mannequin_cam_url", cleanUrl);
+    localStorage.setItem("smart_mannequin_cam_name", cleanName);
     setIsModalOpen(false);
+
+    if (cleanUrl) {
+      setStreamStatus("loading");
+      setStreamErrorMsg("");
+      setTimeout(() => {
+        setStreamStatus("online");
+      }, 1000);
+    } else {
+      setStreamStatus("offline");
+    }
   };
 
   const handleClearUrl = () => {
     setCameraUrl("");
     localStorage.removeItem("smart_mannequin_cam_url");
+    setStreamStatus("offline");
   };
 
   // Status Suhu
@@ -365,71 +424,281 @@ const ThermalPage = () => {
         {/* Card Kiri: Live Video Stream Feed (Diperbesar: 8 Kolom di Desktop) */}
         <div className="lg:col-span-8">
           <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex flex-col justify-between h-full transition-all group hover:border-emerald-200">
-            {/* Header Feed Video */}
-            <div className="flex items-center justify-between pb-3.5 mb-3 border-b border-slate-100">
+            {/* 1. Header Feed Video: Nama Kamera, Status Koneksi, & Action Controls */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 mb-3 border-b border-slate-100 gap-3">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center font-bold text-sm">
-                  <Video className="w-4 h-4" />
+                <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center font-bold text-sm shadow-xs shrink-0">
+                  <Video className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-bold text-sm sm:text-base text-slate-800">
-                      {t("cameraSensor.kamera") || "Live Video Stream Feed"}
+                  <div className="flex items-center gap-2 flex-wrap">
+                    {/* Nama Kamera dengan Tombol Edit Cepat */}
+                    <h3 className="font-bold text-sm sm:text-base text-slate-800 flex items-center gap-1.5">
+                      <span>{cameraName}</span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInputUrl(cameraUrl);
+                          setInputCameraName(cameraName);
+                          setIsModalOpen(true);
+                        }}
+                        title="Ubah Nama atau URL Kamera"
+                        className="p-1 text-slate-400 hover:text-emerald-600 rounded-md transition hover:bg-slate-100 cursor-pointer"
+                      >
+                        <Edit2 className="w-3.5 h-3.5" />
+                      </button>
                     </h3>
-                    <span
-                      className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
-                        cameraUrl
-                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                          : "bg-slate-100 text-slate-500"
-                      }`}>
-                      {cameraUrl ? "STREAM AKTIF" : "BELUM DISETEL"}
-                    </span>
+
+                    {/* Status Koneksi Kamera Dinamis */}
+                    {streamStatus === "online" && (
+                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                        ONLINE • TERHUBUNG
+                      </span>
+                    )}
+                    {streamStatus === "loading" && (
+                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-300 flex items-center gap-1">
+                        <Loader2 className="w-2.5 h-2.5 animate-spin text-amber-600" />
+                        MEMUAT STREAM...
+                      </span>
+                    )}
+                    {streamStatus === "offline" && (
+                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-300 flex items-center gap-1">
+                        <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                        OFFLINE
+                      </span>
+                    )}
+                    {streamStatus === "error" && (
+                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-300 flex items-center gap-1">
+                        <AlertTriangle className="w-2.5 h-2.5 text-rose-600" />
+                        GAGAL DIMUAT
+                      </span>
+                    )}
                   </div>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-slate-400 mt-0.5">
                     Streaming visual video waktu nyata via URL sumber feed
                   </p>
                 </div>
               </div>
 
-              {/* Action Buttons Header (Tanpa Tombol Layar Penuh) */}
-              <div className="flex items-center gap-1.5">
+              {/* Action Buttons: Fullscreen, Clear, & Settings */}
+              <div className="flex items-center gap-2 shrink-0">
+                {/* Tombol Fullscreen */}
+                <button
+                  type="button"
+                  onClick={toggleFullscreen}
+                  title={isFullscreen ? "Keluar Layar Penuh" : "Mode Layar Penuh"}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold shadow-xs transition cursor-pointer"
+                >
+                  {isFullscreen ? (
+                    <>
+                      <Minimize2 className="w-3.5 h-3.5 text-slate-600" />
+                      <span className="hidden sm:inline">Keluar Fullscreen</span>
+                    </>
+                  ) : (
+                    <>
+                      <Maximize2 className="w-3.5 h-3.5 text-slate-600" />
+                      <span className="hidden sm:inline">Fullscreen</span>
+                    </>
+                  )}
+                </button>
+
                 {cameraUrl && (
                   <button
                     type="button"
                     onClick={handleClearUrl}
                     title="Hapus URL Stream"
-                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100 transition">
+                    className="p-1.5 text-slate-400 hover:text-rose-600 rounded-xl hover:bg-slate-100 transition border border-transparent hover:border-slate-200 cursor-pointer"
+                  >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 )}
+
                 <button
                   type="button"
                   onClick={() => {
                     setInputUrl(cameraUrl);
+                    setInputCameraName(cameraName);
                     setIsModalOpen(true);
                   }}
-                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white transition shadow-xs">
-                  {cameraUrl ? "Ubah URL" : "Set URL Kamera"}
+                  className="px-3.5 py-1.5 rounded-xl text-xs font-bold bg-slate-900 hover:bg-slate-800 text-white transition shadow-xs flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Settings className="w-3.5 h-3.5" />
+                  <span>{cameraUrl ? "Pengaturan Kamera" : "Set URL Kamera"}</span>
                 </button>
               </div>
             </div>
 
-            {/* Video Viewport Area (Diperluas) */}
-            <div className="flex-grow flex items-center justify-center rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 relative aspect-video min-h-[340px] sm:min-h-[420px]">
-              {cameraUrl ? (
+            {/* 2. Area Tampilan Kamera / Video Viewport */}
+            <div
+              ref={videoViewportRef}
+              className={`flex-grow flex items-center justify-center rounded-2xl overflow-hidden bg-slate-950 border border-slate-900 relative aspect-video min-h-[340px] sm:min-h-[440px] select-none ${
+                isFullscreen ? "!fixed !inset-0 !z-[9999] !w-screen !h-screen !rounded-none !border-0 !min-h-screen" : ""
+              }`}
+            >
+              {/* KONDISI 1: SEDANG LOADING */}
+              {streamStatus === "loading" && (
+                <div className="flex flex-col items-center justify-center p-8 text-center text-slate-300 animate-in fade-in duration-300 z-10">
+                  <div className="relative flex items-center justify-center mb-4">
+                    <span className="animate-ping absolute inline-flex h-16 w-16 rounded-full bg-emerald-400 opacity-20"></span>
+                    <div className="w-14 h-14 rounded-2xl bg-slate-900/90 border border-emerald-500/40 flex items-center justify-center text-emerald-400 shadow-[0_0_20px_rgba(16,185,129,0.25)]">
+                      <Loader2 className="w-7 h-7 animate-spin" />
+                    </div>
+                  </div>
+                  <h4 className="text-base font-bold text-white mb-1.5 flex items-center gap-2">
+                    Menghubungkan ke Feed Kamera...
+                  </h4>
+                  <p className="text-xs text-slate-400 max-w-sm mb-4 leading-relaxed font-mono">
+                    Memulai inisialisasi stream ({cameraName})
+                  </p>
+                  <div className="flex items-center gap-2 text-[11px] font-mono text-emerald-400 bg-emerald-950/70 border border-emerald-800/70 px-3.5 py-1 rounded-full">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Sinkronisasi Frame Video Real-time
+                  </div>
+                </div>
+              )}
+
+              {/* KONDISI 2: OFFLINE */}
+              {streamStatus === "offline" && (
+                <div className="flex flex-col items-center justify-center p-8 text-center text-slate-400 max-w-md animate-in fade-in duration-300 z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mb-3 text-slate-400 shadow-inner">
+                    <CameraOff className="w-8 h-8 text-slate-400" />
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[11px] font-mono font-bold mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                    KAMERA OFFLINE
+                  </div>
+                  <h4 className="text-base font-bold text-white mb-1.5">
+                    Feed Kamera Tidak Tersedia
+                  </h4>
+                  <p className="text-xs text-slate-400 mb-5 leading-relaxed">
+                    {cameraUrl
+                      ? `Perangkat ${cameraName} sedang offline atau transmisi video terhenti.`
+                      : "Belum ada URL video stream yang dikonfigurasi untuk kamera ini."}
+                  </p>
+                  <div className="flex items-center gap-2.5 flex-wrap justify-center">
+                    {cameraUrl && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setStreamStatus("loading");
+                          setTimeout(() => setStreamStatus("online"), 1000);
+                        }}
+                        className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white transition flex items-center gap-1.5 shadow-sm cursor-pointer"
+                      >
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        Hubungkan Ulang
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setInputUrl(cameraUrl);
+                        setInputCameraName(cameraName);
+                        setIsModalOpen(true);
+                      }}
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-[#00ba88] hover:bg-emerald-600 text-white transition shadow-sm cursor-pointer"
+                    >
+                      {cameraUrl ? "Ubah Sumber Kamera" : "Set URL Kamera"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* KONDISI 3: GAGAL DIMUAT (ERROR) */}
+              {streamStatus === "error" && (
+                <div className="flex flex-col items-center justify-center p-8 text-center text-slate-300 max-w-md animate-in fade-in duration-300 z-10">
+                  <div className="w-16 h-16 rounded-2xl bg-rose-950/70 border border-rose-800/80 flex items-center justify-center mb-3 text-rose-400 shadow-[0_0_20px_rgba(244,63,94,0.2)]">
+                    <AlertTriangle className="w-8 h-8 text-rose-500" />
+                  </div>
+                  <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-rose-950 text-rose-300 border border-rose-800 text-[11px] font-mono font-bold mb-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                    GAGAL MEMUAT VIDEO
+                  </div>
+                  <h4 className="text-base font-bold text-white mb-1.5">
+                    Video Gagal Dimuat
+                  </h4>
+                  <p className="text-xs text-rose-200/80 mb-5 leading-relaxed">
+                    {streamErrorMsg || "Feed kamera tidak dapat ditampilkan. Periksa koneksi jaringan, URL RTSP/WebRTC/HTTP, atau izin pemutaran media browser."}
+                  </p>
+                  <div className="flex items-center gap-2.5 flex-wrap justify-center">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setStreamStatus("loading");
+                        setTimeout(() => setStreamStatus("online"), 1000);
+                      }}
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-white transition flex items-center gap-1.5 shadow-sm cursor-pointer"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      Coba Lagi
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setInputUrl(cameraUrl);
+                        setInputCameraName(cameraName);
+                        setIsModalOpen(true);
+                      }}
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-[#00ba88] hover:bg-emerald-600 text-white transition shadow-sm cursor-pointer"
+                    >
+                      Periksa / Ubah URL
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* KONDISI 4: ONLINE / AKTIF */}
+              {streamStatus === "online" && cameraUrl && (
                 <>
-                  {/* Subtle HUD Overlay */}
-                  <div className="absolute top-3 left-3 z-10 flex items-center gap-2 pointer-events-none">
-                    <span className="px-2 py-0.5 rounded-md bg-rose-600/90 text-white text-[9px] font-mono font-bold tracking-wider flex items-center gap-1.5 shadow-xs">
-                      <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
-                      LIVE
-                    </span>
+                  {/* HUD Overlay Atas: Live Indicator, Nama Kamera, Jam Update, dan Tombol Fullscreen */}
+                  <div className="absolute top-3 inset-x-3 z-20 flex items-center justify-between gap-2 pointer-events-none">
+                    <div className="flex items-center gap-2 flex-wrap pointer-events-auto">
+                      <span className="px-2.5 py-1 rounded-lg bg-rose-600/90 text-white text-[10px] font-mono font-bold tracking-wider flex items-center gap-1.5 shadow-md backdrop-blur-xs">
+                        <span className="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+                        LIVE STREAM
+                      </span>
+                      <span className="px-2.5 py-1 rounded-lg bg-black/60 text-slate-200 text-[10px] font-mono font-semibold border border-white/10 shadow-xs backdrop-blur-xs flex items-center gap-1">
+                        <CameraIcon className="w-3 h-3 text-emerald-400" />
+                        {cameraName}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2 pointer-events-auto">
+                      <span className="hidden sm:flex items-center gap-1 px-2.5 py-1 rounded-lg bg-black/60 text-slate-300 text-[10px] font-mono border border-white/10 backdrop-blur-xs">
+                        <Clock className="w-3 h-3 text-slate-400" />
+                        {formattedUpdateTime}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={toggleFullscreen}
+                        title={isFullscreen ? "Keluar Fullscreen" : "Fullscreen"}
+                        className="p-1.5 rounded-lg bg-black/70 hover:bg-black text-white border border-white/20 shadow-md backdrop-blur-xs transition cursor-pointer"
+                      >
+                        {isFullscreen ? <Minimize2 className="w-3.5 h-3.5" /> : <Maximize2 className="w-3.5 h-3.5" />}
+                      </button>
+                    </div>
                   </div>
 
+                  {/* Video Player / Embed Stream */}
                   {cameraUrl.includes("<iframe") ? (
                     <div
                       className="w-full h-full"
                       dangerouslySetInnerHTML={{ __html: cameraUrl }}
+                    />
+                  ) : cameraUrl.endsWith(".mp4") || cameraUrl.endsWith(".webm") ? (
+                    <video
+                      src={cameraUrl}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      controls
+                      onError={() => {
+                        setStreamErrorMsg("Gagal memutar file video. File mungkin tidak ditemukan atau codec tidak didukung.");
+                        setStreamStatus("error");
+                      }}
+                      className="w-full h-full object-cover"
                     />
                   ) : (
                     <iframe
@@ -438,42 +707,54 @@ const ThermalPage = () => {
                       className="w-full h-full border-0 rounded-2xl"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowFullScreen
+                      onError={() => {
+                        setStreamErrorMsg("Sumber iframe tidak merespons atau diblokir oleh header X-Frame-Options.");
+                        setStreamStatus("error");
+                      }}
                     />
                   )}
                 </>
-              ) : (
-                <div className="flex flex-col items-center justify-center p-8 text-center text-slate-400 max-w-md">
-                  <div className="w-14 h-14 rounded-2xl bg-slate-900 border border-slate-800 flex items-center justify-center mb-3 text-slate-500">
-                    <Video className="w-7 h-7" />
-                  </div>
-                  <h4 className="text-sm font-bold text-white mb-1">
-                    Belum Ada URL Streaming Kamera
-                  </h4>
-                  <p className="text-xs text-slate-400 mb-4 leading-relaxed">
-                    Tautkan URL video stream (RTSP/HLS/WebRTC/YouTube embed) untuk memantau feed kamera secara real-time.
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setInputUrl(cameraUrl);
-                      setIsModalOpen(true);
-                    }}
-                    className="px-4 py-2 rounded-xl text-xs font-bold bg-[#00ba88] hover:bg-emerald-600 text-white transition shadow-sm">
-                    Set URL Kamera Sekarang
-                  </button>
-                </div>
               )}
             </div>
 
-            {/* Footer Status Video */}
-            <div className="flex items-center justify-between text-[11px] text-slate-500 pt-3 mt-3 border-t border-slate-50">
-              <span className="text-slate-400">
-                {cameraUrl ? "Sumber: URL Eksternal" : "Sumber: Belum Dikonfigurasi"}
-              </span>
-              <span className="font-mono text-emerald-600 font-semibold flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                {cameraUrl ? "Feed Tersambung" : "Menunggu Konfigurasi"}
-              </span>
+            {/* 3. Footer Status Video: Waktu Terakhir & Sumber Feed */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] text-slate-500 pt-3 mt-3 border-t border-slate-50">
+              <div className="flex items-center gap-2 font-mono">
+                <Clock className="w-3.5 h-3.5 text-slate-400" />
+                <span>Waktu Update Terakhir:</span>
+                <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="text-slate-400">
+                  {cameraUrl ? "Sumber: Live Feed URL" : "Sumber: Belum Dikonfigurasi"}
+                </span>
+                <span className="font-mono font-semibold flex items-center gap-1.5">
+                  {streamStatus === "online" && (
+                    <span className="text-emerald-600 flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                      Feed Terhubung
+                    </span>
+                  )}
+                  {streamStatus === "loading" && (
+                    <span className="text-amber-600 flex items-center gap-1">
+                      <Loader2 className="w-3 h-3 animate-spin text-amber-500" />
+                      Sedang Menghubungkan
+                    </span>
+                  )}
+                  {streamStatus === "offline" && (
+                    <span className="text-slate-500 flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+                      Standby / Offline
+                    </span>
+                  )}
+                  {streamStatus === "error" && (
+                    <span className="text-rose-600 flex items-center gap-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-rose-500"></span>
+                      Koneksi Gagal
+                    </span>
+                  )}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -853,6 +1134,20 @@ const ThermalPage = () => {
             <form onSubmit={handleSaveUrl} className="space-y-4">
               <div>
                 <label className="block text-xs font-bold text-slate-700 mb-1.5 font-mono">
+                  NAMA PERANGKAT KAMERA
+                </label>
+                <input
+                  type="text"
+                  value={inputCameraName}
+                  onChange={(e) => setInputCameraName(e.target.value)}
+                  placeholder="Contoh: Kamera Utama Manekin (Front Cam)"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-xs font-semibold focus:outline-hidden focus:border-[#00ba88] focus:ring-1 focus:ring-[#00ba88] transition"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 mb-1.5 font-mono">
                   URL STREAMING KAMERA
                 </label>
                 <textarea
@@ -861,27 +1156,81 @@ const ThermalPage = () => {
                   onChange={(e) => setInputUrl(e.target.value)}
                   placeholder="https://... atau http://... atau URL embed iframe"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-slate-800 text-xs font-mono focus:outline-hidden focus:border-[#00ba88] focus:ring-1 focus:ring-[#00ba88] transition"
-                  required
                 />
               </div>
 
-              {/* Preset Button Contoh */}
+              {/* Preset Cepat URL Stream */}
               <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/80 space-y-1.5">
                 <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block font-mono">
-                  Preset Cepat:
+                  Preset Cepat URL Stream:
                 </span>
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => setInputUrl(DEFAULT_STREAM_PRESET)}
-                    className="px-2.5 py-1 text-[11px] rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-xs transition">
+                    onClick={() => {
+                      setInputUrl(DEFAULT_STREAM_PRESET);
+                      if (!inputCameraName) setInputCameraName("Kamera Demo CCTV");
+                    }}
+                    className="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 shadow-xs transition cursor-pointer"
+                  >
                     Stream Demo (Loop)
                   </button>
                   <button
                     type="button"
                     onClick={() => setInputUrl("")}
-                    className="px-2.5 py-1 text-[11px] rounded-lg bg-white hover:bg-slate-100 text-slate-500 border border-slate-200 transition">
-                    Kosongkan
+                    className="px-2.5 py-1 text-[11px] font-semibold rounded-lg bg-white hover:bg-slate-100 text-slate-500 border border-slate-200 transition cursor-pointer"
+                  >
+                    Kosongkan URL
+                  </button>
+                </div>
+              </div>
+
+              {/* Simulator Uji Status Tampilan Kamera (Testing / Preview) */}
+              <div className="bg-slate-50/80 p-3 rounded-xl border border-slate-200/80 space-y-1.5">
+                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider block font-mono">
+                  Uji Tampilan Status (Testing/Demo):
+                </span>
+                <div className="grid grid-cols-4 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStreamStatus("online");
+                      setIsModalOpen(false);
+                    }}
+                    className="px-2 py-1 text-[10px] font-bold rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100 transition text-center cursor-pointer"
+                  >
+                    Uji Online
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStreamStatus("loading");
+                      setIsModalOpen(false);
+                    }}
+                    className="px-2 py-1 text-[10px] font-bold rounded-lg bg-amber-50 text-amber-700 border border-amber-300 hover:bg-amber-100 transition text-center cursor-pointer"
+                  >
+                    Uji Loading
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStreamStatus("offline");
+                      setIsModalOpen(false);
+                    }}
+                    className="px-2 py-1 text-[10px] font-bold rounded-lg bg-slate-200 text-slate-700 border border-slate-300 hover:bg-slate-300 transition text-center cursor-pointer"
+                  >
+                    Uji Offline
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setStreamStatus("error");
+                      setStreamErrorMsg("Koneksi ditolak oleh host video atau format stream RTSP tidak dapat diurai browser.");
+                      setIsModalOpen(false);
+                    }}
+                    className="px-2 py-1 text-[10px] font-bold rounded-lg bg-rose-50 text-rose-700 border border-rose-300 hover:bg-rose-100 transition text-center cursor-pointer"
+                  >
+                    Uji Error
                   </button>
                 </div>
               </div>
