@@ -38,25 +38,25 @@ const PART_THEMES = {
         color: "#ef4444", // Crimson Red
         rgb: "239, 68, 68",
     },
-    // 4 Titik Punggung (Hijau Emerald)
-    "back-1": { color: "#00ba88", rgb: "0, 186, 136" },
-    "back-2": { color: "#00ba88", rgb: "0, 186, 136" },
-    "back-3": { color: "#00ba88", rgb: "0, 186, 136" },
-    "back-4": { color: "#00ba88", rgb: "0, 186, 136" },
+    // 4 Titik Punggung (Merah)
+    "back-1": { color: "#ef4444", rgb: "239, 68, 68" },
+    "back-2": { color: "#ef4444", rgb: "239, 68, 68" },
+    "back-3": { color: "#ef4444", rgb: "239, 68, 68" },
+    "back-4": { color: "#ef4444", rgb: "239, 68, 68" },
 
-    // 4 Titik Lengan (Hijau Emerald)
-    "arm-left-1": { color: "#00ba88", rgb: "0, 186, 136" },
-    "arm-left-2": { color: "#00ba88", rgb: "0, 186, 136" },
-    "arm-right-1": { color: "#00ba88", rgb: "0, 186, 136" },
-    "arm-right-2": { color: "#00ba88", rgb: "0, 186, 136" },
+    // 4 Titik Lengan (Pink)
+    "arm-left-1": { color: "#ec4899", rgb: "236, 72, 153" },
+    "arm-left-2": { color: "#ec4899", rgb: "236, 72, 153" },
+    "arm-right-1": { color: "#ec4899", rgb: "236, 72, 153" },
+    "arm-right-2": { color: "#ec4899", rgb: "236, 72, 153" },
 
-    // 6 Titik Kaki / Paha (Hijau Emerald)
-    "leg-left-1": { color: "#00ba88", rgb: "0, 186, 136" },
-    "leg-left-2": { color: "#00ba88", rgb: "0, 186, 136" },
-    "leg-left-3": { color: "#00ba88", rgb: "0, 186, 136" },
-    "leg-right-1": { color: "#00ba88", rgb: "0, 186, 136" },
-    "leg-right-2": { color: "#00ba88", rgb: "0, 186, 136" },
-    "leg-right-3": { color: "#00ba88", rgb: "0, 186, 136" },
+    // 6 Titik Kaki / Paha (Biru Navy)
+    "leg-left-1": { color: "#1d4ed8", rgb: "29, 78, 216" },
+    "leg-left-2": { color: "#1d4ed8", rgb: "29, 78, 216" },
+    "leg-left-3": { color: "#1d4ed8", rgb: "29, 78, 216" },
+    "leg-right-1": { color: "#1d4ed8", rgb: "29, 78, 216" },
+    "leg-right-2": { color: "#1d4ed8", rgb: "29, 78, 216" },
+    "leg-right-3": { color: "#1d4ed8", rgb: "29, 78, 216" },
 
     "left-shoulder": {
         color: "#0284c7", // Sky Blue
@@ -123,25 +123,25 @@ export default function MannequinHotspotSVG({
     const SENSORS = useMemo(
         () => [
             // --- 14 Titik SmartSkin Sesuai Gambar Manekin ---
-            // 4 Titik Punggung
-            { id: "back-1",       x: 40.7, y: 25.5 },
-            { id: "back-2",       x: 40.7, y: 31.6 },
-            { id: "back-3",       x: 57.7, y: 25.5 },
-            { id: "back-4",       x: 57.7, y: 31.6 },
+            // 4 Titik Punggung (Merah)
+            { id: "back-1",       x: 35,   y: 26  },
+            { id: "back-2",       x: 35,   y: 33  },
+            { id: "back-3",       x: 56,   y: 26  },
+            { id: "back-4",       x: 56,   y: 33  },
 
-            // 4 Titik Lengan
-            { id: "arm-left-1",   x: 31.2, y: 37.2 },
-            { id: "arm-left-2",   x: 30.3, y: 44.7 },
-            { id: "arm-right-1",  x: 66.7, y: 36.0 },
-            { id: "arm-right-2",  x: 68.6, y: 44.7 },
+            // 4 Titik Lengan (Pink)
+            { id: "arm-left-1",   x: 21,   y: 38  },
+            { id: "arm-left-2",   x: 20,   y: 46  },
+            { id: "arm-right-1",  x: 67.5, y: 38  },
+            { id: "arm-right-2",  x: 68.5, y: 46  },
 
-            // 6 Titik Kaki / Paha
-            { id: "leg-left-1",   x: 39.4, y: 79.3 },
-            { id: "leg-left-2",   x: 38.4, y: 86.8 },
-            { id: "leg-left-3",   x: 38.4, y: 94.3 },
-            { id: "leg-right-1",  x: 58.7, y: 79.3 },
-            { id: "leg-right-2",  x: 60.6, y: 86.8 },
-            { id: "leg-right-3",  x: 60.6, y: 94.3 },
+            // 6 Titik Kaki / Paha (Biru)
+            { id: "leg-left-1",   x: 33,   y: 82  },
+            { id: "leg-left-2",   x: 32,   y: 90  },
+            { id: "leg-left-3",   x: 32,   y: 98  },
+            { id: "leg-right-1",  x: 57,   y: 82  },
+            { id: "leg-right-2",  x: 59,   y: 90  },
+            { id: "leg-right-3",  x: 59,   y: 98  },
 
             // --- Titik Standar / Flex & Strain ---
             { id: "back",           x: 50,   y: 30  },
@@ -169,12 +169,12 @@ export default function MannequinHotspotSVG({
     const isHover = (id) => hoverId === id;
 
     // ======== ukuran ========
-    const DOT_R = 2.0;
-    const HALO_R = 4.8;
+    const DOT_R = 2.4;
+    const HALO_R = 6.5;
 
     // ======== pulse ========
-    const PULSE_R_FROM = HALO_R - 0.5;
-    const PULSE_R_TO = HALO_R + 3.5;
+    const PULSE_R_FROM = HALO_R - 1;
+    const PULSE_R_TO = HALO_R + 7;
     const PULSE_DUR = "1.2s";
 
     const hoveredSensor = hoverId ? visibleSensors.find((s) => s.id === hoverId) : null;

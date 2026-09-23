@@ -50,9 +50,9 @@ const SENSORS_DEF = [
     id: "smartskin-flex",
     titleKey: "smartskinSensor.flex",
     defaultTitle: "SmartSkin Flex & Strain Gauge",
-    unit: "Ω",
+    unit: "µε / Ω",
     backendType: "flex",
-    initialVal: 52400,
+    initialVal: 52.4,
   },
 ];
 
@@ -336,23 +336,20 @@ export default function SmartskinPage() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
         {SENSORS_DEF.map((sensor, index) => {
           const title = t(sensor.titleKey, sensor.defaultTitle);
+          const isFlex = sensor.key === "flex";
           const valObj = latestValues[sensor.key] || {};
           const valF = valObj.front;
-          const valB = valObj.back;
+          const valB = valObj.back !== undefined ? valObj.back : valObj.front;
 
-          const displayF =
-            valF !== null && valF !== undefined
-              ? sensor.unit === "Ω"
-                ? Number(valF).toLocaleString()
-                : Number(valF).toFixed(2)
-              : "--";
+          const formatVal = (val) => {
+            if (val === null || val === undefined || isNaN(val)) return "--";
+            const num = Number(val);
+            const normalized = num > 1000 ? num / 1000 : num;
+            return normalized.toFixed(2);
+          };
 
-          const displayB =
-            valB !== null && valB !== undefined
-              ? sensor.unit === "Ω"
-                ? Number(valB).toLocaleString()
-                : Number(valB).toFixed(2)
-              : "--";
+          const displayF = formatVal(valF);
+          const displayB = formatVal(valB);
 
           const hist = chartHistories[sensor.key] || { frontData: [], backData: [], categories: [] };
           const sliceFront = (hist.frontData || []).slice(-limit);
@@ -370,47 +367,42 @@ export default function SmartskinPage() {
             title: {
               text: undefined,
             },
-            colors: ["#10b981", "#ef4444"], // Green for Depan, Red for Belakang
+            colors: isFlex ? ["#10b981", "#ef4444"] : ["#00ba88"],
             stroke: {
-              width: [2.5, 2.5],
+              width: isFlex ? [2.5, 2.5] : 3,
               curve: "smooth",
             },
+            grid: {
+              ...baseChartOpts?.grid,
+              padding: {
+                top: 0,
+                bottom: 10,
+                left: 10,
+                right: 10,
+              },
+            },
             legend: {
-              show: true,
-              position: "top",
-              horizontalAlign: "left",
-              offsetX: -6,
-              offsetY: -6,
-              fontSize: "12px",
-              fontWeight: 600,
-              markers: {
-                width: 10,
-                height: 10,
-                radius: 12,
-              },
-              itemMargin: {
-                horizontal: 10,
-                vertical: 2,
-              },
-              onItemHover: {
-                highlightDataSeries: true,
-              },
-              onItemClick: {
-                toggleDataSeries: true,
-              },
+              show: false,
             },
           };
 
-          const series = [
-            {
-              name: "Depan",
-              data: sliceFront,
-            },
-            {
-              name: "Belakang",
-              data: sliceBack,
-            },
-          ];
+          const series = isFlex
+            ? [
+                {
+                  name: "Depan",
+                  data: sliceFront,
+                },
+                {
+                  name: "Belakang",
+                  data: sliceBack,
+                },
+              ]
+            : [
+                {
+                  name: title,
+                  data: sliceBack,
+                },
+              ];
 
           return (
             <div
@@ -425,30 +417,37 @@ export default function SmartskinPage() {
                 className="h-full flex flex-col hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15"
               >
                 <div className="flex flex-col h-full">
-                  {/* Card Header: Kiri ada Judul Sensor, Kanan ada Badge D: / B: & Status Dot */}
-                  <div className="flex flex-wrap justify-between items-center mb-1 gap-2">
+                  {/* Card Header: Kiri ada Judul Sensor, Kanan ada Badge Nilai & Status Dot */}
+                  <div className="flex items-center justify-between gap-2 mb-2 pb-2 border-b border-slate-100/70">
                     {/* Sisi Kiri: Judul di atas */}
-                    <div className="flex flex-col">
-                      <h3 className="font-bold text-sm sm:text-base text-slate-800 tracking-tight flex items-center gap-1.5">
-                        {title}
-                        <span className="text-[10px] text-emerald-700 font-semibold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 ml-1">
+                    <div className="min-w-0 pr-1">
+                      <h3 className="font-bold text-sm sm:text-base text-slate-800 tracking-tight flex items-center gap-1.5 truncate">
+                        <span className="truncate">{title}</span>
+                        <span className="text-[10px] text-emerald-700 font-semibold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 shrink-0">
                           Detail →
                         </span>
                       </h3>
                     </div>
 
-                    {/* Sisi Kanan: Badge D: dan B: serta live indicator dot */}
+                    {/* Sisi Kanan: Badge Nilai Sensor & Live Indicator Dot */}
                     <div className="flex items-center gap-2 shrink-0">
-                      <div className="flex items-center gap-1.5 flex-wrap">
-                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-300 text-emerald-800 shadow-xs flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          D: {displayF} {sensor.unit}
+                      {isFlex ? (
+                        <div className="flex items-center gap-1.5 shrink-0">
+                          <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-300 text-emerald-800 shadow-xs flex items-center gap-1 font-mono shrink-0">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                            D: {displayF} {sensor.unit}
+                          </span>
+                          <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-50 border border-rose-300 text-rose-800 shadow-xs flex items-center gap-1 font-mono shrink-0">
+                            <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                            B: {displayB} {sensor.unit}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-xs font-bold px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-800 shadow-xs flex items-center gap-1.5 font-mono shrink-0">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                          {displayB} {sensor.unit}
                         </span>
-                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-50 border border-rose-300 text-rose-800 shadow-xs flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                          B: {displayB} {sensor.unit}
-                        </span>
-                      </div>
+                      )}
 
                       <div
                         title={newDataFlags[index] ? "Receiving live data" : "Idle"}
