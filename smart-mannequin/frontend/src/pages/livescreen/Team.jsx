@@ -194,10 +194,10 @@ const TeamPage = () => {
 
           <div className="relative z-10">
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-              Informasi Tim Riset & Pengembang
+              {t("team.title", "Informasi Tim Riset & Pengembang")}
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
-              Daftar dosen pembimbing, peneliti, dan pengembang sistem <strong>Smart Mannequin</strong> dan <strong>Smart Skin</strong> berbasis IoT di Telkom University.
+              {t("team.subtitle", "Daftar dosen pembimbing, peneliti, dan pengembang sistem Smart Mannequin dan Smart Skin berbasis IoT di Telkom University.")}
             </p>
           </div>
         </div>
@@ -210,7 +210,7 @@ const TeamPage = () => {
                 ? "bg-[#00ba88] text-white shadow-xs"
                 : "bg-white text-slate-600 hover:bg-slate-50 hover:text-[#00ba88] hover:border-[#00ba88]/40 border border-slate-100 shadow-2xs"
               }`}>
-            Semua Anggota ({allMembers.length})
+            {t("team.allMembers", "Semua Anggota")} ({allMembers.length})
           </button>
           <button
             onClick={() => setActiveTab("dosen")}
@@ -218,7 +218,7 @@ const TeamPage = () => {
                 ? "bg-[#00ba88] text-white shadow-xs"
                 : "bg-white text-slate-600 hover:bg-slate-50 hover:text-[#00ba88] hover:border-[#00ba88]/40 border border-slate-100 shadow-2xs"
               }`}>
-            Dosen Pembimbing ({listDosen.length})
+            {t("team.lecturers", "Dosen Pembimbing")} ({listDosen.length})
           </button>
           <button
             onClick={() => setActiveTab("hardware")}
@@ -226,7 +226,7 @@ const TeamPage = () => {
                 ? "bg-[#00ba88] text-white shadow-xs"
                 : "bg-white text-slate-600 hover:bg-slate-50 hover:text-[#00ba88] hover:border-[#00ba88]/40 border border-slate-100 shadow-2xs"
               }`}>
-            Hardware ({listMahasiswa.filter((m) => m.category === "hardware").length})
+            {t("team.hardware", "Hardware")} ({listMahasiswa.filter((m) => m.category === "hardware").length})
           </button>
           <button
             onClick={() => setActiveTab("software")}
@@ -234,7 +234,7 @@ const TeamPage = () => {
                 ? "bg-[#00ba88] text-white shadow-xs"
                 : "bg-white text-slate-600 hover:bg-slate-50 hover:text-[#00ba88] hover:border-[#00ba88]/40 border border-slate-100 shadow-2xs"
               }`}>
-            Software & IoT ({listMahasiswa.filter((m) => m.category === "software" || m.category === "iot").length})
+            {t("team.softwareIot", "Software & IoT")} ({listMahasiswa.filter((m) => m.category === "software" || m.category === "iot").length})
           </button>
         </div>
 
@@ -243,13 +243,15 @@ const TeamPage = () => {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <GraduationCap className="w-4 h-4 text-emerald-600" />
-              <h2 className="text-base sm:text-lg font-bold text-slate-900">Dosen Pembimbing & Peneliti</h2>
+              <h2 className="text-base sm:text-lg font-bold text-slate-900">
+                {t("team.lecturers", "Dosen Pembimbing")}
+              </h2>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3.5">
               {listDosen.map((dosen) => (
                 <div
                   key={dosen.id}
-                  className="group relative bg-white rounded-xl border border-slate-100 p-3.5 shadow-2xs hover:border-[#00ba88] hover:shadow-md transition-all duration-200 flex flex-col items-center text-center">
+                  className="group relative bg-white rounded-xl border border-slate-100 p-3.5 shadow-sm hover:border-[#00ba88] hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center cursor-default">
                   {dosen.highlight && (
                     <span className="absolute top-2 right-2 bg-amber-50 text-amber-700 text-[9px] font-bold px-1.5 py-0.5 rounded-full flex items-center gap-0.5 border border-amber-200/70">
                       <Award className="w-2.5 h-2.5 text-amber-500" />
@@ -260,7 +262,7 @@ const TeamPage = () => {
                     <img
                       src={dosen.image}
                       alt={dosen.name}
-                      className="w-16 h-16 sm:w-18 sm:h-18 rounded-full object-cover border-2 border-slate-100 shadow-xs group-hover:scale-105 transition duration-200"
+                      className="w-16 h-16 sm:w-18 sm:h-18 rounded-full object-cover border-2 border-slate-100 shadow-xs group-hover:scale-105 group-hover:border-emerald-200 transition-all duration-300"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(dosen.name)}&background=00ba88&color=fff&bold=true`;
@@ -302,12 +304,12 @@ const TeamPage = () => {
               ).map((member) => (
                 <div
                   key={member.id}
-                  className="group bg-white rounded-xl border border-slate-100 p-3 shadow-2xs hover:border-[#00ba88] hover:shadow-md transition-all duration-200 flex flex-col items-center text-center">
+                  className="group bg-white rounded-xl border border-slate-100 p-3 shadow-sm hover:border-[#00ba88] hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center cursor-default">
                   <div className="relative mb-2">
                     <img
                       src={member.image}
                       alt={member.name}
-                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-slate-100 shadow-xs group-hover:scale-105 transition duration-200"
+                      className="w-14 h-14 sm:w-16 sm:h-16 rounded-full object-cover border-2 border-slate-100 shadow-xs group-hover:scale-105 group-hover:border-cyan-200 transition-all duration-300"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(member.name)}&background=0284c7&color=fff&bold=true`;

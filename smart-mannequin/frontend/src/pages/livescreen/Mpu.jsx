@@ -270,7 +270,7 @@ const MpuPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
                 <span className="text-xs font-bold text-emerald-700 font-mono">
-                  ONLINE • TERHUBUNG
+                  {t("common.online", "ONLINE • TERHUBUNG")}
                 </span>
               </>
             ) : (
@@ -279,7 +279,7 @@ const MpuPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
                 </span>
                 <span className="text-xs font-bold text-slate-500 font-mono">
-                  STANDBY / OFFLINE
+                  {t("common.offline", "STANDBY / OFFLINE")}
                 </span>
               </>
             )}
@@ -287,7 +287,7 @@ const MpuPage = () => {
 
           <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Update Terakhir:</span>
+            <span>{t("common.lastUpdated", "Update Terakhir:")}</span>
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
@@ -296,7 +296,7 @@ const MpuPage = () => {
         <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
           <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            Periode:
+            {t("common.period", "Periode:")}
           </span>
           {PERIOD_OPTIONS.map((opt) => (
             <button
@@ -307,7 +307,7 @@ const MpuPage = () => {
                   ? "bg-white text-[#00ba88] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}>
-              {opt.label}
+              {opt.value} {t("common.data", "Data")}
             </button>
           ))}
         </div>
@@ -315,7 +315,7 @@ const MpuPage = () => {
 
       {/* Informasi Sensor Card */}
       <SensorInfoCard
-        title={t("informasiSensor") || "Informasi Sensor"}
+        title={t("sensorInfo.title", "Informasi Sensor")}
         sensorCode="MPU-6050 6-AXIS MOTIONTRACKING"
         imageSrc="/images/information/mpu-information.png"
         imageAlt="mpu-information"
@@ -325,12 +325,12 @@ const MpuPage = () => {
             onClick={() => setIsLogsModalOpen(true)}
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer">
             <ScrollText size={14} />
-            <span>Lihat Log Riwayat Sensor</span>
+            <span>{t("common.viewLogs", "Lihat Log Riwayat Sensor")}</span>
           </button>
         }>
         <div className="flex flex-col gap-2">
           <h4 className="font-bold text-slate-800 text-base">
-            Sistem Sensor Gerak & Orientasi MPU-6050
+            {t("mpuSensor.title", "Sistem Sensor Gerak & Orientasi MPU-6050")}
           </h4>
           <p className="text-slate-600 text-sm leading-relaxed text-justify">
             {t(
@@ -375,21 +375,9 @@ const MpuPage = () => {
               </p>
             </div>
 
-            <div className="space-y-1.5 pt-2 border-t border-slate-50">
-              <div className="flex justify-between text-[11px] text-slate-500 font-mono">
-                <span>Beban Dinamik X</span>
-                <span className="text-emerald-700 font-semibold">
-                  {Math.min(100, Math.round(Math.abs(latestX) * 100))}%
-                </span>
-              </div>
-              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-400 to-[#00ba88] rounded-full transition-all duration-500"
-                  style={{
-                    width: `${Math.min(100, Math.max(5, Math.round(Math.abs(latestX) * 100)))}%`,
-                  }}
-                />
-              </div>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
+              <span>Orientasi Sumbu:</span>
+              <span className="font-semibold text-emerald-700 font-mono">Lateral (X-Axis)</span>
             </div>
           </div>
         </div>
@@ -426,21 +414,9 @@ const MpuPage = () => {
               </p>
             </div>
 
-            <div className="space-y-1.5 pt-2 border-t border-slate-50">
-              <div className="flex justify-between text-[11px] text-slate-500 font-mono">
-                <span>Beban Dinamik Y</span>
-                <span className="text-emerald-700 font-semibold">
-                  {Math.min(100, Math.round(Math.abs(latestY) * 100))}%
-                </span>
-              </div>
-              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-400 to-[#00ba88] rounded-full transition-all duration-500"
-                  style={{
-                    width: `${Math.min(100, Math.max(5, Math.round(Math.abs(latestY) * 100)))}%`,
-                  }}
-                />
-              </div>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
+              <span>Orientasi Sumbu:</span>
+              <span className="font-semibold text-emerald-700 font-mono">Longitudinal (Y-Axis)</span>
             </div>
           </div>
         </div>
@@ -477,21 +453,9 @@ const MpuPage = () => {
               </p>
             </div>
 
-            <div className="space-y-1.5 pt-2 border-t border-slate-50">
-              <div className="flex justify-between text-[11px] text-slate-500 font-mono">
-                <span>Beban Dinamik Z</span>
-                <span className="text-emerald-700 font-semibold">
-                  {Math.min(100, Math.round(Math.abs(latestZ) * 100))}%
-                </span>
-              </div>
-              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-400 to-[#00ba88] rounded-full transition-all duration-500"
-                  style={{
-                    width: `${Math.min(100, Math.max(5, Math.round(Math.abs(latestZ) * 100)))}%`,
-                  }}
-                />
-              </div>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
+              <span>Orientasi Sumbu:</span>
+              <span className="font-semibold text-emerald-700 font-mono">Transversal (Z-Axis)</span>
             </div>
           </div>
         </div>

@@ -124,39 +124,39 @@ export default function MannequinHotspotSVG({
         () => [
             // --- 14 Titik SmartSkin Sesuai Gambar Manekin ---
             // 4 Titik Punggung (Merah)
-            { id: "back-1",       x: 35,   y: 26  },
-            { id: "back-2",       x: 35,   y: 33  },
-            { id: "back-3",       x: 56,   y: 26  },
-            { id: "back-4",       x: 56,   y: 33  },
+            { id: "back-1",       x: 40.7, y: 25.4 },
+            { id: "back-2",       x: 40.7, y: 31.4 },
+            { id: "back-3",       x: 57.7, y: 25.4 },
+            { id: "back-4",       x: 57.7, y: 31.4 },
 
             // 4 Titik Lengan (Pink)
-            { id: "arm-left-1",   x: 21,   y: 38  },
-            { id: "arm-left-2",   x: 20,   y: 46  },
-            { id: "arm-right-1",  x: 67.5, y: 38  },
-            { id: "arm-right-2",  x: 68.5, y: 46  },
+            { id: "arm-left-1",   x: 31.2, y: 37.0 },
+            { id: "arm-left-2",   x: 30.2, y: 44.5 },
+            { id: "arm-right-1",  x: 66.7, y: 35.8 },
+            { id: "arm-right-2",  x: 68.6, y: 44.5 },
 
             // 6 Titik Kaki / Paha (Biru)
-            { id: "leg-left-1",   x: 33,   y: 82  },
-            { id: "leg-left-2",   x: 32,   y: 90  },
-            { id: "leg-left-3",   x: 32,   y: 98  },
-            { id: "leg-right-1",  x: 57,   y: 82  },
-            { id: "leg-right-2",  x: 59,   y: 90  },
-            { id: "leg-right-3",  x: 59,   y: 98  },
+            { id: "leg-left-1",   x: 39.4, y: 78.9 },
+            { id: "leg-left-2",   x: 38.4, y: 86.3 },
+            { id: "leg-left-3",   x: 38.4, y: 93.8 },
+            { id: "leg-right-1",  x: 58.7, y: 78.9 },
+            { id: "leg-right-2",  x: 60.6, y: 86.4 },
+            { id: "leg-right-3",  x: 60.6, y: 93.8 },
 
             // --- Titik Standar / Flex & Strain ---
-            { id: "back",           x: 50,   y: 30  },
-            { id: "left-arm",       x: 34,   y: 45  },
-            { id: "right-arm",      x: 67,   y: 45  },
-            { id: "left-leg",       x: 43.2, y: 85  },
-            { id: "right-leg",      x: 58.2, y: 85  },
-            { id: "left-shoulder",  x: 36,   y: 38  },
-            { id: "right-shoulder", x: 64,   y: 38  },
-            { id: "left-elbow",     x: 30,   y: 58  },
-            { id: "right-elbow",    x: 71,   y: 58  },
-            { id: "left-waist",     x: 39,   y: 72  },
-            { id: "right-waist",    x: 61,   y: 72  },
-            { id: "left-knee",      x: 42,   y: 110 },
-            { id: "right-knee",     x: 59,   y: 110 },
+            { id: "back",           x: 49.5, y: 28.5 },
+            { id: "left-arm",       x: 30.5, y: 41.0 },
+            { id: "right-arm",      x: 67.5, y: 41.0 },
+            { id: "left-leg",       x: 39.0, y: 86.0 },
+            { id: "right-leg",      x: 59.5, y: 86.0 },
+            { id: "left-shoulder",  x: 34.0, y: 27.5 },
+            { id: "right-shoulder", x: 64.5, y: 27.5 },
+            { id: "left-elbow",     x: 28.0, y: 52.0 },
+            { id: "right-elbow",    x: 70.5, y: 52.0 },
+            { id: "left-waist",     x: 40.5, y: 65.0 },
+            { id: "right-waist",    x: 58.5, y: 65.0 },
+            { id: "left-knee",      x: 38.5, y: 104.0},
+            { id: "right-knee",     x: 59.5, y: 104.0},
         ],
         []
     );
@@ -169,12 +169,12 @@ export default function MannequinHotspotSVG({
     const isHover = (id) => hoverId === id;
 
     // ======== ukuran ========
-    const DOT_R = 2.4;
-    const HALO_R = 6.5;
+    const DOT_R = 2.2;
+    const HALO_R = 5.2;
 
     // ======== pulse ========
-    const PULSE_R_FROM = HALO_R - 1;
-    const PULSE_R_TO = HALO_R + 7;
+    const PULSE_R_FROM = HALO_R - 0.5;
+    const PULSE_R_TO = HALO_R + 4.5;
     const PULSE_DUR = "1.2s";
 
     const hoveredSensor = hoverId ? visibleSensors.find((s) => s.id === hoverId) : null;
@@ -214,12 +214,15 @@ export default function MannequinHotspotSVG({
                 const dimOthers = Boolean(hoverId || activePart) && !active && !hover;
 
                 const theme = PART_THEMES[s.id] || { color: "#10b981", rgb: "16, 185, 129" };
+                const activeOrHover = active || hover;
+                const highlightColor = "#10b981";
+                const highlightRgb = "16, 185, 129";
 
-                const dotFill = `rgb(${theme.rgb})`;
-                const ringStroke = theme.color;
-                const haloFill = `rgba(${theme.rgb}, 0.28)`;
+                const dotFill = active ? `rgb(${highlightRgb})` : `rgb(${theme.rgb})`;
+                const ringStroke = activeOrHover ? highlightColor : theme.color;
+                const haloFill = activeOrHover ? `rgba(${highlightRgb}, 0.35)` : `rgba(${theme.rgb}, 0.28)`;
 
-                const haloOpacity = active ? 0.75 : hover ? 0.85 : dimOthers ? 0.18 : 0.4;
+                const haloOpacity = active ? 0.85 : hover ? 0.9 : dimOthers ? 0.18 : 0.4;
                 const ringOpacity = active ? 1 : hover ? 1 : dimOthers ? 0.35 : 0.8;
                 const dotOpacity = active ? 1 : hover ? 1 : dimOthers ? 0.5 : 0.95;
 
@@ -241,13 +244,13 @@ export default function MannequinHotspotSVG({
                             opacity: dimOthers ? 0.65 : 1,
                         }}
                     >
-                        {(active || hover) && (
+                        {activeOrHover && (
                             <circle
                                 cx={s.x}
                                 cy={s.y}
                                 r={PULSE_R_FROM}
                                 fill="transparent"
-                                stroke={theme.color}
+                                stroke={highlightColor}
                                 strokeWidth="1.6"
                                 opacity="0.8"
                                 pointerEvents="none"
@@ -328,7 +331,7 @@ export default function MannequinHotspotSVG({
                             height={boxH}
                             rx="2.2"
                             fill="#0f172a"
-                            stroke={theme.color}
+                            stroke="#10b981"
                             strokeWidth="0.8"
                             opacity="0.96"
                         />

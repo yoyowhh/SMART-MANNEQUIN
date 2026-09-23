@@ -49,22 +49,22 @@ const AdxlPage = () => {
   const getMotionStatus = (gVal) => {
     if (gVal >= 2.0) {
       return {
-        label: "Impak Tinggi",
+        label: t("adxlSensor.highImpact", "Impak Tinggi"),
         badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
-        desc: "Akselerasi impak mendadak",
+        desc: t("adxlSensor.highImpactDesc", "Akselerasi impak mendadak"),
       };
     }
     if (gVal >= 1.2) {
       return {
-        label: "Gerak Aktif",
+        label: t("adxlSensor.activeMotion", "Gerak Aktif"),
         badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
-        desc: "Akselerasi dinamik sedang",
+        desc: t("adxlSensor.activeMotionDesc", "Akselerasi dinamik sedang"),
       };
     }
     return {
-      label: "Statik Normal",
+      label: t("adxlSensor.normalStatic", "Statik Normal"),
       badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
-      desc: "Gravitasi stabil 1.0G",
+      desc: t("adxlSensor.normalStaticDesc", "Gravitasi stabil 1.0G"),
     };
   };
 
@@ -332,7 +332,7 @@ const AdxlPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
                 <span className="text-xs font-bold text-emerald-700 font-mono">
-                  ONLINE • TERHUBUNG
+                  {t("common.online", "ONLINE • TERHUBUNG")}
                 </span>
               </>
             ) : (
@@ -341,7 +341,7 @@ const AdxlPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
                 </span>
                 <span className="text-xs font-bold text-slate-500 font-mono">
-                  STANDBY / OFFLINE
+                  {t("common.offline", "STANDBY / OFFLINE")}
                 </span>
               </>
             )}
@@ -349,7 +349,7 @@ const AdxlPage = () => {
 
           <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Update Terakhir:</span>
+            <span>{t("common.lastUpdated", "Update Terakhir:")}</span>
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
@@ -358,7 +358,7 @@ const AdxlPage = () => {
         <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
           <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            Periode:
+            {t("common.period", "Periode:")}
           </span>
           {PERIOD_OPTIONS.map((opt) => (
             <button
@@ -369,7 +369,7 @@ const AdxlPage = () => {
                   ? "bg-white text-[#00ba88] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}>
-              {opt.label}
+              {opt.value} {t("common.data", "Data")}
             </button>
           ))}
         </div>
@@ -377,7 +377,7 @@ const AdxlPage = () => {
 
       {/* Informasi Sensor Card */}
       <SensorInfoCard
-        title={t("informasiSensor") || "Informasi Sensor"}
+        title={t("sensorInfo.title", "Informasi Sensor")}
         sensorCode="ADXL345 / ACCELEROMETER"
         imageSrc="/images/information/adxl-information.png"
         imageAlt="adxl-information"
@@ -388,13 +388,13 @@ const AdxlPage = () => {
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
           >
             <ScrollText size={14} />
-            <span>Lihat Log Riwayat Sensor</span>
+            <span>{t("common.viewLogs", "Lihat Log Riwayat Sensor")}</span>
           </button>
         }
       >
         <div className="flex flex-col gap-2">
           <h4 className="font-bold text-slate-800 text-base">
-            Sistem Sensor Akselerometer ADXL345 (Kinematika Ekstremitas)
+            {t("adxlSensor.title", "Sistem Sensor Akselerometer ADXL345 (Kinematika Ekstremitas)")}
           </h4>
           <p className="text-slate-600 text-sm leading-relaxed text-justify">
             {t(
@@ -417,7 +417,7 @@ const AdxlPage = () => {
                 </div>
                 <div>
                   <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
-                    Tangan Kanan (Lengan)
+                    {t("adxlSensor.rightArm", "Lengan Kanan")}
                   </h3>
                   <p className="text-[11px] text-slate-400 font-mono">Sensor ID: ADXL-201 • Tri-Axis G-Force</p>
                 </div>
@@ -441,20 +441,7 @@ const AdxlPage = () => {
               </div>
             </div>
 
-            <div className="space-y-1.5 pt-1">
-              <div className="flex justify-between text-[11px] text-slate-500 font-mono">
-                <span>Intensitas Gerakan Kinematik</span>
-                <span className="text-emerald-700 font-semibold">{Math.min(100, Math.round(latest201.g * 40))}%</span>
-              </div>
-              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-400 to-[#00ba88] rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(100, Math.max(5, latest201.g * 40))}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 mt-auto">
               <span className="text-slate-400">Ambang Batas Impak:</span>
               <span className="font-semibold text-emerald-700 font-mono">&lt; 2.0 G (Optimal)</span>
             </div>
@@ -471,7 +458,7 @@ const AdxlPage = () => {
                 </div>
                 <div>
                   <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
-                    Tangan Kiri (Lengan)
+                    {t("adxlSensor.leftArm", "Lengan Kiri")}
                   </h3>
                   <p className="text-[11px] text-slate-400 font-mono">Sensor ID: ADXL-202 • Tri-Axis G-Force</p>
                 </div>
@@ -495,20 +482,7 @@ const AdxlPage = () => {
               </div>
             </div>
 
-            <div className="space-y-1.5 pt-1">
-              <div className="flex justify-between text-[11px] text-slate-500 font-mono">
-                <span>Intensitas Gerakan Kinematik</span>
-                <span className="text-emerald-700 font-semibold">{Math.min(100, Math.round(latest202.g * 40))}%</span>
-              </div>
-              <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-400 to-[#00ba88] rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(100, Math.max(5, latest202.g * 40))}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+            <div className="pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 mt-auto">
               <span className="text-slate-400">Ambang Batas Impak:</span>
               <span className="font-semibold text-emerald-700 font-mono">&lt; 2.0 G (Optimal)</span>
             </div>
@@ -595,7 +569,7 @@ const AdxlPage = () => {
                       <span>ADXL-201</span>
                     </div>
                   </td>
-                  <td className="py-3.5 px-4 font-medium text-slate-800">Tangan Kanan</td>
+                  <td className="py-3.5 px-4 font-medium text-slate-800">{t("adxlSensor.tanganKanan", "Tangan Kanan")}</td>
                   <td className="py-3.5 px-4 text-right font-mono text-slate-700">{latest201.x.toFixed(2)}</td>
                   <td className="py-3.5 px-4 text-right font-mono text-slate-700">{latest201.y.toFixed(2)}</td>
                   <td className="py-3.5 px-4 text-right font-mono text-slate-700">{latest201.z.toFixed(2)}</td>
@@ -619,7 +593,7 @@ const AdxlPage = () => {
                       <span>ADXL-202</span>
                     </div>
                   </td>
-                  <td className="py-3.5 px-4 font-medium text-slate-800">Tangan Kiri</td>
+                  <td className="py-3.5 px-4 font-medium text-slate-800">{t("adxlSensor.tanganKiri", "Tangan Kiri")}</td>
                   <td className="py-3.5 px-4 text-right font-mono text-slate-700">{latest202.x.toFixed(2)}</td>
                   <td className="py-3.5 px-4 text-right font-mono text-slate-700">{latest202.y.toFixed(2)}</td>
                   <td className="py-3.5 px-4 text-right font-mono text-slate-700">{latest202.z.toFixed(2)}</td>

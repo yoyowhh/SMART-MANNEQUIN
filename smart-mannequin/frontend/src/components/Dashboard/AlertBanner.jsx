@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { AlertTriangle, AlertOctagon, ShieldCheck, ChevronDown, ChevronUp, ArrowRight } from "lucide-react";
 
 export default function AlertBanner({ alerts = [], mannequinId = 1 }) {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
 
@@ -19,15 +21,15 @@ export default function AlertBanner({ alerts = [], mannequinId = 1 }) {
           </div>
           <div>
             <span className="font-bold text-xs sm:text-sm text-emerald-900">
-              Kondisi Manekin Normal:
+              {t("dashboard.conditionNormal", "Kondisi Manekin Normal:")}
             </span>{" "}
             <span className="text-xs text-emerald-700">
-              Seluruh sensor telemetri terhubung dan beroperasi dalam ambang batas aman.
+              {t("dashboard.conditionNormalDesc", "Seluruh sensor telemetri terhubung dan beroperasi dalam ambang batas aman.")}
             </span>
           </div>
         </div>
         <span className="hidden sm:inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-[#00ba88]/20 text-[#008f68] uppercase tracking-wider">
-          Optimal
+          {t("dashboard.optimal", "Optimal")}
         </span>
       </div>
     );
@@ -42,7 +44,7 @@ export default function AlertBanner({ alerts = [], mannequinId = 1 }) {
         textTitle: "text-rose-950",
         textDesc: "text-rose-800",
         icon: AlertOctagon,
-        label: "KRITIS",
+        label: t("dashboard.criticalBadge", "KRITIS"),
       }
     : {
         bg: "bg-amber-50/90 border-amber-300 shadow-[0_4px_20px_rgba(245,158,11,0.08)]",
@@ -51,7 +53,7 @@ export default function AlertBanner({ alerts = [], mannequinId = 1 }) {
         textTitle: "text-amber-950",
         textDesc: "text-amber-800",
         icon: AlertTriangle,
-        label: "PERINGATAN",
+        label: t("dashboard.warningBadge", "PERINGATAN"),
       };
 
   const Icon = bannerTheme.icon;

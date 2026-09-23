@@ -10,6 +10,7 @@ import {
   Layers,
 } from "lucide-react";
 import moment from "moment";
+import LogsModalPortal from "../Elements/Modal/LogsModalPortal";
 
 export default function MannequinLogsModal({
   isOpen,
@@ -91,8 +92,7 @@ export default function MannequinLogsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+    <LogsModalPortal isOpen={isOpen} onClose={onClose}>
         {/* Header Modal */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/70">
           <div className="flex items-center gap-3">
@@ -188,7 +188,7 @@ export default function MannequinLogsModal({
         </div>
 
         {/* Tabel Data Log */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto overscroll-contain">
           <table className="w-full text-left text-xs border-collapse">
             <thead className="sticky top-0 bg-slate-50 text-slate-600 font-semibold border-b border-slate-200">
               <tr>
@@ -293,7 +293,6 @@ export default function MannequinLogsModal({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </LogsModalPortal>
   );
 }

@@ -95,20 +95,12 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
   const changeLanguage = (lng) => {
     i18n.changeLanguage(lng);
     setCurrentLang(lng);
-  };
-
-  const toggleTheme = () => {
-    setIsDarkMode(!isDarkMode);
-    if (!isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
+    localStorage.setItem("i18nextLng", lng);
   };
 
   const handleLogout = () => {
     setIsProfileOpen(false);
-    showConfirmation("Apakah Anda yakin ingin keluar / logout?").then(
+    showConfirmation(t("header.logoutConfirm", "Apakah Anda yakin ingin keluar / logout?")).then(
       (result) => {
         if (result) {
           localStorage.removeItem("user");
@@ -116,7 +108,7 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
           Cookies.remove("token");
           Cookies.remove("expirationTime");
 
-          showSuccess("Logout Berhasil!").then(() => {
+          showSuccess(t("header.logoutSuccess", "Logout Berhasil!")).then(() => {
             navigate("/login");
           });
         }
@@ -165,66 +157,66 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
     }
 
     if (path.includes("/sensor/smartskin")) {
-      crumbs.push({ label: "SmartSkin" });
+      crumbs.push({ label: t("sensor.smartskin", "Smart Skin") });
       return crumbs;
     }
 
     if (path.includes("/sensor/loadcell")) {
-      crumbs.push({ label: "Sensor Load Cell" });
+      crumbs.push({ label: t("sensor.loadcell", "Sensor Load Cell") });
       return crumbs;
     }
 
     if (path.includes("/sensor/sound")) {
-      crumbs.push({ label: "Sensor Suara" });
+      crumbs.push({ label: t("sensor.sound", "Sensor Suara") });
       return crumbs;
     }
 
     if (path.includes("/sensor/gas")) {
-      crumbs.push({ label: "Sensor Gas" });
+      crumbs.push({ label: t("sensor.gas", "Sensor Gas") });
       return crumbs;
     }
 
     if (path.includes("/sensor/lidar")) {
-      crumbs.push({ label: "Sensor LiDAR" });
+      crumbs.push({ label: t("sensor.lidar", "Sensor LiDAR") });
       return crumbs;
     }
 
     if (path.includes("/sensor/camera")) {
-      crumbs.push({ label: "Kamera Thermal" });
+      crumbs.push({ label: t("sensor.camera", "Kamera Termal") });
       return crumbs;
     }
 
     if (path.includes("/sensor/adxl")) {
-      crumbs.push({ label: "Sensor ADXL345" });
+      crumbs.push({ label: t("sensor.adxl", "Sensor ADXL345") });
       return crumbs;
     }
 
     if (path.includes("/sensor/mpu6050")) {
-      crumbs.push({ label: "Sensor MPU6050" });
+      crumbs.push({ label: t("sensor.mpu6050", "Sensor MPU6050") });
       return crumbs;
     }
 
     if (path.includes("/sensor/bme")) {
-      crumbs.push({ label: "Sensor BME280" });
+      crumbs.push({ label: t("sensor.bme", "Sensor BME280") });
       return crumbs;
     }
 
     if (path.includes("/sensor/wit")) {
-      crumbs.push({ label: "Sensor Wit Motion" });
+      crumbs.push({ label: t("sensor.wit", "Sensor Wit Motion") });
       return crumbs;
     }
 
     if (path.includes("/team")) {
-      crumbs.push({ label: "Informasi Tim" });
+      crumbs.push({ label: t("informasiTim", "Informasi Tim") });
       return crumbs;
     }
 
     if (path.includes("/mannequin") || path.includes("/manekin")) {
-      crumbs.push({ label: "Visualisasi Manekin" });
+      crumbs.push({ label: t("sidebar.mannequinVisual", "Visualisasi Manekin") });
       return crumbs;
     }
 
-    crumbs.push({ label: "Dashboard Overview" });
+    crumbs.push({ label: t("header.dashboardOverview", "Dashboard Overview") });
     return crumbs;
   };
 
@@ -313,7 +305,7 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
           {isMannequinOpen && (
             <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-xl border border-slate-100 py-1.5 z-50 animate-in fade-in zoom-in-95 duration-150">
               <div className="px-3 py-1.5 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-                Pilih Manekin
+                {t("header.selectMannequin", "Pilih Manekin")}
               </div>
               <button
                 onClick={() => switchMannequin(1)}
@@ -330,7 +322,7 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
                         : "bg-slate-300"
                     }`}
                   />
-                  Manekin 1
+                  {t("header.mannequin1", "Manekin 1")}
                 </span>
                 {String(mannequinId) === "1" && (
                   <Check className="w-4 h-4 text-[#00ba88]" />
@@ -351,7 +343,7 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
                         : "bg-slate-300"
                     }`}
                   />
-                  Manekin 2
+                  {t("header.mannequin2", "Manekin 2")}
                 </span>
                 {String(mannequinId) === "2" && (
                   <Check className="w-4 h-4 text-[#00ba88]" />

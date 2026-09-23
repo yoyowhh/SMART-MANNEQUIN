@@ -244,7 +244,7 @@ export default function SmartskinPage() {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
                 <span className="text-xs font-bold text-emerald-700 font-mono">
-                  ONLINE • TERHUBUNG
+                  {t("common.online", "ONLINE • TERHUBUNG")}
                 </span>
               </>
             ) : (
@@ -253,7 +253,7 @@ export default function SmartskinPage() {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
                 </span>
                 <span className="text-xs font-bold text-slate-500 font-mono">
-                  STANDBY / OFFLINE
+                  {t("common.offline", "STANDBY / OFFLINE")}
                 </span>
               </>
             )}
@@ -261,7 +261,7 @@ export default function SmartskinPage() {
 
           <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Update Terakhir:</span>
+            <span>{t("common.lastUpdated", "Update Terakhir:")}</span>
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
@@ -270,7 +270,7 @@ export default function SmartskinPage() {
         <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
           <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            Periode:
+            {t("common.period", "Periode:")}
           </span>
           {PERIOD_OPTIONS.map((opt) => (
             <button
@@ -282,7 +282,7 @@ export default function SmartskinPage() {
                   : "text-slate-600 hover:text-slate-900"
                 }`}
             >
-              {opt.label}
+              {opt.value} {t("common.data", "Data")}
             </button>
           ))}
         </div>
@@ -291,7 +291,7 @@ export default function SmartskinPage() {
       {/* Informasi Sensor (Di Atas) */}
       <div className="mb-5">
         <SensorInfoCard
-          title={t("informasiSensor", "Informasi Sensor")}
+          title={t("sensorInfo.title", "Informasi Sensor")}
           sensorCode="SMARTSKIN / MULTIMODAL"
           imageSlot={
             <div className="flex flex-row items-center justify-center gap-4 shrink-0 bg-slate-50/70 p-3 rounded-2xl border border-slate-100">
@@ -314,13 +314,13 @@ export default function SmartskinPage() {
               className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
             >
               <ScrollText size={14} />
-              <span>Lihat Log Riwayat Sensor</span>
+              <span>{t("common.viewLogs", "Lihat Log Riwayat Sensor")}</span>
             </button>
           }
         >
           <div className="flex flex-col gap-2.5 flex-1">
             <h4 className="font-bold text-slate-800 text-base sm:text-lg">
-              Sistem Sensor Cerdas Smart Skin (STAS-RG)
+              {t("smartskinSensor.title", "Sistem Sensor Cerdas Smart Skin (STAS-RG)")}
             </h4>
             <p className="text-slate-600 text-sm leading-relaxed text-justify">
               {t(
@@ -389,11 +389,11 @@ export default function SmartskinPage() {
           const series = isFlex
             ? [
                 {
-                  name: "Depan",
+                  name: t("common.front", "Depan"),
                   data: sliceFront,
                 },
                 {
-                  name: "Belakang",
+                  name: t("common.back", "Belakang"),
                   data: sliceBack,
                 },
               ]
@@ -424,7 +424,7 @@ export default function SmartskinPage() {
                       <h3 className="font-bold text-sm sm:text-base text-slate-800 tracking-tight flex items-center gap-1.5 truncate">
                         <span className="truncate">{title}</span>
                         <span className="text-[10px] text-emerald-700 font-semibold opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-0.5 shrink-0">
-                          Detail →
+                          {t("showMore", "Detail →")}
                         </span>
                       </h3>
                     </div>

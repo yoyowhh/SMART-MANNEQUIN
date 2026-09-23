@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Cpu,
   CheckCircle2,
@@ -22,7 +23,8 @@ export default function QuickStatusSummary({
   lastUpdated = null,
   onRefresh = null,
 }) {
-  const [timeAgo, setTimeAgo] = useState("Baru saja");
+  const { t } = useTranslation();
+  const [timeAgo, setTimeAgo] = useState(t("dashboard.justNow", "Baru saja"));
 
   // Format timestamp ke WIB
   const formatTimestamp = (date) => {
@@ -34,7 +36,7 @@ export default function QuickStatusSummary({
     return `${hrs}:${mins}:${secs} WIB`;
   };
 
-  // Update relative time ("x detik lalu")
+  // Update relative time ("x detik lalu" / "x seconds ago")
   useEffect(() => {
     if (!lastUpdated) return;
 
@@ -42,25 +44,25 @@ export default function QuickStatusSummary({
       const now = new Date();
       const diffSec = Math.floor((now - new Date(lastUpdated)) / 1000);
       if (diffSec < 2) {
-        setTimeAgo("Baru saja");
+        setTimeAgo(t("dashboard.justNow", "Baru saja"));
       } else if (diffSec < 60) {
-        setTimeAgo(`${diffSec} detik lalu`);
+        setTimeAgo(`${diffSec} ${t("dashboard.secondsAgo", "detik lalu")}`);
       } else {
         const mins = Math.floor(diffSec / 60);
-        setTimeAgo(`${mins} menit lalu`);
+        setTimeAgo(`${mins} ${t("dashboard.minutesAgo", "menit lalu")}`);
       }
     };
 
     updateRelative();
     const interval = setInterval(updateRelative, 1000);
     return () => clearInterval(interval);
-  }, [lastUpdated]);
+  }, [lastUpdated, t]);
 
   // Tentukan status manekin secara keseluruhan
   const getMannequinStatus = () => {
     if (criticalSensors > 0) {
       return {
-        label: "Kritis / Bahaya",
+        label: t("dashboard.criticalStatus", "Kritis / Bahaya"),
         color: "bg-rose-500/10 text-rose-600 border-rose-500/30",
         dotColor: "bg-rose-500",
         pulse: true,
@@ -68,7 +70,7 @@ export default function QuickStatusSummary({
     }
     if (warningSensors > 0) {
       return {
-        label: "Perhatian / Warning",
+        label: t("dashboard.warningStatus", "Perhatian / Warning"),
         color: "bg-amber-500/10 text-amber-600 border-amber-500/30",
         dotColor: "bg-amber-500",
         pulse: true,
@@ -76,14 +78,14 @@ export default function QuickStatusSummary({
     }
     if (offlineSensors === totalSensors) {
       return {
-        label: "Offline / Terputus",
+        label: t("dashboard.offlineStatus", "Offline / Terputus"),
         color: "bg-slate-500/10 text-slate-600 border-slate-500/30",
         dotColor: "bg-slate-500",
         pulse: false,
       };
     }
     return {
-      label: "Normal & Operasional",
+      label: t("dashboard.normalOperational", "Normal & Operasional"),
       color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/30",
       dotColor: "bg-[#00ba88]",
       pulse: true,
@@ -106,14 +108,14 @@ export default function QuickStatusSummary({
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <span className="font-extrabold text-slate-800 text-sm sm:text-base">
-                  Manekin #{mannequinId}
+                  {t("Mannequin", "Manekin")} #{mannequinId}
                 </span>
                 <span className="text-[11px] font-medium text-slate-400">
                   (Anthropometric Test Unit)
                 </span>
               </div>
               <p className="text-[11px] text-slate-500">
-                Kabinet Uji Kenyamanan & Ergonomi Penumpang
+                {t("dashboard.testingCabinet", "Kabinet Uji Kenyamanan & Ergonomi Penumpang")}
               </p>
             </div>
           </div>
@@ -125,10 +127,10 @@ export default function QuickStatusSummary({
               <Radio className="w-3.5 h-3.5 text-[#00ba88]" />
               <div className="flex flex-col">
                 <span className="text-[10px] text-slate-400 font-semibold uppercase leading-none">
-                  Status Sistem
+                  {t("dashboard.systemStatus", "Status Sistem")}
                 </span>
                 <span className="text-xs font-bold text-slate-700 leading-tight">
-                  LoRa & WebSocket Aktif
+                  {t("dashboard.loraActive", "LoRa & WebSocket Aktif")}
                 </span>
               </div>
             </div>
@@ -138,7 +140,7 @@ export default function QuickStatusSummary({
               <Clock className="w-3.5 h-3.5 text-slate-500" />
               <div className="flex flex-col">
                 <span className="text-[10px] text-slate-400 font-semibold uppercase leading-none">
-                  Update Terakhir
+                  {t("common.lastUpdated", "Update Terakhir")}
                 </span>
                 <div className="flex items-center gap-1.5 leading-tight">
                   <span className="font-mono font-bold text-slate-800">
@@ -182,7 +184,7 @@ export default function QuickStatusSummary({
         <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500">
-              Total Sensor
+              {t("dashboard.totalSensors", "Total Sensor")}
             </span>
             <div className="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center">
               <Cpu className="w-4 h-4" />
@@ -193,7 +195,7 @@ export default function QuickStatusSummary({
               {totalSensors}
             </div>
             <div className="text-[11px] text-slate-400 mt-0.5 font-medium">
-              Titik telemetri
+              {t("dashboard.telemetryPoints", "Titik telemetri")}
             </div>
           </div>
         </div>
@@ -202,7 +204,7 @@ export default function QuickStatusSummary({
         <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:border-[#00ba88]/40 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500">
-              Sensor Aktif
+              {t("dashboard.activeSensors", "Sensor Aktif")}
             </span>
             <div className="w-7 h-7 rounded-lg bg-emerald-50 text-[#00ba88] flex items-center justify-center">
               <CheckCircle2 className="w-4 h-4" />
@@ -224,7 +226,7 @@ export default function QuickStatusSummary({
         <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)] flex flex-col justify-between hover:border-slate-300 transition-all">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500">
-              Sensor Offline
+              {t("dashboard.offlineSensors", "Sensor Offline")}
             </span>
             <div
               className={`w-7 h-7 rounded-lg flex items-center justify-center ${
@@ -243,7 +245,7 @@ export default function QuickStatusSummary({
               {offlineSensors}
             </div>
             <div className="text-[11px] text-slate-400 mt-0.5 font-medium">
-              {offlineSensors > 0 ? "Terputus" : "Semua terhubung"}
+              {offlineSensors > 0 ? t("dashboard.disconnected", "Terputus") : t("dashboard.optimal", "Semua terhubung")}
             </div>
           </div>
         </div>
@@ -257,7 +259,7 @@ export default function QuickStatusSummary({
           }`}>
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500">
-              Status Warning
+              {t("dashboard.warningSensors", "Status Warning")}
             </span>
             <div
               className={`w-7 h-7 rounded-lg flex items-center justify-center ${
@@ -276,7 +278,7 @@ export default function QuickStatusSummary({
               {warningSensors}
             </div>
             <div className="text-[11px] text-slate-400 mt-0.5 font-medium">
-              {warningSensors > 0 ? "Mendekati batas" : "Parameter aman"}
+              {warningSensors > 0 ? t("dashboard.needsAttention", "Mendekati batas") : "Normal"}
             </div>
           </div>
         </div>
@@ -290,7 +292,7 @@ export default function QuickStatusSummary({
           }`}>
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500">
-              Status Critical
+              {t("dashboard.criticalSensors", "Status Critical")}
             </span>
             <div
               className={`w-7 h-7 rounded-lg flex items-center justify-center ${
@@ -309,7 +311,7 @@ export default function QuickStatusSummary({
               {criticalSensors}
             </div>
             <div className="text-[11px] text-slate-400 mt-0.5 font-medium">
-              {criticalSensors > 0 ? "Bahaya terdeteksi" : "Kondisi terkendali"}
+              {criticalSensors > 0 ? t("dashboard.emergencyState", "Bahaya terdeteksi") : t("dashboard.optimal", "Kondisi terkendali")}
             </div>
           </div>
         </div>

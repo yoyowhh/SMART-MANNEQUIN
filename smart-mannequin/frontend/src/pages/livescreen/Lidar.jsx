@@ -18,6 +18,8 @@ import {
   Calendar,
   Compass,
   ScrollText,
+  Sliders,
+  Sparkles,
 } from "lucide-react";
 
 const PERIOD_OPTIONS = [
@@ -36,6 +38,7 @@ const LidarPage = () => {
   const [loading, setLoading] = useState(true);
   const [rawRows, setRawRows] = useState([]);
   const [latestDistance, setLatestDistance] = useState(0);
+  const [latestKalman, setLatestKalman] = useState(0);
   const [lastUpdateTime, setLastUpdateTime] = useState(null);
   const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
 
@@ -78,7 +81,12 @@ const LidarPage = () => {
         setIsConnected(true);
         const latest = rows[0];
         const dist = parseFloat(latest.value) || 0;
+        const kalman =
+          latest.kalmanvalue !== undefined && !isNaN(parseFloat(latest.kalmanvalue))
+            ? parseFloat(latest.kalmanvalue)
+            : dist;
         setLatestDistance(dist);
+        setLatestKalman(kalman);
         setLastUpdateTime(latest.inputed_at);
       } else {
         setIsConnected(false);
@@ -189,7 +197,7 @@ const LidarPage = () => {
           },
         },
       },
-      colors: ["#00ba88", "#0ea5e9"], // 2 warna berbeda: Hijau Emerald (Raw) & Biru Langit (Kalman)
+      colors: ["#00ba88", "#10b981"], // Palette Hijau Tema: Emerald (Raw) & Mint Emerald (Kalman)
       fill: {
         type: "gradient",
         gradient: {
@@ -254,7 +262,7 @@ const LidarPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
                 <span className="text-xs font-bold text-emerald-700 font-mono">
-                  ONLINE • TERHUBUNG
+                  {t("common.online", "ONLINE • TERHUBUNG")}
                 </span>
               </>
             ) : (
@@ -263,7 +271,7 @@ const LidarPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
                 </span>
                 <span className="text-xs font-bold text-slate-500 font-mono">
-                  STANDBY / OFFLINE
+                  {t("common.offline", "STANDBY / OFFLINE")}
                 </span>
               </>
             )}
@@ -271,7 +279,7 @@ const LidarPage = () => {
 
           <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Update Terakhir:</span>
+            <span>{t("common.lastUpdated", "Update Terakhir:")}</span>
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
@@ -280,7 +288,7 @@ const LidarPage = () => {
         <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
           <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            Periode:
+            {t("common.period", "Periode:")}
           </span>
           {PERIOD_OPTIONS.map((opt) => (
             <button
@@ -310,7 +318,7 @@ const LidarPage = () => {
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
           >
             <ScrollText size={14} />
-            <span>Lihat Log Riwayat Sensor</span>
+            <span>{t("common.viewLogs", "Lihat Log Riwayat Sensor")}</span>
           </button>
         }
       >
@@ -327,33 +335,72 @@ const LidarPage = () => {
         </div>
       </SensorInfoCard>
 
-      {/* Row 1: 1 Card Hasil Data Pengukuran Jarak LiDAR (Simple & Minimalis) */}
-      <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group hover:border-emerald-200 transition-all">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
-            JARAK TERDETEKSI (LIDAR)
-          </span>
-          <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center font-bold text-xs">
-            <Compass className="w-4 h-4" />
+      {/* Row 1: 2 Cards Hasil Data Pengukuran Jarak LiDAR & Filter Kalman (Desain Loadcell Style) */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
+        {/* Card 1: Jarak Terdeteksi (Raw) */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                {t("common.rawDistance", "Jarak Sensor (Raw)")}
+              </h3>
+              <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs ${currentStatus.badgeClass}`}>
+                {currentStatus.label}
+              </span>
+            </div>
+
+            <div className="flex items-baseline gap-1.5 py-1 mb-1">
+              <span className="text-3xl font-black text-[#00ba88] tracking-tight font-mono">
+                {loading ? "--" : latestDistance.toFixed(1)}
+              </span>
+              <span className="text-sm font-bold text-slate-400">cm</span>
+              <span className="text-xs font-semibold text-slate-400 ml-1">
+                ({loading ? "--" : (latestDistance / 100).toFixed(2)} m)
+              </span>
+            </div>
+
+            <div className="text-[11px] text-slate-500 mb-2">
+              Pembacaan Langsung Sensor TF-Mini (901)
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <span>{t("common.effectiveRange", "Jangkauan Efektif")}</span>
+            <span className="font-semibold text-emerald-700 font-mono">30 - 1200 cm</span>
           </div>
         </div>
 
-        <div className="flex items-baseline gap-2 mb-2 font-mono">
-          <span className="text-3xl sm:text-4xl font-extrabold text-[#00ba88] tracking-tight">
-            {loading ? "--" : latestDistance.toFixed(1)}
-          </span>
-          <span className="text-sm font-bold text-slate-400">CM</span>
-          <span className="text-xs font-semibold text-slate-400 ml-2">
-            ({loading ? "--" : (latestDistance / 100).toFixed(2)} m)
-          </span>
-        </div>
+        {/* Card 2: Jarak Terfilter (Kalman Filter) */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                {t("common.filterNoise", "Jarak Terfilter (Kalman)")}
+              </h3>
+              <span className="px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
+                {t("common.noiseReduction", "Peredam Noise")}
+              </span>
+            </div>
 
-        <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50">
-          <span className="text-slate-400">Sensor TF-Mini (901)</span>
-          <span className="font-mono text-emerald-600 font-semibold flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-            Real-Time
-          </span>
+            <div className="flex items-baseline gap-1.5 py-1 mb-1">
+              <span className="text-3xl font-black text-[#00ba88] tracking-tight font-mono">
+                {loading ? "--" : latestKalman.toFixed(1)}
+              </span>
+              <span className="text-sm font-bold text-slate-400">cm</span>
+              <span className="text-xs font-semibold text-slate-400 ml-1">
+                ({loading ? "--" : (latestKalman / 100).toFixed(2)} m)
+              </span>
+            </div>
+
+            <div className="text-[11px] text-slate-500 mb-2">
+              Noise-Reduction Algorithm (Kalman Filter)
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <span>{t("common.opticalStability", "Stabilitas Optik")}</span>
+            <span className="font-semibold text-emerald-700 font-mono">{t("common.highPrecision", "Presisi Tinggi")}</span>
+          </div>
         </div>
       </div>
 

@@ -53,47 +53,47 @@ const BmePage = () => {
   const getTempStatus = (val) => {
     if (val >= 35) {
       return {
-        label: "Panas Ekstrem",
+        label: t("bmeSensor.extremeHot", "Panas Ekstrem"),
         badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
-        desc: "Suhu di atas ambang batas wajar",
+        desc: t("bmeSensor.extremeHotDesc", "Suhu di atas ambang batas wajar"),
       };
     }
     if (val >= 28) {
       return {
-        label: "Hangat",
+        label: t("bmeSensor.warm", "Hangat"),
         badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
-        desc: "Suhu agak tinggi di atas batas optimal",
+        desc: t("bmeSensor.warmDesc", "Suhu agak tinggi di atas batas optimal"),
       };
     }
     if (val < 18 && val > 0) {
       return {
-        label: "Dingin",
+        label: t("bmeSensor.cold", "Dingin"),
         badgeClass: "bg-blue-50 text-blue-700 border-blue-200",
-        desc: "Suhu di bawah batas kenyamanan",
+        desc: t("bmeSensor.coldDesc", "Suhu di bawah batas kenyamanan"),
       };
     }
     return {
-      label: "Optimal / Sejuk",
+      label: t("bmeSensor.optimalCool", "Optimal / Sejuk"),
       badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
-      desc: "Kondisi termal ideal ruang uji",
+      desc: t("bmeSensor.optimalCoolDesc", "Kondisi termal ideal ruang uji"),
     };
   };
 
   const getHumidityStatus = (val) => {
     if (val > 70) {
       return {
-        label: "Sangat Lembab",
+        label: t("bmeSensor.veryHumid", "Sangat Lembab"),
         badgeClass: "bg-blue-50 text-blue-700 border-blue-200",
       };
     }
     if (val < 30 && val > 0) {
       return {
-        label: "Kering",
+        label: t("bmeSensor.dry", "Kering"),
         badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
       };
     }
     return {
-      label: "Nyaman / Ideal",
+      label: t("bmeSensor.idealHumid", "Nyaman / Ideal"),
       badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
     };
   };
@@ -329,7 +329,7 @@ const BmePage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
                 <span className="text-xs font-bold text-emerald-700 font-mono">
-                  ONLINE • TERHUBUNG
+                  {t("common.online", "ONLINE • TERHUBUNG")}
                 </span>
               </>
             ) : (
@@ -338,7 +338,7 @@ const BmePage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
                 </span>
                 <span className="text-xs font-bold text-slate-500 font-mono">
-                  STANDBY / OFFLINE
+                  {t("common.offline", "STANDBY / OFFLINE")}
                 </span>
               </>
             )}
@@ -346,7 +346,7 @@ const BmePage = () => {
 
           <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Update Terakhir:</span>
+            <span>{t("common.lastUpdated", "Update Terakhir:")}</span>
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
@@ -355,7 +355,7 @@ const BmePage = () => {
         <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
           <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            Periode:
+            {t("common.period", "Periode:")}
           </span>
           {PERIOD_OPTIONS.map((opt) => (
             <button
@@ -366,7 +366,7 @@ const BmePage = () => {
                   ? "bg-white text-[#00ba88] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}>
-              {opt.label}
+              {opt.value} {t("common.data", "Data")}
             </button>
           ))}
         </div>
@@ -374,7 +374,7 @@ const BmePage = () => {
 
       {/* Informasi Sensor Card */}
       <SensorInfoCard
-        title={t("informasiSensor") || "Informasi Sensor"}
+        title={t("sensorInfo.title", "Informasi Sensor")}
         sensorCode="BME280 ENVIRONMENTAL SENSOR"
         imageSrc="/images/information/bme-information.png"
         imageAlt="bme-information"
@@ -384,12 +384,12 @@ const BmePage = () => {
             onClick={() => setIsLogsModalOpen(true)}
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer">
             <ScrollText size={14} />
-            <span>Lihat Log Riwayat Sensor</span>
+            <span>{t("common.viewLogs", "Lihat Log Riwayat Sensor")}</span>
           </button>
         }>
         <div className="flex flex-col gap-2">
           <h4 className="font-bold text-slate-800 text-base">
-            Sistem Pemantauan Mikroklimat BME280
+            {t("bmeSensor.title", "Sistem Pemantauan Mikroklimat BME280")}
           </h4>
           <p className="text-slate-600 text-sm leading-relaxed text-justify">
             {t(
@@ -400,101 +400,125 @@ const BmePage = () => {
         </div>
       </SensorInfoCard>
 
-      {/* Row 1: 4 Cards Metrik Lingkungan */}
+      {/* Row 1: 4 Cards Metrik Lingkungan (Desain Loadcell Style) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Suhu */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
-              TEMPERATUR
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center">
-              <Thermometer className="w-4 h-4" />
+        {/* Card 1: Suhu / Temperatur */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                {t("bmeSensor.temperature", "Temperatur")}
+              </h3>
+              <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs ${tempStatus.badgeClass}`}>
+                {tempStatus.label}
+              </span>
+            </div>
+
+            <div className="flex items-baseline gap-1.5 py-1 mb-1">
+              <span className="text-3xl font-black text-[#00ba88] tracking-tight font-mono">
+                {loading ? "--" : latestTemp.toFixed(1)}
+              </span>
+              <span className="text-sm font-bold text-slate-400">°C</span>
+            </div>
+
+            <div className="text-[11px] text-slate-500 mb-2">
+              {t("bmeSensor.ambientTemp", "Suhu Lingkungan Kabin (Ambient)")}
             </div>
           </div>
-          <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-3xl font-extrabold text-slate-800 tracking-tight font-mono">
-              {loading ? "--" : latestTemp.toFixed(1)}
-            </span>
-            <span className="text-xs font-semibold text-slate-400">°C</span>
-          </div>
-          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50">
-            <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${tempStatus.badgeClass}`}>
-              {tempStatus.label}
-            </span>
-            <span className="font-mono text-slate-400">Ambient Temp</span>
+
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <span>{t("common.optimalRange", "Rentang Optimal")}</span>
+            <span className="font-semibold text-emerald-700 font-mono">20 - 32 °C</span>
           </div>
         </div>
 
         {/* Card 2: Kelembaban */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
-              KELEMBABAN
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center">
-              <Droplets className="w-4 h-4" />
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                {t("bmeSensor.humidity", "Kelembaban")}
+              </h3>
+              <span className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs ${humStatus.badgeClass}`}>
+                {humStatus.label}
+              </span>
+            </div>
+
+            <div className="flex items-baseline gap-1.5 py-1 mb-1">
+              <span className="text-3xl font-black text-[#00ba88] tracking-tight font-mono">
+                {loading ? "--" : latestHumidity.toFixed(1)}
+              </span>
+              <span className="text-sm font-bold text-slate-400">%RH</span>
+            </div>
+
+            <div className="text-[11px] text-slate-500 mb-2">
+              {t("bmeSensor.relativeHumidity", "Kelembaban Relatif Udara")}
             </div>
           </div>
-          <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-3xl font-extrabold text-slate-800 tracking-tight font-mono">
-              {loading ? "--" : latestHumidity.toFixed(1)}
-            </span>
-            <span className="text-xs font-semibold text-slate-400">%RH</span>
-          </div>
-          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50">
-            <span className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${humStatus.badgeClass}`}>
-              {humStatus.label}
-            </span>
-            <span className="font-mono text-slate-400">Relative Humidity</span>
+
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <span>{t("common.idealRange", "Rentang Ideal")}</span>
+            <span className="font-semibold text-emerald-700 font-mono">40 - 70 %RH</span>
           </div>
         </div>
 
         {/* Card 3: Tekanan Udara */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
-              TEKANAN UDARA
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center">
-              <Gauge className="w-4 h-4" />
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                {t("bmeSensor.pressure", "Tekanan Udara")}
+              </h3>
+              <span className="px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
+                {t("bmeSensor.barometric", "Barometrik")}
+              </span>
+            </div>
+
+            <div className="flex items-baseline gap-1.5 py-1 mb-1">
+              <span className="text-3xl font-black text-[#00ba88] tracking-tight font-mono">
+                {loading ? "--" : latestPressure.toFixed(1)}
+              </span>
+              <span className="text-sm font-bold text-slate-400">hPa</span>
+            </div>
+
+            <div className="text-[11px] text-slate-500 mb-2">
+              {t("bmeSensor.atmosphericPressure", "Tekanan Atmosferik Barometrik")}
             </div>
           </div>
-          <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-3xl font-extrabold text-slate-800 tracking-tight font-mono">
-              {loading ? "--" : latestPressure.toFixed(1)}
-            </span>
-            <span className="text-xs font-semibold text-slate-400">hPa</span>
-          </div>
-          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50">
-            <span className="px-2 py-0.5 rounded-md font-bold text-[10px] border bg-emerald-50 text-emerald-700 border-emerald-200/80">
-              Barometrik
-            </span>
-            <span className="font-mono text-slate-400">Atmospheric</span>
+
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <span>{t("bmeSensor.seaLevelStandard", "Standar Permukaan Laut")}</span>
+            <span className="font-semibold text-emerald-700 font-mono">1013.25 hPa</span>
           </div>
         </div>
 
-        {/* Card 4: Ketinggian */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-slate-500 tracking-wider font-mono">
-              ESTIMASI KETINGGIAN
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 text-[#00ba88] flex items-center justify-center">
-              <Mountain className="w-4 h-4" />
+        {/* Card 4: Estimasi Ketinggian */}
+        <div className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm relative overflow-hidden group cursor-default hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between">
+          <div>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                {t("bmeSensor.altitude", "Estimasi Ketinggian")}
+              </h3>
+              <span className="px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
+                {t("bmeSensor.altimetryPrecision", "Presisi Altimetri")}
+              </span>
+            </div>
+
+            <div className="flex items-baseline gap-1.5 py-1 mb-1">
+              <span className="text-3xl font-black text-[#00ba88] tracking-tight font-mono">
+                {loading ? "--" : latestAltitude.toFixed(1)}
+              </span>
+              <span className="text-sm font-bold text-slate-400">meter (dpl)</span>
+            </div>
+
+            <div className="text-[11px] text-slate-500 mb-2">
+              {t("bmeSensor.aboveSeaLevel", "Ketinggian dari Permukaan Laut")}
             </div>
           </div>
-          <div className="flex items-baseline gap-2 mb-2">
-            <span className="text-3xl font-extrabold text-slate-800 tracking-tight font-mono">
-              {loading ? "--" : latestAltitude.toFixed(1)}
-            </span>
-            <span className="text-xs font-semibold text-slate-400">meter (dpl)</span>
-          </div>
-          <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50">
-            <span className="px-2 py-0.5 rounded-md font-bold text-[10px] border bg-emerald-50 text-emerald-700 border-emerald-200/80">
-              Presisi Altimetri
-            </span>
-            <span className="font-mono text-slate-400">Sensor 1001</span>
+
+          <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <span>{t("bmeSensor.nodeReference", "Referensi Node")}</span>
+            <span className="font-semibold text-emerald-700 font-mono">Sensor BME-1001</span>
           </div>
         </div>
       </div>
@@ -505,23 +529,23 @@ const BmePage = () => {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-slate-800">
-                Grafik Telemetri Lingkungan BME280
+                {t("bmeSensor.chartTitle", "Grafik Telemetri Lingkungan BME280")}
               </h3>
               <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-50 text-[#00ba88] font-bold">
                 REALTIME MULTI-PARAM
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              Pantau fluktuasi parameter mikroklimat lingkungan (suhu, kelembaban, tekanan udara, dan ketinggian) secara terpadu.
+              {t("bmeSensor.chartSubtitle", "Pantau fluktuasi parameter mikroklimat lingkungan (suhu, kelembaban, tekanan udara, dan ketinggian) secara terpadu.")}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-slate-500">
-              Sampel Ditampilkan:
+              {t("common.displayedSamples", "Sampel Ditampilkan:")}
             </span>
             <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-[#00ba88] font-bold font-mono text-xs">
-              {rawRows.length} Titik
+              {rawRows.length} {t("common.points", "Titik")}
             </span>
           </div>
         </div>
@@ -546,10 +570,10 @@ const BmePage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h3 className="text-base font-bold text-slate-800">
-              Ringkasan Parameter & Ambang Batas BME280
+              {t("bmeSensor.summaryTitle", "Ringkasan Parameter & Ambang Batas BME280")}
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Spesifikasi dan batas toleransi operasional sensor mikroklimat (Sensor ID: 1001).
+              {t("bmeSensor.summarySubtitle", "Spesifikasi dan batas toleransi operasional sensor mikroklimat (Sensor ID: 1001).")}
             </p>
           </div>
 
@@ -566,12 +590,12 @@ const BmePage = () => {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 font-semibold text-xs border-b border-slate-100">
               <tr>
-                <th className="py-3.5 px-4">Parameter Lingkungan</th>
+                <th className="py-3.5 px-4">{t("bmeSensor.envParam", "Parameter Lingkungan")}</th>
                 <th className="py-3.5 px-4">Sensor ID</th>
-                <th className="py-3.5 px-4">Nilai Terkini</th>
-                <th className="py-3.5 px-4">Batas Operasional Optimal</th>
-                <th className="py-3.5 px-4">Status Kondisi</th>
-                <th className="py-3.5 px-4">Waktu Pembaruan</th>
+                <th className="py-3.5 px-4">{t("common.currentValue", "Nilai Terkini")}</th>
+                <th className="py-3.5 px-4">{t("bmeSensor.optimalThreshold", "Batas Operasional Optimal")}</th>
+                <th className="py-3.5 px-4">{t("common.conditionStatus", "Status Kondisi")}</th>
+                <th className="py-3.5 px-4">{t("common.updatedAt", "Waktu Pembaruan")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700 text-xs">
@@ -580,7 +604,7 @@ const BmePage = () => {
                   <div className="flex items-center gap-2.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#00ba88]"></span>
                     <div>
-                      <span className="font-bold text-slate-800 block">Temperatur Ambient</span>
+                      <span className="font-bold text-slate-800 block">{t("bmeSensor.temperature", "Temperatur")} Ambient</span>
                       <span className="text-[11px] text-slate-400">Thermal Monitoring</span>
                     </div>
                   </div>
@@ -603,7 +627,7 @@ const BmePage = () => {
                   <div className="flex items-center gap-2.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#10b981]"></span>
                     <div>
-                      <span className="font-bold text-slate-800 block">Kelembaban Relatif</span>
+                      <span className="font-bold text-slate-800 block">{t("bmeSensor.relativeHumidity", "Kelembaban Relatif")}</span>
                       <span className="text-[11px] text-slate-400">Relative Humidity</span>
                     </div>
                   </div>
@@ -626,7 +650,7 @@ const BmePage = () => {
                   <div className="flex items-center gap-2.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#34d399]"></span>
                     <div>
-                      <span className="font-bold text-slate-800 block">Tekanan Barometrik</span>
+                      <span className="font-bold text-slate-800 block">{t("bmeSensor.atmosphericPressure", "Tekanan Barometrik")}</span>
                       <span className="text-[11px] text-slate-400">Atmospheric Pressure</span>
                     </div>
                   </div>
@@ -638,7 +662,7 @@ const BmePage = () => {
                 <td className="py-3.5 px-4 font-mono text-slate-500">950.0 - 1050.0 hPa</td>
                 <td className="py-3.5 px-4">
                   <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200/80">
-                    Stabil Normal
+                    {t("common.normalOperational", "Stabil Normal")}
                   </span>
                 </td>
                 <td className="py-3.5 px-4 font-mono text-slate-500">{formattedUpdateTime}</td>
@@ -649,7 +673,7 @@ const BmePage = () => {
                   <div className="flex items-center gap-2.5">
                     <span className="w-2.5 h-2.5 rounded-full bg-[#059669]"></span>
                     <div>
-                      <span className="font-bold text-slate-800 block">Perkiraan Ketinggian</span>
+                      <span className="font-bold text-slate-800 block">{t("bmeSensor.altitude", "Perkiraan Ketinggian")}</span>
                       <span className="text-[11px] text-slate-400">Altimetry Calculation</span>
                     </div>
                   </div>
@@ -661,7 +685,7 @@ const BmePage = () => {
                 <td className="py-3.5 px-4 font-mono text-slate-500">-100 s/d 9000 m</td>
                 <td className="py-3.5 px-4">
                   <span className="px-2.5 py-1 rounded-md text-[11px] font-semibold border bg-emerald-50 text-emerald-700 border-emerald-200/80">
-                    Akurat
+                    {t("common.optimalPrecision", "Akurat")}
                   </span>
                 </td>
                 <td className="py-3.5 px-4 font-mono text-slate-500">{formattedUpdateTime}</td>
@@ -673,20 +697,20 @@ const BmePage = () => {
         {/* Legend Informasi Status */}
         <div className="mt-4 p-3 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-700">Panduan Status Lingkungan:</span>
+            <span className="font-bold text-slate-700">{t("bmeSensor.statusGuide", "Panduan Status Lingkungan:")}</span>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Optimal (Kenyamanan Standar)</span>
+              <span>{t("bmeSensor.optimalGuide", "Optimal (Kenyamanan Standar)")}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-              <span>Waspada (Hangat / Udara Kering)</span>
+              <span>{t("bmeSensor.warmGuide", "Waspada (Hangat / Udara Kering)")}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-              <span>Ekstrem (Suhu &gt; 35°C / Sangat Panas)</span>
+              <span>{t("bmeSensor.extremeGuide", "Ekstrem (Suhu > 35°C / Sangat Panas)")}</span>
             </div>
           </div>
         </div>

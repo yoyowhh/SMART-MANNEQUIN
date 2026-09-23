@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Download, RefreshCw, X, FileSpreadsheet, Filter, Thermometer } from "lucide-react";
 import moment from "moment";
 import { useFetchSensor } from "../../hooks/useSensor";
+import LogsModalPortal from "../Elements/Modal/LogsModalPortal";
 
 const STATUS_FILTERS = [
   { value: "all", label: "Semua Status" },
@@ -147,8 +148,7 @@ export default function ThermalLogsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+    <LogsModalPortal isOpen={isOpen} onClose={onClose}>
         {/* Header Modal */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center gap-3">
@@ -234,7 +234,7 @@ export default function ThermalLogsModal({
         </div>
 
         {/* Tabel Data */}
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 overflow-auto overscroll-contain">
           {loading ? (
             <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-3">
               <RefreshCw size={28} className="animate-spin text-[#00ba88]" />
@@ -346,7 +346,6 @@ export default function ThermalLogsModal({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </LogsModalPortal>
   );
 }

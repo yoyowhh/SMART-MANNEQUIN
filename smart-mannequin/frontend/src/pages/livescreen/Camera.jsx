@@ -348,7 +348,7 @@ const ThermalPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
                 <span className="text-xs font-bold text-emerald-700 font-mono">
-                  ONLINE • TERHUBUNG
+                  {t("common.online", "ONLINE • TERHUBUNG")}
                 </span>
               </>
             ) : (
@@ -357,7 +357,7 @@ const ThermalPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
                 </span>
                 <span className="text-xs font-bold text-slate-500 font-mono">
-                  STANDBY / OFFLINE
+                  {t("common.offline", "STANDBY / OFFLINE")}
                 </span>
               </>
             )}
@@ -365,7 +365,7 @@ const ThermalPage = () => {
 
           <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Update Terakhir:</span>
+            <span>{t("common.lastUpdated", "Update Terakhir:")}</span>
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
@@ -374,7 +374,7 @@ const ThermalPage = () => {
         <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
           <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            Periode:
+            {t("common.period", "Periode:")}
           </span>
           {PERIOD_OPTIONS.map((opt) => (
             <button
@@ -385,7 +385,7 @@ const ThermalPage = () => {
                   ? "bg-white text-[#00ba88] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}>
-              {opt.label}
+              {opt.value} {t("common.data", "Data")}
             </button>
           ))}
         </div>
@@ -393,7 +393,7 @@ const ThermalPage = () => {
 
       {/* 2. Informasi Sensor Card */}
       <SensorInfoCard
-        title={t("informasiSensor") || "Informasi Sensor"}
+        title={t("sensorInfo.title", "Informasi Sensor")}
         sensorCode="CAMERA & MLX90640 THERMAL ARRAY"
         imageSrc="/images/information/camera-information.png"
         imageAlt="thermal-information"
@@ -403,7 +403,7 @@ const ThermalPage = () => {
             onClick={() => setIsLogsModalOpen(true)}
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer">
             <ScrollText size={14} />
-            <span>Lihat Log Riwayat Sensor</span>
+            <span>{t("common.viewLogs", "Lihat Log Riwayat Sensor")}</span>
           </button>
         }>
         <div className="flex flex-col gap-2">
@@ -453,25 +453,25 @@ const ThermalPage = () => {
                     {streamStatus === "online" && (
                       <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-300 flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        ONLINE • TERHUBUNG
+                        {t("common.online", "ONLINE • TERHUBUNG")}
                       </span>
                     )}
                     {streamStatus === "loading" && (
                       <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-300 flex items-center gap-1">
                         <Loader2 className="w-2.5 h-2.5 animate-spin text-amber-600" />
-                        MEMUAT STREAM...
+                        {t("common.loadingStream", "MEMUAT STREAM...")}
                       </span>
                     )}
                     {streamStatus === "offline" && (
                       <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-300 flex items-center gap-1">
                         <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
-                        OFFLINE
+                        {t("common.offline", "OFFLINE")}
                       </span>
                     )}
                     {streamStatus === "error" && (
                       <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-300 flex items-center gap-1">
                         <AlertTriangle className="w-2.5 h-2.5 text-rose-600" />
-                        GAGAL DIMUAT
+                        {t("common.failedToLoad", "GAGAL DIMUAT")}
                       </span>
                     )}
                   </div>

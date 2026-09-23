@@ -25,11 +25,11 @@ const PERIOD_OPTIONS = [
 ];
 
 const LOADCELL_CONFIG = [
-  { id: 801, name: "Leher", desc: "Kompresi Servikal", maxSafe: 25 },
-  { id: 802, name: "Paha Kiri", desc: "Distribusi Femur Kiri", maxSafe: 40 },
-  { id: 803, name: "Paha Kanan", desc: "Distribusi Femur Kanan", maxSafe: 40 },
-  { id: 804, name: "Kaki Kiri", desc: "Tumpuan Telapak Kiri", maxSafe: 50 },
-  { id: 805, name: "Kaki Kanan", desc: "Tumpuan Telapak Kanan", maxSafe: 50 },
+  { id: 801, nameKey: "loadcellSensor.neck", defaultName: "Leher", descKey: "loadcellSensor.neckDesc", defaultDesc: "Kompresi Servikal", maxSafe: 25 },
+  { id: 802, nameKey: "loadcellSensor.leftThigh", defaultName: "Paha Kiri", descKey: "loadcellSensor.leftThighDesc", defaultDesc: "Distribusi Femur Kiri", maxSafe: 40 },
+  { id: 803, nameKey: "loadcellSensor.rightThigh", defaultName: "Paha Kanan", descKey: "loadcellSensor.rightThighDesc", defaultDesc: "Distribusi Femur Kanan", maxSafe: 40 },
+  { id: 804, nameKey: "loadcellSensor.leftFoot", defaultName: "Kaki Kiri", descKey: "loadcellSensor.leftFootDesc", defaultDesc: "Tumpuan Telapak Kiri", maxSafe: 50 },
+  { id: 805, nameKey: "loadcellSensor.rightFoot", defaultName: "Kaki Kanan", descKey: "loadcellSensor.rightFootDesc", defaultDesc: "Tumpuan Telapak Kanan", maxSafe: 50 },
 ];
 
 const LoadcellPage = () => {
@@ -57,18 +57,18 @@ const LoadcellPage = () => {
   const getLoadStatus = (val, maxSafe = 50) => {
     if (val >= maxSafe) {
       return {
-        label: "Overload (Kritis)",
+        label: t("loadcellSensor.overload", "Overload (Kritis)"),
         badgeClass: "bg-rose-50 text-rose-700 border-rose-200",
       };
     }
     if (val >= maxSafe * 0.7) {
       return {
-        label: "Beban Tinggi",
+        label: t("loadcellSensor.highLoad", "Beban Tinggi"),
         badgeClass: "bg-amber-50 text-amber-700 border-amber-200",
       };
     }
     return {
-      label: "Beban Aman",
+      label: t("loadcellSensor.safeLoad", "Beban Aman"),
       badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
     };
   };
@@ -280,7 +280,7 @@ const LoadcellPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
                 <span className="text-xs font-bold text-emerald-700 font-mono">
-                  ONLINE • TERHUBUNG
+                  {t("common.online", "ONLINE • TERHUBUNG")}
                 </span>
               </>
             ) : (
@@ -289,7 +289,7 @@ const LoadcellPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
                 </span>
                 <span className="text-xs font-bold text-slate-500 font-mono">
-                  STANDBY / OFFLINE
+                  {t("common.offline", "STANDBY / OFFLINE")}
                 </span>
               </>
             )}
@@ -297,7 +297,7 @@ const LoadcellPage = () => {
 
           <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Update Terakhir:</span>
+            <span>{t("common.lastUpdated", "Update Terakhir:")}</span>
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
@@ -306,7 +306,7 @@ const LoadcellPage = () => {
         <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
           <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            Periode:
+            {t("common.period", "Periode:")}
           </span>
           {PERIOD_OPTIONS.map((opt) => (
             <button
@@ -317,7 +317,7 @@ const LoadcellPage = () => {
                   ? "bg-white text-[#00ba88] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}>
-              {opt.label}
+              {opt.value} {t("common.data", "Data")}
             </button>
           ))}
         </div>
@@ -325,7 +325,7 @@ const LoadcellPage = () => {
 
       {/* Informasi Sensor Card */}
       <SensorInfoCard
-        title={t("informasiSensor") || "Informasi Sensor"}
+        title={t("sensorInfo.title", "Informasi Sensor")}
         sensorCode="LOAD CELL TRANSDUCERS"
         imageSlot={
           <div className="flex flex-row items-center gap-4 sm:gap-6 bg-slate-50/90 p-3 sm:p-4 rounded-2xl border border-slate-100 shrink-0 shadow-2xs">
@@ -335,7 +335,9 @@ const LoadcellPage = () => {
                 alt="loadcell-leher"
                 className="max-h-40 sm:max-h-48 max-w-[130px] sm:max-w-[160px] w-auto object-contain mix-blend-multiply transition-transform duration-300 hover:scale-105"
               />
-              <span className="text-xs font-mono font-bold text-slate-600 mt-2">Sensor Leher</span>
+              <span className="text-xs font-mono font-bold text-slate-600 mt-2">
+                {t("loadcellSensor.neckSensor", "Sensor Leher")}
+              </span>
             </div>
             <div className="flex flex-col items-center">
               <img
@@ -343,7 +345,9 @@ const LoadcellPage = () => {
                 alt="loadcell-kaki"
                 className="max-h-40 sm:max-h-48 max-w-[130px] sm:max-w-[160px] w-auto object-contain mix-blend-multiply transition-transform duration-300 hover:scale-105"
               />
-              <span className="text-xs font-mono font-bold text-slate-600 mt-2">Sensor Kaki & Paha</span>
+              <span className="text-xs font-mono font-bold text-slate-600 mt-2">
+                {t("loadcellSensor.legThighSensor", "Sensor Kaki & Paha")}
+              </span>
             </div>
           </div>
         }
@@ -353,12 +357,12 @@ const LoadcellPage = () => {
             onClick={() => setIsLogsModalOpen(true)}
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer">
             <ScrollText size={14} />
-            <span>Lihat Log Riwayat Sensor</span>
+            <span>{t("common.viewLogs", "Lihat Log Riwayat Sensor")}</span>
           </button>
         }>
         <div className="flex flex-col gap-2.5">
           <h4 className="font-bold text-slate-800 text-base sm:text-lg">
-            Sistem Distribusi Beban Mekanis Load Cell
+            {t("loadcellSensor.title", "Sistem Distribusi Beban Mekanis Load Cell")}
           </h4>
           <p className="text-slate-600 text-sm leading-relaxed text-justify">
             {t(
@@ -374,6 +378,8 @@ const LoadcellPage = () => {
         {LOADCELL_CONFIG.map((item) => {
           const val = latestValues[item.id] || 0;
           const status = getLoadStatus(val, item.maxSafe);
+          const name = t(item.nameKey, item.defaultName);
+          const desc = t(item.descKey, item.defaultDesc);
 
           return (
             <div
@@ -382,7 +388,7 @@ const LoadcellPage = () => {
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
-                    {item.name}
+                    {name}
                   </h3>
                   <span className={`px-2 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs ${status.badgeClass}`}>
                     {status.label}
@@ -397,23 +403,13 @@ const LoadcellPage = () => {
                 </div>
 
                 <div className="text-[11px] text-slate-500 mb-2">
-                  {item.desc}
+                  {desc}
                 </div>
               </div>
 
-              <div className="space-y-1.5 pt-2 border-t border-slate-50">
-                <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                  <span>Kapasitas Maks</span>
-                  <span className="font-semibold text-slate-600">{item.maxSafe} kg</span>
-                </div>
-                <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-to-r from-emerald-400 to-[#00ba88] rounded-full transition-all duration-500"
-                    style={{
-                      width: `${Math.min(100, Math.max(5, Math.round((val / item.maxSafe) * 100)))}%`,
-                    }}
-                  />
-                </div>
+              <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
+                <span>{t("loadcellSensor.maxCapacity", "Kapasitas Maks")}</span>
+                <span className="font-semibold text-emerald-700 font-mono">{item.maxSafe} kg</span>
               </div>
             </div>
           );
@@ -426,23 +422,23 @@ const LoadcellPage = () => {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-base font-bold text-slate-800">
-                Grafik Distribusi Beban 5 Titik Anatomis
+                {t("loadcellSensor.chartTitle", "Grafik Distribusi Beban 5 Titik Anatomis")}
               </h3>
               <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-50 text-[#00ba88] font-bold">
                 REALTIME
               </span>
             </div>
             <p className="text-xs text-slate-500 mt-1">
-              Visualisasi kontur pembebanan komparatif pada seluruh titik transduser tubuh manekin.
+              {t("loadcellSensor.chartSubtitle", "Visualisasi kontur pembebanan komparatif pada seluruh titik transduser tubuh manekin.")}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-slate-500">
-              Kanal Aktif:
+              {t("loadcellSensor.activeChannels", "Kanal Aktif:")}
             </span>
             <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-[#00ba88] font-bold font-mono text-xs">
-              5 Titik Beban
+              {t("loadcellSensor.loadPointsCount", "5 Titik Beban")}
             </span>
           </div>
         </div>
@@ -467,10 +463,10 @@ const LoadcellPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
             <h3 className="text-base font-bold text-slate-800">
-              Ringkasan Distribusi Beban Titik Transduser
+              {t("loadcellSensor.summaryTitle", "Ringkasan Distribusi Beban Titik Transduser")}
             </h3>
             <p className="text-xs text-slate-500 mt-0.5">
-              Nilai pengukuran beban statik dan dinamik pada seluruh titik anatomis manekin.
+              {t("loadcellSensor.summarySubtitle", "Nilai pengukuran beban statik dan dinamik pada seluruh titik anatomis manekin.")}
             </p>
           </div>
         </div>
@@ -480,12 +476,12 @@ const LoadcellPage = () => {
           <table className="w-full text-left text-sm">
             <thead className="bg-slate-50 text-slate-600 font-semibold text-xs border-b border-slate-100">
               <tr>
-                <th className="py-3.5 px-4">Titik Anatomis</th>
+                <th className="py-3.5 px-4">{t("loadcellSensor.anatomicalPoint", "Titik Anatomis")}</th>
                 <th className="py-3.5 px-4">Sensor ID</th>
-                <th className="py-3.5 px-4">Nilai Terkini</th>
-                <th className="py-3.5 px-4">Kapasitas Maks Aman</th>
-                <th className="py-3.5 px-4">Status Pembebanan</th>
-                <th className="py-3.5 px-4">Waktu Pembaruan</th>
+                <th className="py-3.5 px-4">{t("common.currentValue", "Nilai Terkini")}</th>
+                <th className="py-3.5 px-4">{t("loadcellSensor.safeMaxCapacity", "Kapasitas Maks Aman")}</th>
+                <th className="py-3.5 px-4">{t("loadcellSensor.loadStatus", "Status Pembebanan")}</th>
+                <th className="py-3.5 px-4">{t("common.updatedAt", "Waktu Pembaruan")}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 text-slate-700 text-xs">
@@ -493,6 +489,8 @@ const LoadcellPage = () => {
                 const val = latestValues[item.id] || 0;
                 const status = getLoadStatus(val, item.maxSafe);
                 const dotColors = ["#00ba88", "#0ea5e9", "#f59e0b", "#8b5cf6", "#ec4899"];
+                const name = t(item.nameKey, item.defaultName);
+                const desc = t(item.descKey, item.defaultDesc);
 
                 return (
                   <tr key={item.id} className="hover:bg-slate-50/60 transition-colors">
@@ -502,8 +500,8 @@ const LoadcellPage = () => {
                           className="w-2.5 h-2.5 rounded-full"
                           style={{ backgroundColor: dotColors[idx] }}></span>
                         <div>
-                          <span className="font-bold text-slate-800 block">{item.name}</span>
-                          <span className="text-[11px] text-slate-400">{item.desc}</span>
+                          <span className="font-bold text-slate-800 block">{name}</span>
+                          <span className="text-[11px] text-slate-400">{desc}</span>
                         </div>
                       </div>
                     </td>
@@ -528,20 +526,20 @@ const LoadcellPage = () => {
         {/* Legend Informasi Status */}
         <div className="mt-4 p-3 rounded-xl bg-slate-50/80 border border-slate-100 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-600">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-700">Panduan Batas Pembebanan:</span>
+            <span className="font-bold text-slate-700">{t("loadcellSensor.loadGuide", "Panduan Batas Pembebanan:")}</span>
           </div>
           <div className="flex flex-wrap items-center gap-4">
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>Beban Aman (&lt; 70% Kapasitas)</span>
+              <span>{t("loadcellSensor.safeLoadDesc", "Beban Aman (< 70% Kapasitas)")}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-              <span>Beban Tinggi (70% - 100%)</span>
+              <span>{t("loadcellSensor.highLoadDesc", "Beban Tinggi (70% - 100%)")}</span>
             </div>
             <div className="flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-rose-500"></span>
-              <span>Overload (&gt; 100% Kapasitas Maks)</span>
+              <span>{t("loadcellSensor.overloadDesc", "Overload (> 100% Kapasitas Maks)")}</span>
             </div>
           </div>
         </div>

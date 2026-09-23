@@ -353,7 +353,7 @@ const GasPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
                 <span className="text-xs font-bold text-emerald-700 font-mono">
-                  ONLINE • TERHUBUNG
+                  {t("common.online", "ONLINE • TERHUBUNG")}
                 </span>
               </>
             ) : (
@@ -362,7 +362,7 @@ const GasPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
                 </span>
                 <span className="text-xs font-bold text-slate-500 font-mono">
-                  STANDBY / OFFLINE
+                  {t("common.offline", "STANDBY / OFFLINE")}
                 </span>
               </>
             )}
@@ -370,7 +370,7 @@ const GasPage = () => {
 
           <div className="flex items-center gap-2 text-slate-500 text-xs font-mono">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span>Update Terakhir:</span>
+            <span>{t("common.lastUpdated", "Update Terakhir:")}</span>
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
@@ -379,7 +379,7 @@ const GasPage = () => {
         <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
           <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
           <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            Periode:
+            {t("common.period", "Periode:")}
           </span>
           {PERIOD_OPTIONS.map((opt) => (
             <button
@@ -390,7 +390,7 @@ const GasPage = () => {
                   ? "bg-white text-[#00ba88] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
               }`}>
-              {opt.label}
+              {opt.value} {t("common.data", "Data")}
             </button>
           ))}
         </div>
@@ -398,7 +398,7 @@ const GasPage = () => {
 
       {/* Informasi Sensor (Ukuran Gambar Besar Sama Seperti Sensor Suara) */}
       <SensorInfoCard
-        title={t("informasiSensor", "Informasi Sensor")}
+        title={t("sensorInfo.title", "Informasi Sensor")}
         sensorCode="MQ-2 / GAS SENSOR"
         imageSrc="/images/information/gas-information.png"
         imageAlt="gas-information"
@@ -409,7 +409,7 @@ const GasPage = () => {
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
           >
             <ScrollText size={14} />
-            <span>Lihat Log Riwayat Sensor</span>
+            <span>{t("common.viewLogs", "Lihat Log Riwayat Sensor")}</span>
           </button>
         }
       >
@@ -476,21 +476,7 @@ const GasPage = () => {
               </div>
             </div>
 
-            {/* Level Progress Bar Meter */}
-            <div className="space-y-1 pt-1">
-              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>Level Sensor</span>
-                <span className="text-emerald-700 font-semibold">{Math.min(100, Math.round(latestSmoke))}%</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-300 to-[#00ba88] rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(100, Math.max(5, latestSmoke))}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
               <span>Batas Toleransi:</span>
               <span className="font-semibold text-emerald-700 font-mono">&lt; 50 PPM</span>
             </div>
@@ -545,21 +531,7 @@ const GasPage = () => {
               </div>
             </div>
 
-            {/* Level Progress Bar Meter */}
-            <div className="space-y-1 pt-1">
-              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>Level Sensor</span>
-                <span className="text-emerald-700 font-semibold">{Math.min(100, Math.round(latestNh3 * 2))}%</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-300 to-[#00ba88] rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(100, Math.max(5, latestNh3 * 2))}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
               <span>Batas Toleransi:</span>
               <span className="font-semibold text-emerald-700 font-mono">&lt; 25 PPM</span>
             </div>
@@ -614,21 +586,7 @@ const GasPage = () => {
               </div>
             </div>
 
-            {/* Level Progress Bar Meter */}
-            <div className="space-y-1 pt-1">
-              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>Level Sensor</span>
-                <span className="text-emerald-700 font-semibold">{Math.min(100, Math.round(latestCo2 / 3))}%</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-300 to-[#00ba88] rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(100, Math.max(5, latestCo2 / 3))}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
               <span>Batas Toleransi:</span>
               <span className="font-semibold text-emerald-700 font-mono">&lt; 100 PPM</span>
             </div>
@@ -683,21 +641,7 @@ const GasPage = () => {
               </div>
             </div>
 
-            {/* Level Progress Bar Meter */}
-            <div className="space-y-1 pt-1">
-              <div className="flex justify-between text-[10px] text-slate-400 font-mono">
-                <span>Level Sensor</span>
-                <span className="text-emerald-700 font-semibold">{Math.min(100, Math.round(latestCo * 1.5))}%</span>
-              </div>
-              <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-gradient-to-r from-emerald-300 to-[#00ba88] rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(100, Math.max(5, latestCo * 1.5))}%` }}
-                />
-              </div>
-            </div>
-
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
               <span>Batas Toleransi:</span>
               <span className="font-semibold text-emerald-700 font-mono">&lt; 35 PPM</span>
             </div>

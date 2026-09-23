@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Download, RefreshCw, X, FileSpreadsheet, Layers, Filter, Compass } from "lucide-react";
 import moment from "moment";
 import { useFetchSensor } from "../../hooks/useSensor";
+import LogsModalPortal from "../Elements/Modal/LogsModalPortal";
 
 export default function MpuLogsModal({
   isOpen,
@@ -120,8 +121,7 @@ export default function MpuLogsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+    <LogsModalPortal isOpen={isOpen} onClose={onClose}>
         {/* Header Modal */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
           <div className="flex items-center gap-3">
@@ -186,7 +186,7 @@ export default function MpuLogsModal({
         </div>
 
         {/* Tabel Konten Log */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto overscroll-contain p-6">
           {loading && readings.length === 0 ? (
             <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
               Memuat data log riwayat MPU-6050...
@@ -286,7 +286,6 @@ export default function MpuLogsModal({
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </LogsModalPortal>
   );
 }

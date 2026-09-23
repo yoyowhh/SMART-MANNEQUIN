@@ -1,4 +1,5 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { Sliders, Download } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -9,6 +10,8 @@ export default function HeroBanner({
   isCalibrating = false,
   calibrationProgress = 0,
 }) {
+  const { t } = useTranslation();
+
   const handleCalibrate = () => {
     if (onCalibrate) {
       onCalibrate();
@@ -16,8 +19,8 @@ export default function HeroBanner({
     }
     Swal.fire({
       icon: "success",
-      title: "Kalibrasi Zero-Point Berhasil",
-      text: "Seluruh sensor dan load cell telah di-reset ke titik nol referensi.",
+      title: t("mannequinPage.calibrationSuccess", "Kalibrasi Zero-Point Berhasil"),
+      text: t("mannequinPage.calibrationDesc", "Seluruh sensor dan load cell telah di-reset ke titik nol referensi."),
       timer: 2200,
       showConfirmButton: false,
       background: "#ffffff",
@@ -37,10 +40,10 @@ export default function HeroBanner({
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="max-w-3xl">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            Selamat Datang Admin STAS
+            {t("dashboard.welcomeAdmin", "Selamat Datang Admin STAS")}
           </h1>
           <p className="text-sm sm:text-base text-emerald-100/90 mt-2 leading-relaxed font-medium">
-            Anthropometric smart mannequin for passenger comfort and safety studies.
+            {t("dashboard.heroSubtitle", "Anthropometric smart mannequin for passenger comfort and safety studies.")}
           </p>
         </div>
 
@@ -54,8 +57,8 @@ export default function HeroBanner({
               <Sliders className={`w-4 h-4 text-[#00ba88] ${isCalibrating ? "animate-spin" : ""}`} />
               <span>
                 {isCalibrating
-                  ? `Memindai Blueprint (${calibrationProgress}%)...`
-                  : "Kalibrasi Zero-Point"}
+                  ? `${t("mannequinPage.calibrating", "Memindai Blueprint")} (${calibrationProgress}%)...`
+                  : t("mannequinPage.calibrate", "Kalibrasi Zero-Point")}
               </span>
             </button>
 

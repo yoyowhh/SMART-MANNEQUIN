@@ -480,14 +480,14 @@ const SoundSensorPage = () => {
                   <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                 </span>
                 <span className="text-xs font-bold text-emerald-700 font-mono">
-                  ONLINE • TERHUBUNG
+                  {t("common.online", "ONLINE • TERHUBUNG")}
                 </span>
               </>
             ) : (
               <>
                 <span className="h-3 w-3 rounded-full bg-slate-400"></span>
                 <span className="text-xs font-bold text-slate-600 font-mono">
-                  STANDBY / OFFLINE
+                  {t("common.offline", "STANDBY / OFFLINE")}
                 </span>
               </>
             )}
@@ -495,7 +495,7 @@ const SoundSensorPage = () => {
 
           <div className="flex items-center gap-2 text-xs text-slate-500">
             <Clock className="w-3.5 h-3.5 text-slate-400" />
-            <span className="font-medium">Update Terakhir:</span>
+            <span className="font-medium">{t("common.lastUpdated", "Update Terakhir:")}</span>
             <span className="font-semibold font-mono text-slate-700">
               {formattedUpdateTime}
             </span>
@@ -509,7 +509,7 @@ const SoundSensorPage = () => {
           <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
             <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
             <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-              Periode:
+              {t("common.period", "Periode:")}
             </span>
             {PERIOD_OPTIONS.map((opt) => (
               <button
@@ -520,7 +520,7 @@ const SoundSensorPage = () => {
                     ? "bg-white text-[#00ba88] shadow-xs"
                     : "text-slate-600 hover:text-slate-900"
                 }`}>
-                {opt.label}
+                {opt.value} {t("common.data", "Data")}
               </button>
             ))}
           </div>
@@ -529,7 +529,7 @@ const SoundSensorPage = () => {
 
       {/* Informasi Sensor Card (Sama Seperti di Sensor Gas) */}
       <SensorInfoCard
-        title={t("informasiSensor") || "Informasi Sensor"}
+        title={t("sensorInfo.title", "Informasi Sensor")}
         sensorCode="KY-037 / SOUND SENSOR"
         imageSrc="/images/information/sound-information.png"
         imageAlt="sound-information"
@@ -540,7 +540,7 @@ const SoundSensorPage = () => {
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
           >
             <ScrollText size={14} />
-            <span>Lihat Log Riwayat Sensor</span>
+            <span>{t("common.viewLogs", "Lihat Log Riwayat Sensor")}</span>
           </button>
         }
       >

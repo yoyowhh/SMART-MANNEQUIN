@@ -1,9 +1,10 @@
 import React from "react";
+import { useTranslation } from "react-i18next";
 import BaseCard from "../Elements/Card";
 import { Info } from "lucide-react";
 
 export default function SensorInfoCard({
-  title = "Informasi Sensor",
+  title = "",
   sensorCode = "",
   imageSrc = "",
   imageAlt = "",
@@ -13,6 +14,9 @@ export default function SensorInfoCard({
   children = null,
   className = "",
 }) {
+  const { t } = useTranslation();
+  const displayTitle = title || t("sensorInfo.title", "Informasi Sensor");
+
   return (
     <div className={`col-span-full ${className}`}>
       <BaseCard mobileHeight="auto" height="auto" className="!h-auto">
@@ -22,10 +26,10 @@ export default function SensorInfoCard({
               <Info className="w-5 h-5 text-[#00ba88] shrink-0" strokeWidth={2.2} />
               <div>
                 <h4 className="font-bold text-slate-800 text-base">
-                  {title}
+                  {displayTitle}
                 </h4>
                 <p className="text-xs text-slate-400">
-                  Spesifikasi & Penempatan Anatomis Mannequin
+                  {t("sensorInfo.specSubtitle", "Spesifikasi & Penempatan Anatomis Mannequin")}
                 </p>
               </div>
             </div>

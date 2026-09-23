@@ -133,7 +133,7 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
           <button
             onClick={toggleMobileMenu}
             className="w-full p-4 text-left flex items-center justify-between text-slate-800 font-semibold">
-            <span>Menu Navigasi</span>
+            <span>{t("sidebar.navMenu", "Menu Navigasi")}</span>
             {mobileMenuOpen ? <BiChevronUp className="w-5 h-5" /> : <BiChevronDown className="w-5 h-5" />}
           </button>
           {mobileMenuOpen && (
@@ -141,6 +141,11 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
               <Menu
                 className="max-h-[80vh] overflow-y-auto py-2"
                 menuItemStyles={modernMenuItemStyles}>
+                <div className="px-5 py-1 mb-1">
+                  <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase font-mono">
+                    {t("sidebar.mainMenu", "Menu Utama")}
+                  </span>
+                </div>
                 <MenuItem
                   active={isDashboardActive}
                   component={<Link to={mannequinId ? `/${mannequinId}` : "/"} />}
@@ -153,7 +158,7 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
                   }
                   onClick={toggleMobileMenu}
                   style={{ margin: "4px 0" }}>
-                  Dashboard
+                  {t("sidebar.dashboard", "Dashboard")}
                 </MenuItem>
 
                 <MenuItem
@@ -168,7 +173,7 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
                   }
                   onClick={toggleMobileMenu}
                   style={{ margin: "4px 0" }}>
-                  Visualisasi Manekin
+                  {t("sidebar.mannequinVisual", "Visualisasi Manekin")}
                 </MenuItem>
 
                 <MenuItem
@@ -183,13 +188,13 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
                   }
                   onClick={toggleMobileMenu}
                   style={{ margin: "4px 0" }}>
-                  Informasi Tim
+                  {t("informasiTim", "Informasi Tim")}
                 </MenuItem>
 
                 <div className="my-3 mx-4 border-t border-slate-100" />
                 <div className="px-5 py-1 mb-1">
                   <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase font-mono">
-                    Sensor Telemetri
+                    {t("sidebar.sensorTelemetry", "Sensor Telemetri")}
                   </span>
                 </div>
 
@@ -247,6 +252,13 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
           <Menu
             className="overflow-y-auto px-1 py-3"
             menuItemStyles={modernMenuItemStyles}>
+            {!collapsed && (
+              <div className="px-4 py-1 mb-1">
+                <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase font-mono">
+                  {t("sidebar.mainMenu", "Menu Utama")}
+                </span>
+              </div>
+            )}
             <MenuItem
               active={isDashboardActive}
               component={<Link to={mannequinId ? `/${mannequinId}` : "/"} />}
@@ -264,7 +276,7 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
               onMouseEnter={() => setHoveredItem("dashboard")}
               onMouseLeave={() => setHoveredItem(null)}
               style={{ margin: "4px 0" }}>
-              Dashboard
+              {t("sidebar.dashboard", "Dashboard")}
             </MenuItem>
 
             <MenuItem
@@ -284,7 +296,7 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
               onMouseEnter={() => setHoveredItem("mannequin")}
               onMouseLeave={() => setHoveredItem(null)}
               style={{ margin: "4px 0" }}>
-              Visualisasi Manekin
+              {t("sidebar.mannequinVisual", "Visualisasi Manekin")}
             </MenuItem>
 
             <MenuItem
@@ -304,16 +316,18 @@ const Sidebar = ({ collapsed, handleCollapsedChange, isMobileView }) => {
               onMouseEnter={() => setHoveredItem("team")}
               onMouseLeave={() => setHoveredItem(null)}
               style={{ margin: "4px 0" }}>
-              Informasi Tim
+              {t("informasiTim", "Informasi Tim")}
             </MenuItem>
 
             <div className="my-3 mx-3 border-t border-slate-100" />
 
-            <div className="px-4 py-1 mb-1">
-              <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase font-mono">
-                Sensor Telemetri
-              </span>
-            </div>
+            {!collapsed && (
+              <div className="px-4 py-1 mb-1">
+                <span className="text-[11px] font-bold tracking-wider text-slate-400 uppercase font-mono">
+                  {t("sidebar.sensorTelemetry", "Sensor Telemetri")}
+                </span>
+              </div>
+            )}
 
             {sensorList.map((sensor) => {
               const isExternal = sensor.isExternal;

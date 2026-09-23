@@ -13,8 +13,12 @@ i18n
   // init i18next
   // for all options read: https://www.i18next.com/overview/configuration-options
   .init({
-    lng: "id",
+    lng: localStorage.getItem("i18nextLng") || "id",
     fallbackLng: "en",
+    detection: {
+      order: ["localStorage", "navigator"],
+      caches: ["localStorage"],
+    },
     interpolation: {
       escapeValue: false, // not needed for react as it escapes by default
     },

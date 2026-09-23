@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
   Volume2,
   Wind,
@@ -35,49 +36,49 @@ const evaluateSensor = (sensorId, val) => {
 
   switch (sensorId) {
     case "sound":
-      if (num > 85) return { status: "critical", message: "Kebisingan ekstrem (>85 dB), risiko kenyamanan kabin", threshold: "70 - 85 dB" };
+      if (num > 85) return { status: "critical", message: "Kebisingan ekstrem (>85 dB), risiko pendengaran", threshold: "70 - 85 dB" };
       if (num > 70) return { status: "warning", message: "Tingkat suara tinggi (>70 dB), mendekati batas nyaman", threshold: "< 70 dB" };
       return { status: "normal", message: "Kondisi akustik normal", threshold: "< 70 dB" };
 
     case "gas":
-      if (num > 1000) return { status: "critical", message: "Konsentrasi gas berlebih (>1000 ppm)", threshold: "500 - 1000 ppm" };
-      if (num > 500) return { status: "warning", message: "Kadar gas meningkat (>500 ppm), periksa sirkulasi", threshold: "< 500 ppm" };
-      return { status: "normal", message: "Kualitas udara normal", threshold: "< 500 ppm" };
+      if (num > 50) return { status: "critical", message: "Kadar gas CO berbahaya (>50 ppm)", threshold: "25 - 50 ppm" };
+      if (num > 25) return { status: "warning", message: "Kadar gas CO meningkat (>25 ppm)", threshold: "< 25 ppm" };
+      return { status: "normal", message: "Kualitas udara normal", threshold: "< 25 ppm" };
 
     case "lidar":
-      if (num < 15) return { status: "critical", message: "Objek terlalu dekat (<15 cm), potensi benturan", threshold: "15 - 30 cm" };
-      if (num < 30) return { status: "warning", message: "Jarak batas sempit (<30 cm)", threshold: "> 30 cm" };
-      return { status: "normal", message: "Jarak perimeter aman", threshold: "> 30 cm" };
+      if (num < 20) return { status: "critical", message: "Objek sangat dekat (<20 cm), potensi impak", threshold: "20 - 50 cm" };
+      if (num < 50) return { status: "warning", message: "Jarak deteksi mendekat (<50 cm)", threshold: "> 50 cm" };
+      return { status: "normal", message: "Jarak perimeter aman", threshold: "> 50 cm" };
 
     case "camera":
-      if (num > 39.0) return { status: "critical", message: "Suhu termal tubuh/kabin sangat tinggi (>39°C)", threshold: "37.5 - 39°C" };
-      if (num > 37.5) return { status: "warning", message: "Suhu hangat/meningkat (>37.5°C)", threshold: "30 - 37.5°C" };
+      if (num > 39.0) return { status: "critical", message: "Suhu termal kritis (>39°C)", threshold: "37.5 - 39°C" };
+      if (num > 37.5) return { status: "warning", message: "Suhu termal meningkat (>37.5°C)", threshold: "30 - 37.5°C" };
       return { status: "normal", message: "Suhu termal stabil", threshold: "30 - 37.5°C" };
 
     case "adxl":
-      if (num > 1.2) return { status: "critical", message: "Guncangan inersia keras (>1.2 g)", threshold: "0.5 - 1.2 g" };
-      if (num > 0.5) return { status: "warning", message: "Getaran sedang terdeteksi (>0.5 g)", threshold: "< 0.5 g" };
+      if (num > 1.2) return { status: "critical", message: "Guncangan inersia tinggi (>1.2 g)", threshold: "0.5 - 1.2 g" };
+      if (num > 0.5) return { status: "warning", message: "Getaran sedang (>0.5 g)", threshold: "< 0.5 g" };
       return { status: "normal", message: "Akselerasi inersia normal", threshold: "< 0.5 g" };
 
     case "mpu":
-      if (num > 15.0) return { status: "critical", message: "Perubahan sudut rotasi ekstrem (>15°/s)", threshold: "5 - 15°/s" };
-      if (num > 5.0) return { status: "warning", message: "Goyangan aktif terdeteksi (>5°/s)", threshold: "< 5°/s" };
-      return { status: "normal", message: "Orientasi stabil", threshold: "< 5°/s" };
+      if (num > 2.5) return { status: "critical", message: "Akselerasi dinamis kritis (>2.5 G)", threshold: "1.5 - 2.5 G" };
+      if (num > 1.5) return { status: "warning", message: "Akselerasi dinamis meningkat (>1.5 G)", threshold: "< 1.5 G" };
+      return { status: "normal", message: "Akselerasi stabil", threshold: "< 1.5 G" };
 
     case "bme":
-      if (num > 35.0 || num < 15.0) return { status: "critical", message: "Suhu mikroklimat ekstrem di luar batas operasional", threshold: "20 - 28°C" };
-      if (num > 28.0 || num < 18.0) return { status: "warning", message: "Suhu mikroklimat di luar zona kenyamanan termal", threshold: "20 - 28°C" };
-      return { status: "normal", message: "Mikroklimat optimal", threshold: "20 - 28°C" };
+      if (num > 38.0 || num < 15.0) return { status: "critical", message: "Suhu mikroklimat ekstrem (>38°C)", threshold: "20 - 34°C" };
+      if (num > 34.0 || num < 18.0) return { status: "warning", message: "Suhu mikroklimat hangat (>34°C)", threshold: "20 - 34°C" };
+      return { status: "normal", message: "Mikroklimat optimal", threshold: "20 - 34°C" };
 
     case "loadcell":
-      if (num > 130.0) return { status: "critical", message: "Beban kursi melebihi kapasitas (>130 kg)", threshold: "100 - 130 kg" };
-      if (num > 100.0) return { status: "warning", message: "Beban mendekati batas atas (>100 kg)", threshold: "40 - 100 kg" };
-      return { status: "normal", message: "Beban kursi proporsional", threshold: "40 - 100 kg" };
+      if (num > 80.0) return { status: "critical", message: "Beban titik leher berlebih (>80 N)", threshold: "45 - 80 N" };
+      if (num > 45.0) return { status: "warning", message: "Beban titik leher meningkat (>45 N)", threshold: "< 45 N" };
+      return { status: "normal", message: "Beban leher seimbang", threshold: "< 45 N" };
 
     case "smartskin":
-      if (num > 50.0) return { status: "critical", message: "Tekanan titik kontak sangat tinggi (>50 kPa)", threshold: "35 - 50 kPa" };
-      if (num > 35.0) return { status: "warning", message: "Tekanan kontak permukaan tinggi (>35 kPa)", threshold: "< 35 kPa" };
-      return { status: "normal", message: "Distribusi tekanan aman", threshold: "< 35 kPa" };
+      if (num > 39.0) return { status: "critical", message: "Suhu permukaan sangat tinggi (>39°C)", threshold: "37.5 - 39°C" };
+      if (num > 37.5) return { status: "warning", message: "Suhu permukaan meningkat (>37.5°C)", threshold: "28 - 37.5°C" };
+      return { status: "normal", message: "Suhu kontak aman", threshold: "28 - 37.5°C" };
 
     default:
       return { status: "normal", message: "Operasional normal", threshold: "-" };
@@ -90,7 +91,7 @@ const SENSOR_LIST = [
     name: "Sensor Suara",
     defaultValue: "43.3",
     unit: "dB",
-    location: "Head / Binaural Ears",
+    location: "Telinga Kanan (KY-601)",
     icon: Volume2,
     route: "/sensor/sound",
     progressPercent: 45,
@@ -98,19 +99,19 @@ const SENSOR_LIST = [
   {
     id: "gas",
     name: "Sensor Gas",
-    defaultValue: "410",
+    defaultValue: "18.5",
     unit: "ppm",
-    location: "Nasal / Respiratory Node",
+    location: "Karbon Monoksida / CO (MQ-101)",
     icon: Wind,
     route: "/sensor/gas",
-    progressPercent: 78,
+    progressPercent: 68,
   },
   {
     id: "lidar",
     name: "Sensor Lidar",
     defaultValue: "84.2",
     unit: "cm",
-    location: "Chest / Torso Perimeter",
+    location: "Dahi / TF-Mini LiDAR (901)",
     icon: Radio,
     route: "/sensor/lidar",
     progressPercent: 62,
@@ -118,9 +119,9 @@ const SENSOR_LIST = [
   {
     id: "camera",
     name: "Kamera",
-    defaultValue: "60",
-    unit: "FPS",
-    location: "Facial / Vision Mount",
+    defaultValue: "33.7",
+    unit: "°C",
+    location: "Sensor Termal Kabin (702)",
     icon: Camera,
     route: "/sensor/camera",
     progressPercent: 85,
@@ -130,7 +131,7 @@ const SENSOR_LIST = [
     name: "Sensor ADXL345",
     defaultValue: "0.14",
     unit: "g",
-    location: "Spine / Lumbar Vertebrae",
+    location: "Bahu Kanan (ADXL-201)",
     icon: Activity,
     route: "/sensor/adxl",
     progressPercent: 30,
@@ -138,9 +139,9 @@ const SENSOR_LIST = [
   {
     id: "mpu",
     name: "Sensor MPU6050",
-    defaultValue: "1.2",
-    unit: "°/s",
-    location: "Pelvic / Center of Gravity",
+    defaultValue: "1.02",
+    unit: "G",
+    location: "Dada Atas / Sumbu X (1002)",
     icon: Compass,
     route: "/sensor/mpu6050",
     progressPercent: 55,
@@ -148,9 +149,9 @@ const SENSOR_LIST = [
   {
     id: "bme",
     name: "Sensor BME280",
-    defaultValue: "23.9",
+    defaultValue: "28.5",
     unit: "°C",
-    location: "Chest Microclimate Node",
+    location: "Dada Tengah / Suhu (BME-1001)",
     icon: Thermometer,
     route: "/sensor/bme",
     progressPercent: 40,
@@ -158,19 +159,19 @@ const SENSOR_LIST = [
   {
     id: "loadcell",
     name: "Sensor Load Cell",
-    defaultValue: "72.3",
-    unit: "kg",
-    location: "Seat Cushion & Backrest",
+    defaultValue: "12.4",
+    unit: "N",
+    location: "Leher / Neck (801)",
     icon: LayoutGrid,
     route: "/sensor/loadcell",
-    progressPercent: 68,
+    progressPercent: 48,
   },
   {
     id: "smartskin",
     name: "SmartSkin",
-    defaultValue: "18.6",
-    unit: "kPa",
-    location: "Full Body Contact Matrix",
+    defaultValue: "32.5",
+    unit: "°C",
+    location: "Punggung Kiri Atas / Suhu (MCP9808)",
     icon: Fingerprint,
     route: "/sensor/smartskin",
     progressPercent: 52,
@@ -178,6 +179,7 @@ const SENSOR_LIST = [
 ];
 
 const MannequinPage = () => {
+  const { t } = useTranslation();
   const params = useParams();
   const mannequinId = params?.id || 1;
 
@@ -193,30 +195,31 @@ const MannequinPage = () => {
   // Live readings state
   const [readings, setReadings] = useState({
     sound: { value: "43.3", unit: "dB" },
-    gas: { value: "410", unit: "ppm" },
+    gas: { value: "18.5", unit: "ppm" },
     lidar: { value: "84.2", unit: "cm" },
-    camera: { value: "34.0", unit: "°C" },
+    camera: { value: "33.7", unit: "°C" },
     adxl: { value: "0.14", unit: "g" },
-    mpu: { value: "1.2", unit: "°/s" },
-    bme: { value: "23.9", unit: "°C" },
-    loadcell: { value: "72.3", unit: "kg" },
-    smartskin: { value: "18.6", unit: "kPa" },
+    mpu: { value: "1.02", unit: "G" },
+    bme: { value: "28.5", unit: "°C" },
+    loadcell: { value: "12.4", unit: "N" },
+    smartskin: { value: "32.5", unit: "°C" },
   });
 
   // WebSocket update
   useEffect(() => {
     if (latestBatch && latestBatch.length > 0) {
-      const pressures = latestBatch
-        .filter((r) => r.sensor_type === "pressure" || r.sensorType === "pressure")
-        .map((r) => parseFloat(r.value))
-        .filter((v) => !isNaN(v));
-      if (pressures.length > 0) {
-        const avg = (pressures.reduce((a, b) => a + b, 0) / pressures.length).toFixed(1);
-        setReadings((prev) => ({
-          ...prev,
-          smartskin: { value: avg, unit: "kPa" },
-        }));
-        setLastUpdated(new Date());
+      const tempReadings = latestBatch.filter(
+        (r) => r.sensor_type === "temperature" || r.sensorType === "temperature"
+      );
+      if (tempReadings.length > 0) {
+        const firstVal = parseFloat(tempReadings[0].value);
+        if (!isNaN(firstVal)) {
+          setReadings((prev) => ({
+            ...prev,
+            smartskin: { value: firstVal.toFixed(1), unit: "°C" },
+          }));
+          setLastUpdated(new Date());
+        }
       }
     }
   }, [latestBatch]);
@@ -224,11 +227,11 @@ const MannequinPage = () => {
   // Polling data telemetry
   const fetchTelemetry = useCallback(async () => {
     try {
-      // 1. BME280
+      // 1. BME280 (Suhu dada tengah)
       const bmeData = await useFetchSensor("bme", 1001, mannequinId);
       if (bmeData) {
         const latest = getLatestData(bmeData);
-        if (latest?.temperature) {
+        if (latest?.temperature !== undefined) {
           setReadings((prev) => ({
             ...prev,
             bme: { value: parseFloat(latest.temperature).toFixed(1), unit: "°C" },
@@ -236,7 +239,7 @@ const MannequinPage = () => {
         }
       }
 
-      // 2. Sound
+      // 2. Sound (Telinga Kanan KY-601)
       const soundData = await useFetchSensor("ky", 601, mannequinId);
       if (soundData) {
         const latest = getLatestData(soundData);
@@ -248,7 +251,7 @@ const MannequinPage = () => {
         }
       }
 
-      // 3. Lidar
+      // 3. Lidar (Dahi 901)
       const lidarData = await useFetchSensor("lidar", 901, mannequinId);
       if (lidarData) {
         const latest = getLatestData(lidarData);
@@ -260,20 +263,20 @@ const MannequinPage = () => {
         }
       }
 
-      // 4. Gas
+      // 4. Gas (CO MQ-101)
       const gasData = await useFetchSensor("mq", 101, mannequinId);
       if (gasData) {
         const latest = getLatestData(gasData);
-        const val = latest?.value !== undefined ? latest.value : latest?.co;
+        const val = latest?.co !== undefined ? latest.co : latest?.value;
         if (val !== undefined) {
           setReadings((prev) => ({
             ...prev,
-            gas: { value: parseFloat(val).toFixed(0), unit: "ppm" },
+            gas: { value: parseFloat(val).toFixed(1), unit: "ppm" },
           }));
         }
       }
 
-      // 5. ADXL345
+      // 5. ADXL345 (Bahu Kanan 201)
       const adxlData = await useFetchSensor("adxl", 201, mannequinId);
       if (adxlData) {
         const latest = getLatestData(adxlData);
@@ -285,33 +288,32 @@ const MannequinPage = () => {
         }
       }
 
-      // 6. MPU6050
+      // 6. MPU6050 (Dada Atas 1002 - Akselerasi Sumbu X)
       const mpuData = await useFetchSensor("mpu", 1002, mannequinId);
       if (mpuData) {
         const latest = getLatestData(mpuData);
-        const val = latest?.x_rotation !== undefined ? latest.x_rotation : latest?.x_acceleration;
+        const val = latest?.x_acceleration !== undefined ? latest.x_acceleration : latest?.x_axis;
         if (val !== undefined) {
           setReadings((prev) => ({
             ...prev,
-            mpu: { value: Math.abs(parseFloat(val)).toFixed(1), unit: "°/s" },
+            mpu: { value: Math.abs(parseFloat(val)).toFixed(2), unit: "G" },
           }));
         }
       }
 
-      // 7. Load Cell
+      // 7. Load Cell (Leher 801)
       const loadData = await useFetchSensor("loadcell", 801, mannequinId);
       if (loadData) {
         const latest = getLatestData(loadData);
         if (latest?.value !== undefined) {
-          const totalKg = (65 + parseFloat(latest.value) * 1.8).toFixed(1);
           setReadings((prev) => ({
             ...prev,
-            loadcell: { value: totalKg, unit: "kg" },
+            loadcell: { value: parseFloat(latest.value).toFixed(1), unit: "N" },
           }));
         }
       }
 
-      // 8. Thermal Camera
+      // 8. Thermal Camera (Mata Kanan 702)
       const thermalData = await useFetchSensor("thermal", 702, mannequinId);
       if (thermalData) {
         const latest = getLatestData(thermalData);
@@ -361,8 +363,8 @@ const MannequinPage = () => {
           setIsCalibrating(false);
           Swal.fire({
             icon: "success",
-            title: "Kalibrasi Zero-Point Berhasil",
-            text: "Pemindaian blueprint selesai. Seluruh titik sensor anatomis mannequin telah berhasil di-scan dan di-reset ke titik nol referensi.",
+            title: t("mannequinPage.calibrationSuccess", "Kalibrasi Zero-Point Berhasil"),
+            text: t("mannequinPage.calibrationDesc", "Pemindaian blueprint selesai. Seluruh titik sensor anatomis mannequin telah berhasil di-scan dan di-reset ke titik nol referensi."),
             timer: 2400,
             showConfirmButton: false,
             background: "#ffffff",
@@ -398,8 +400,8 @@ const MannequinPage = () => {
 
     Swal.fire({
       icon: "success",
-      title: "Ekspor Berhasil",
-      text: "Data telemetri seluruh sensor mannequin berhasil diunduh dalam format CSV.",
+      title: t("mannequinPage.exportSuccess", "Ekspor Berhasil"),
+      text: t("mannequinPage.exportSuccessDesc", "Data telemetri seluruh sensor mannequin berhasil diunduh dalam format CSV."),
       timer: 2000,
       showConfirmButton: false,
     });
@@ -439,15 +441,15 @@ const MannequinPage = () => {
           <div className="relative z-10 max-w-3xl">
             <div className="flex items-center gap-2.5">
               <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                Visualisasi Manekin
+                {t("mannequinPage.title", "Visualisasi Manekin")}
               </h1>
               <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Manekin #{mannequinId}
+                {t("Mannequin", "Manekin")} #{mannequinId}
               </span>
             </div>
             <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
-              Visualisasi blueprint anatomi mannequin interaktif & telemetri kesehatan sensor secara real-time.
+              {t("mannequinPage.subtitle", "Visualisasi blueprint anatomi mannequin interaktif & telemetri kesehatan sensor secara real-time.")}
             </p>
           </div>
 
@@ -456,16 +458,16 @@ const MannequinPage = () => {
             {/* Status counts: 6 Normal 2 Perhatian 1 Kritis */}
             <div className="flex items-center gap-2.5 px-3 py-1.5 bg-slate-800/80 rounded-xl border border-slate-700/60 text-xs font-medium">
               <span className="flex items-center gap-1 text-emerald-400 font-semibold">
-                <CheckCircle2 className="w-3.5 h-3.5" /> {normalCount} Normal
+                <CheckCircle2 className="w-3.5 h-3.5" /> {normalCount} {t("dashboard.optimal", "Normal")}
               </span>
               {warningCount > 0 && (
                 <span className="flex items-center gap-1 text-amber-400 font-semibold">
-                  <AlertTriangle className="w-3.5 h-3.5" /> {warningCount} Perhatian
+                  <AlertTriangle className="w-3.5 h-3.5" /> {warningCount} {t("dashboard.warningStatus", "Perhatian")}
                 </span>
               )}
               {criticalCount > 0 && (
                 <span className="flex items-center gap-1 text-rose-400 font-semibold">
-                  <AlertTriangle className="w-3.5 h-3.5" /> {criticalCount} Kritis
+                  <AlertTriangle className="w-3.5 h-3.5" /> {criticalCount} {t("dashboard.criticalBadge", "Kritis")}
                 </span>
               )}
             </div>
@@ -483,7 +485,11 @@ const MannequinPage = () => {
                 }`}
                 title="Mulai kalibrasi zero-point">
                 <Sliders className={`w-3.5 h-3.5 ${isCalibrating ? "animate-spin text-white" : "text-emerald-400"}`} />
-                <span>{isCalibrating ? `Scanning (${calibrationProgress}%)` : "Kalibrasi"}</span>
+                <span>
+                  {isCalibrating
+                    ? `${t("mannequinPage.calibrating", "Scanning")} (${calibrationProgress}%)`
+                    : t("mannequinPage.calibrate", "Kalibrasi")}
+                </span>
               </button>
 
               {/* Tombol Log Riwayat */}
@@ -492,7 +498,7 @@ const MannequinPage = () => {
                 className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#00ba88] hover:bg-[#009e74] text-white transition-all shadow-xs cursor-pointer"
                 title="Buka log riwayat dan ekspor data">
                 <ScrollText className="w-3.5 h-3.5" />
-                <span>Log Riwayat</span>
+                <span>{t("common.viewLogs", "Log Riwayat")}</span>
               </button>
             </div>
           </div>
@@ -514,7 +520,7 @@ const MannequinPage = () => {
             <button
               onClick={() => setSelectedSensorKey(null)}
               className="text-xs font-bold text-[#00ba88] hover:text-[#009e74] hover:underline px-2 py-1 rounded-lg">
-              Tampilkan Semua
+              {t("showMore", "Tampilkan Semua")}
             </button>
           </div>
         )}

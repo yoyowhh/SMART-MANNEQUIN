@@ -29,9 +29,9 @@ const SECTIONS_14_POINTS = [
     colorTheme: {
       dot: 'bg-rose-500',
       badge: 'bg-rose-50 text-rose-700 border-rose-200',
-      cardActive: 'border-rose-500 shadow-md ring-2 ring-rose-500/20 bg-rose-50/15',
-      iconActive: 'bg-rose-500 text-white shadow-2xs',
-      iconDefault: 'bg-rose-50 text-rose-600',
+      cardActive: 'border-emerald-500 shadow-md ring-2 ring-emerald-500/25 bg-emerald-50/25',
+      iconActive: 'bg-emerald-500 text-white shadow-2xs',
+      iconDefault: 'bg-emerald-50 text-emerald-600',
     },
     locations: [
       { id: 'back-1', label: 'Punggung Kiri Atas' },
@@ -48,9 +48,9 @@ const SECTIONS_14_POINTS = [
     colorTheme: {
       dot: 'bg-pink-500',
       badge: 'bg-pink-50 text-pink-700 border-pink-200',
-      cardActive: 'border-pink-500 shadow-md ring-2 ring-pink-500/20 bg-pink-50/15',
-      iconActive: 'bg-pink-500 text-white shadow-2xs',
-      iconDefault: 'bg-pink-50 text-pink-600',
+      cardActive: 'border-emerald-500 shadow-md ring-2 ring-emerald-500/25 bg-emerald-50/25',
+      iconActive: 'bg-emerald-500 text-white shadow-2xs',
+      iconDefault: 'bg-emerald-50 text-emerald-600',
     },
     locations: [
       { id: 'arm-left-1', label: 'Lengan Kiri Atas' },
@@ -67,9 +67,9 @@ const SECTIONS_14_POINTS = [
     colorTheme: {
       dot: 'bg-blue-600',
       badge: 'bg-blue-50 text-blue-700 border-blue-200',
-      cardActive: 'border-blue-500 shadow-md ring-2 ring-blue-500/20 bg-blue-50/15',
-      iconActive: 'bg-blue-600 text-white shadow-2xs',
-      iconDefault: 'bg-blue-50 text-blue-600',
+      cardActive: 'border-emerald-500 shadow-md ring-2 ring-emerald-500/25 bg-emerald-50/25',
+      iconActive: 'bg-emerald-500 text-white shadow-2xs',
+      iconDefault: 'bg-emerald-50 text-emerald-600',
     },
     locations: [
       { id: 'leg-left-1', label: 'Paha Kiri Atas' },
@@ -297,6 +297,7 @@ const formatSensorVal = (val) => {
 };
 
 export default function SmartskinDetailPage() {
+  const { t } = useTranslation();
   const { sensorKey } = useParams();
   const params = useParams();
   const navigate = useNavigate();
@@ -306,6 +307,15 @@ export default function SmartskinDetailPage() {
   const IconComponent = config.icon;
 
   const [activeLocation, setActiveLocation] = useState(config.locations[0]);
+  const [selectedAreaTab, setSelectedAreaTab] = useState('all');
+
+  // Pastikan activeLocation selalu valid saat berganti sensor
+  useEffect(() => {
+    if (!config.locations.includes(activeLocation)) {
+      setActiveLocation(config.locations[0]);
+    }
+  }, [config.locations, activeLocation]);
+
   const [isLogsModalOpen, setIsLogsModalOpen] = useState(false);
   const [locationValues, setLocationValues] = useState(() => {
     const init = {};
@@ -542,7 +552,7 @@ export default function SmartskinDetailPage() {
           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer shrink-0"
         >
           <ScrollText size={15} />
-          <span>Lihat Log Riwayat Sensor</span>
+          <span>{t("common.viewLogs", "Lihat Log Riwayat Sensor")}</span>
         </button>
       </div>
 
@@ -563,7 +573,7 @@ export default function SmartskinDetailPage() {
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-800 shadow-xs flex items-center gap-1.5 font-mono">
                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        Depan:{' '}
+                        {t("common.front", "Depan")}:{' '}
                         {locationValues[activeLocation]?.front !== undefined
                           ? formatSensorVal(locationValues[activeLocation].front)
                           : '--'}{' '}
@@ -571,7 +581,7 @@ export default function SmartskinDetailPage() {
                       </span>
                       <span className="text-xs font-semibold px-2.5 py-1 rounded-lg bg-rose-50 border border-rose-300 text-rose-800 shadow-xs flex items-center gap-1.5 font-mono">
                         <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                        Belakang:{' '}
+                        {t("common.back", "Belakang")}:{' '}
                         {locationValues[activeLocation]?.back !== undefined
                           ? formatSensorVal(locationValues[activeLocation].back)
                           : '--'}{' '}
@@ -610,8 +620,8 @@ export default function SmartskinDetailPage() {
           <BaseCard height="h-[460px]" mobileHeight="min-h-[420px]" className="h-full flex flex-col justify-between">
             <div className="flex flex-col h-full justify-between items-center text-center pb-1">
               <div className="w-full flex justify-between items-center mb-2">
-                <p className="font-bold text-sm text-slate-800">Pilih Titik Anatomi</p>
-                <span className="text-[10px] font-semibold text-slate-400">Interaktif</span>
+                <p className="font-bold text-sm text-slate-800">{t("smartskinSensor.selectAnatomyPoint", "Pilih Titik Anatomi")}</p>
+                <span className="text-[10px] font-semibold text-slate-400">{t("smartskinSensor.interactive", "Interaktif")}</span>
               </div>
 
               <div className="flex-1 w-full flex items-center justify-center my-1">
@@ -619,6 +629,8 @@ export default function SmartskinDetailPage() {
                   <MannequinHotspotSVG
                     className="w-full h-full object-contain"
                     activePart={activeLocation}
+                    visibleParts={config.locations}
+                    labels={LOCATION_LABELS}
                     onClickPart={(part) => {
                       if (config.locations.includes(part)) {
                         setActiveLocation(part);
@@ -631,7 +643,7 @@ export default function SmartskinDetailPage() {
 
               <div className="w-full bg-slate-50 border border-slate-100 rounded-xl p-2.5 mt-auto">
                 <p className="text-[11px] text-slate-500 font-medium">
-                  Titik Aktif Terpilih:
+                  {t("smartskinSensor.selectedActivePoint", "Titik Aktif Terpilih:")}
                 </p>
                 <p className="text-xs font-bold text-emerald-700 truncate">
                   {LOCATION_LABELS[activeLocation] || activeLocation}
@@ -648,142 +660,164 @@ export default function SmartskinDetailPage() {
           <div>
             <h3 className="font-bold text-base sm:text-lg text-slate-800">
               {config.sections
-                ? `Rincian Bacaan Sensor per Area Tubuh (3 Area - 14 Titik Belakang)`
-                : `Rincian Bacaan Sensor per Titik Sendi (${config.locations.length} Titik)`}
+                ? t("smartskinSensor.bodyAreaDetail", "Rincian Bacaan Sensor per Area Tubuh (3 Area - 14 Titik Belakang)")
+                : `${t("smartskinSensor.jointPointDetail", "Rincian Bacaan Sensor per Titik Sendi")} (${config.locations.length} ${t("common.points", "Titik")})`}
             </h3>
             {config.sections && (
               <p className="text-xs text-slate-500 mt-1">
-                Monitoring sensor belakang terdistribusi dalam 3 card area: Area Punggung (4 titik), Area Lengan (4 titik), dan Area Kaki & Paha (6 titik).
+                {t("smartskinSensor.backSensorDist", "Monitoring sensor belakang terdistribusi dalam 3 card area: Area Punggung (4 titik), Area Lengan (4 titik), dan Area Kaki & Paha (6 titik).")}
               </p>
             )}
           </div>
         </div>
 
         {config.sections ? (
-          /* 3 Card Utama: 1 Card per Area (Area Punggung 4 titik, Area Lengan 4 titik, Area Kaki 6 titik) */
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-            {config.sections.map((sec) => (
-              <div
-                key={sec.id}
-                className="bg-white rounded-3xl p-5 sm:p-6 border border-slate-100 shadow-[0_4px_25px_rgba(0,0,0,0.03)] flex flex-col justify-between transition-all duration-300 hover:shadow-lg hover:border-slate-200"
+          /* Tampilan Tab Area + Grid Card Gambar 2 untuk 14 Titik Belakang */
+          <div className="space-y-6">
+            {/* Filter / Tab Navigasi Area Tubuh */}
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setSelectedAreaTab('all')}
+                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                  selectedAreaTab === 'all'
+                    ? 'bg-slate-900 text-white shadow-xs'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                }`}
               >
-                <div>
-                  {/* Header Card Area: Judul Area, Tag Titik, Icon */}
-                  <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 mb-4">
-                    <div className="flex items-center gap-2.5">
-                      <span className={`w-3.5 h-3.5 rounded-full ${sec.colorTheme.dot} shadow-xs shrink-0`} />
-                      <div>
-                        <h4 className="font-bold text-base text-slate-800 tracking-tight">
-                          {sec.title}
-                        </h4>
-                        <p className="text-[11px] text-slate-400 font-medium">
-                          {sec.subtitle}
-                        </p>
-                      </div>
+                {t("smartskinSensor.allPointsTab", "Semua Titik (14)")}
+              </button>
+              {config.sections.map((sec) => (
+                <button
+                  key={sec.id}
+                  type="button"
+                  onClick={() => setSelectedAreaTab(sec.id)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
+                    selectedAreaTab === sec.id
+                      ? 'bg-[#00ba88] text-white shadow-xs'
+                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <span className={`w-2 h-2 rounded-full ${selectedAreaTab === sec.id ? 'bg-white' : sec.colorTheme.dot}`} />
+                  <span>{t(`smartskinSensor.${sec.id}Area`, sec.title)}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
+                      selectedAreaTab === sec.id
+                        ? 'bg-white/20 text-white'
+                        : 'bg-slate-100 text-slate-600'
+                    }`}
+                  >
+                    {sec.locations.length}
+                  </span>
+                </button>
+              ))}
+            </div>
+
+            {/* List Seksi Area Tubuh dengan Card Grid Gambar 2 */}
+            {(selectedAreaTab === 'all'
+              ? config.sections
+              : config.sections.filter((s) => s.id === selectedAreaTab)
+            ).map((sec) => (
+              <div key={sec.id} className="space-y-3.5">
+                {/* Header Subseksi (saat tab Semua Titik aktif) */}
+                {selectedAreaTab === 'all' && (
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                    <div className="flex items-center gap-2">
+                      <span className={`w-3 h-3 rounded-full ${sec.colorTheme.dot} shadow-xs shrink-0`} />
+                      <h4 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                        {sec.title}
+                      </h4>
+                      <span className="text-xs text-slate-400 font-mono">
+                        ({sec.locations.length} Titik)
+                      </span>
                     </div>
-                    <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${sec.colorTheme.badge} shrink-0`}>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${sec.colorTheme.badge}`}>
                       {sec.tag}
                     </span>
                   </div>
+                )}
 
-                  {/* List Titik di dalam Card ini (Semua 4/6 Titik dalam 1 Card) */}
-                  <div className="flex flex-col gap-2.5">
-                    {sec.locations.map((locItem) => {
-                      const loc = typeof locItem === 'string' ? locItem : locItem.id;
-                      const label = typeof locItem === 'string' ? (LOCATION_LABELS[loc] || loc) : locItem.label;
-                      const valObj = locationValues[loc] || {};
-                      const isSelected = activeLocation === loc;
-                      const isOmega = config.unit === 'Ω' || config.unit === 'µε / Ω';
+                {/* Grid Card Gambar 2 per Area */}
+                <div className={`grid grid-cols-1 sm:grid-cols-2 ${sec.locations.length > 4 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-4`}>
+                  {sec.locations.map((locItem) => {
+                    const loc = typeof locItem === 'string' ? locItem : locItem.id;
+                    const label = typeof locItem === 'string' ? (LOCATION_LABELS[loc] || loc) : locItem.label;
+                    const valObj = locationValues[loc] || {};
+                    const isSelected = activeLocation === loc;
+                    const isOmega = config.unit === 'Ω' || config.unit === 'µε / Ω';
 
-                      const displayVal =
-                        valObj.back !== undefined
-                          ? isOmega
-                            ? Number(valObj.back).toLocaleString()
-                            : Number(valObj.back).toFixed(2)
-                          : '--';
+                    const displayVal =
+                      valObj.back !== undefined
+                        ? isOmega
+                          ? Number(valObj.back).toLocaleString()
+                          : Number(valObj.back).toFixed(2)
+                        : '--';
 
-                      return (
-                        <div
-                          key={loc}
-                          onClick={() => setActiveLocation(loc)}
-                          role="button"
-                          tabIndex={0}
-                          onKeyDown={(e) => e.key === 'Enter' && setActiveLocation(loc)}
-                          className={`p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer flex items-center justify-between gap-3 ${
-                            isSelected
-                              ? `${sec.colorTheme.cardActive} ring-2`
-                              : 'bg-slate-50/70 border-slate-100 hover:bg-slate-50 hover:border-slate-300'
-                          }`}
-                        >
-                          {/* Nama Titik & ID */}
-                          <div className="flex items-center gap-2.5 min-w-0">
-                            <span
-                              className={`w-2 h-2 rounded-full shrink-0 ${
-                                isSelected ? sec.colorTheme.dot : 'bg-slate-300'
-                              }`}
-                            />
-                            <div className="min-w-0">
-                              <p
-                                className={`text-xs font-bold tracking-tight truncate ${
-                                  isSelected ? 'text-slate-900' : 'text-slate-700'
-                                }`}
-                              >
+                    const rawNum = parseFloat(displayVal) || 0;
+                    const maxScale = config.unit === '°C' ? 50 : config.unit === 'N' ? 50 : config.unit === 'V' ? 3 : 100;
+                    const progressPercent = Math.min(100, Math.max(10, Math.round((rawNum / maxScale) * 100)));
+
+                    return (
+                      <div
+                        key={loc}
+                        onClick={() => setActiveLocation(loc)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && setActiveLocation(loc)}
+                        className={`bg-white rounded-2xl p-5 border shadow-sm relative overflow-hidden group cursor-pointer transition-all duration-300 flex flex-col justify-between ${
+                          isSelected
+                            ? 'border-emerald-500 shadow-xl ring-2 ring-emerald-500/25 bg-emerald-50/15 -translate-y-1'
+                            : 'border-slate-100 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2'
+                        }`}
+                      >
+                        <div>
+                          {/* Header Card: Judul Titik & Pill Status Badge */}
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-1.5 min-w-0 pr-1">
+                              <span className={`w-2 h-2 rounded-full shrink-0 ${sec.colorTheme.dot}`} />
+                              <h3 className="font-extrabold text-slate-800 text-sm sm:text-base truncate" title={label}>
                                 {label}
-                              </p>
-                              <span className="text-[10px] text-slate-400 font-mono">
-                                {loc}
-                              </span>
+                              </h3>
                             </div>
-                          </div>
-
-                          {/* Nilai Sensor & Status Aktif */}
-                          <div className="flex items-center gap-2.5 shrink-0">
-                            <div className="text-right">
-                              <div className="flex items-baseline justify-end gap-1 font-mono">
-                                <span
-                                  className={`font-black text-sm sm:text-base ${
-                                    isSelected ? 'text-slate-900' : 'text-slate-800'
-                                  }`}
-                                >
-                                  {displayVal}
-                                </span>
-                                <span className="text-[10px] font-medium text-slate-400 font-sans">
-                                  {config.unit}
-                                </span>
-                              </div>
-                            </div>
-
                             <span
-                              className={`text-[10px] font-bold px-2 py-0.5 rounded-md border transition-colors ${
+                              className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs shrink-0 transition-colors ${
                                 isSelected
-                                  ? 'bg-slate-900 text-white border-slate-900'
-                                  : 'bg-white text-slate-400 border-slate-200'
+                                  ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                                  : 'bg-slate-50 text-slate-500 border-slate-200 group-hover:border-emerald-200 group-hover:text-emerald-700 group-hover:bg-emerald-50'
                               }`}
                             >
-                              {isSelected ? 'Aktif' : 'Pilih'}
+                              {isSelected ? t("common.activePoint", "Titik Aktif") : t("common.selectPoint", "Pilih Titik")}
                             </span>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
 
-                {/* Footer Card */}
-                <div className="flex items-center justify-between text-[11px] text-slate-500 pt-3.5 border-t border-slate-100 mt-4">
-                  <span className="text-slate-400 text-[10px]">
-                    Sensor: <span className="font-semibold text-slate-600">{config.sensorName}</span>
-                  </span>
-                  <span className="text-[10px] font-semibold text-emerald-600 flex items-center gap-1">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                    Koneksi Normal
-                  </span>
+                          {/* Nilai Sensor Besar & Unit */}
+                          <div className="flex items-baseline gap-1.5 py-1 mb-1">
+                            <span className="text-3xl font-black text-[#00ba88] tracking-tight font-mono">
+                              {displayVal}
+                            </span>
+                            <span className="text-sm font-bold text-slate-400 font-sans">
+                              {config.unit}
+                            </span>
+                          </div>
+
+                          <div className="text-[11px] text-slate-500 mb-2 truncate">
+                            {config.sensorName} • <span className="font-mono text-slate-400">{loc}</span>
+                          </div>
+                        </div>
+
+                        <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
+                          <span>{t("common.telemetryStatus", "Status Telemetri")}</span>
+                          <span className="font-semibold text-emerald-700 font-mono">{t("common.optimalPrecision", "Presisi Optimal")}</span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))}
           </div>
         ) : (
-          /* Tampilan Standar Grid 8 Titik untuk Flex & Strain (Depan & Belakang) */
+          /* Tampilan Standar Grid 8 Titik untuk Flex & Strain (Depan & Belakang) - Desain Loadcell Style (Gambar 2) */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {config.locations.map((loc) => {
               const valObj = locationValues[loc] || {};
@@ -791,6 +825,7 @@ export default function SmartskinDetailPage() {
 
               const displayF = formatSensorVal(valObj.front);
               const displayB = formatSensorVal(valObj.back);
+              const numF = parseFloat(valObj.front) || 52.5;
 
               return (
                 <div
@@ -799,75 +834,70 @@ export default function SmartskinDetailPage() {
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => e.key === 'Enter' && setActiveLocation(loc)}
-                  className={`bg-white rounded-2xl p-4 sm:p-5 border shadow-sm relative overflow-hidden transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                  className={`bg-white rounded-2xl p-5 border shadow-sm relative overflow-hidden group cursor-pointer transition-all duration-300 flex flex-col justify-between ${
                     isSelected
-                      ? 'border-emerald-500 shadow-md ring-2 ring-emerald-500/20 bg-emerald-50/15'
-                      : 'border-slate-100 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-1'
+                      ? 'border-emerald-500 shadow-xl ring-2 ring-emerald-500/25 bg-emerald-50/15 -translate-y-1'
+                      : 'border-slate-100 hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2'
                   }`}
                 >
-                  <div className="flex items-center justify-between mb-3">
-                    <span
-                      className="text-xs font-bold text-slate-700 tracking-wider font-mono uppercase truncate pr-2"
-                      title={LOCATION_LABELS[loc] || loc}
-                    >
-                      {LOCATION_LABELS[loc] || loc}
-                    </span>
-                    <div
-                      className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                        isSelected
-                          ? 'bg-emerald-500 text-white shadow-2xs'
-                          : 'bg-emerald-50 text-[#00ba88]'
-                      }`}
-                    >
-                      <IconComponent className="w-4 h-4" />
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-2.5 py-1 mb-3">
-                    <div>
-                      <span className="text-[10px] font-bold text-emerald-600 uppercase font-mono tracking-wider flex items-center gap-1 mb-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                        Depan
+                  <div>
+                    {/* Header Card: Judul Titik & Pill Status Badge */}
+                    <div className="flex items-center justify-between mb-3">
+                      <h3 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                        {LOCATION_LABELS[loc] || loc}
+                      </h3>
+                      <span
+                        className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs transition-colors ${
+                          isSelected
+                            ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
+                            : 'bg-slate-50 text-slate-500 border-slate-200 group-hover:border-emerald-200 group-hover:text-emerald-700 group-hover:bg-emerald-50'
+                        }`}
+                      >
+                        {isSelected ? t("common.activePoint", "Titik Aktif") : t("common.selectPoint", "Pilih Titik")}
                       </span>
-                      <div className="flex items-baseline gap-1 font-mono">
-                        <span className="font-black text-slate-800 tracking-tight text-base sm:text-lg">
-                          {displayF}
-                        </span>
-                        <span className="text-[11px] font-medium text-slate-400 font-sans whitespace-nowrap">
-                          {config.unit}
-                        </span>
+                    </div>
+
+                    {/* Metrik Data Depan & Belakang */}
+                    <div className="grid grid-cols-2 gap-2.5 py-1 mb-1">
+                      <div>
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 uppercase font-mono tracking-wider mb-0.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          <span>{t("common.front", "Depan")}</span>
+                        </div>
+                        <div className="flex items-baseline gap-1 font-mono">
+                          <span className="text-2xl sm:text-[26px] font-black text-[#00ba88] tracking-tight">
+                            {displayF}
+                          </span>
+                          <span className="text-[10px] font-bold text-slate-400 font-sans">
+                            {config.unit}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="border-l border-slate-100 pl-2.5">
+                        <div className="flex items-center gap-1 text-[10px] font-bold text-rose-500 uppercase font-mono tracking-wider mb-0.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                          <span>{t("common.back", "Belakang")}</span>
+                        </div>
+                        <div className="flex items-baseline gap-1 font-mono">
+                          <span className="text-2xl sm:text-[26px] font-black text-slate-800 tracking-tight">
+                            {displayB}
+                          </span>
+                          <span className="text-[10px] font-bold text-slate-400 font-sans">
+                            {config.unit}
+                          </span>
+                        </div>
                       </div>
                     </div>
 
-                    <div className="border-l border-slate-100 pl-2.5">
-                      <span className="text-[10px] font-bold text-rose-600 uppercase font-mono tracking-wider flex items-center gap-1 mb-1">
-                        <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                        Belakang
-                      </span>
-                      <div className="flex items-baseline gap-1 font-mono">
-                        <span className="font-black text-slate-800 tracking-tight text-base sm:text-lg">
-                          {displayB}
-                        </span>
-                        <span className="text-[11px] font-medium text-slate-400 font-sans whitespace-nowrap">
-                          {config.unit}
-                        </span>
-                      </div>
+                    <div className="text-[11px] text-slate-500 mb-2">
+                      {config.sensorName || 'Flex Sensor & Strain Gauge'}
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2.5 border-t border-slate-50 mt-auto">
-                    <span
-                      className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${
-                        isSelected
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-300'
-                          : 'bg-slate-50 text-slate-500 border-slate-200'
-                      }`}
-                    >
-                      {isSelected ? 'Titik Aktif' : 'Pilih Titik'}
-                    </span>
-                    <span className="font-mono text-slate-400 text-[11px] truncate pl-1">
-                      {config.sensorName}
-                    </span>
+                  <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
+                    <span>{t("common.flexRange", "Rentang Fleksi")}</span>
+                    <span className="font-semibold text-emerald-700 font-mono">{t("common.optimalPrecision", "Presisi Optimal")}</span>
                   </div>
                 </div>
               );
