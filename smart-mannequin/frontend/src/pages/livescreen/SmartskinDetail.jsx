@@ -25,13 +25,13 @@ const SECTIONS_14_POINTS = [
     id: 'back',
     title: 'Area Punggung',
     subtitle: '4 Titik Sensor Kontak Tubuh Bagian Atas',
-    tag: '4 Titik',
+    tag: '4 Titik (Merah)',
     colorTheme: {
-      dot: 'bg-[#00ba88]',
-      badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      cardActive: 'border-[#00ba88] shadow-md ring-2 ring-[#00ba88]/20 bg-emerald-50/20',
-      iconActive: 'bg-[#00ba88] text-white shadow-2xs',
-      iconDefault: 'bg-emerald-50 text-[#00ba88]',
+      dot: 'bg-rose-500',
+      badge: 'bg-rose-50 text-rose-700 border-rose-200',
+      cardActive: 'border-rose-500 shadow-md ring-2 ring-rose-500/20 bg-rose-50/15',
+      iconActive: 'bg-rose-500 text-white shadow-2xs',
+      iconDefault: 'bg-rose-50 text-rose-600',
     },
     locations: [
       { id: 'back-1', label: 'Punggung Kiri Atas' },
@@ -44,13 +44,13 @@ const SECTIONS_14_POINTS = [
     id: 'arm',
     title: 'Area Lengan',
     subtitle: '4 Titik Sensor Kontak Lengan Kiri & Kanan',
-    tag: '4 Titik',
+    tag: '4 Titik (Pink)',
     colorTheme: {
-      dot: 'bg-[#00ba88]',
-      badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      cardActive: 'border-[#00ba88] shadow-md ring-2 ring-[#00ba88]/20 bg-emerald-50/20',
-      iconActive: 'bg-[#00ba88] text-white shadow-2xs',
-      iconDefault: 'bg-emerald-50 text-[#00ba88]',
+      dot: 'bg-pink-500',
+      badge: 'bg-pink-50 text-pink-700 border-pink-200',
+      cardActive: 'border-pink-500 shadow-md ring-2 ring-pink-500/20 bg-pink-50/15',
+      iconActive: 'bg-pink-500 text-white shadow-2xs',
+      iconDefault: 'bg-pink-50 text-pink-600',
     },
     locations: [
       { id: 'arm-left-1', label: 'Lengan Kiri Atas' },
@@ -63,13 +63,13 @@ const SECTIONS_14_POINTS = [
     id: 'leg',
     title: 'Area Kaki & Paha',
     subtitle: '6 Titik Sensor Kontak Paha Kiri & Kanan',
-    tag: '6 Titik',
+    tag: '6 Titik (Biru)',
     colorTheme: {
-      dot: 'bg-[#00ba88]',
-      badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
-      cardActive: 'border-[#00ba88] shadow-md ring-2 ring-[#00ba88]/20 bg-emerald-50/20',
-      iconActive: 'bg-[#00ba88] text-white shadow-2xs',
-      iconDefault: 'bg-emerald-50 text-[#00ba88]',
+      dot: 'bg-blue-600',
+      badge: 'bg-blue-50 text-blue-700 border-blue-200',
+      cardActive: 'border-blue-500 shadow-md ring-2 ring-blue-500/20 bg-blue-50/15',
+      iconActive: 'bg-blue-600 text-white shadow-2xs',
+      iconDefault: 'bg-blue-50 text-blue-600',
     },
     locations: [
       { id: 'leg-left-1', label: 'Paha Kiri Atas' },
@@ -435,18 +435,11 @@ export default function SmartskinDetailPage() {
           right: 15,
         },
       },
-      colors: ['#00ba88', '#0ea5e9'],
-      fill: {
-        type: 'gradient',
-        gradient: {
-          shadeIntensity: 1,
-          opacityFrom: 0.25,
-          opacityTo: 0.02,
-          stops: [0, 90, 100],
-        },
-      },
+      colors: config.sections
+        ? [config.key === 'temp' ? '#ef4444' : config.key === 'press' ? '#00ba88' : '#3b82f6']
+        : ['#10b981', '#ef4444'], // Green for Depan, Red for Belakang (Flex)
       stroke: {
-        width: config.sections ? [2.5] : [2.5, 2.5],
+        width: config.sections ? [3] : [3, 3],
         curve: 'smooth',
       },
       markers: {
@@ -456,16 +449,13 @@ export default function SmartskinDetailPage() {
         },
       },
       legend: {
-        show: true,
+        show: !config.sections, // Sembunyikan legend jika hanya ada 1 series
         position: 'top',
         horizontalAlign: 'left',
         offsetX: -6,
         offsetY: -6,
         fontSize: '12px',
         fontWeight: 600,
-        labels: {
-          colors: '#475569',
-        },
         markers: {
           width: 10,
           height: 10,
@@ -510,7 +500,7 @@ export default function SmartskinDetailPage() {
     if (config.sections) {
       return [
         {
-          name: config.title,
+          name: `${config.title} (Sisi Belakang)`,
           data: history.backData || [],
         },
       ];
@@ -628,7 +618,7 @@ export default function SmartskinDetailPage() {
                   options={chartOptions}
                   series={chartSeries}
                   height={320}
-                  type="area"
+                  type="line"
                 />
               </div>
             </div>
@@ -649,7 +639,6 @@ export default function SmartskinDetailPage() {
                   <MannequinHotspotSVG
                     className="w-full h-full object-contain"
                     activePart={activeLocation}
-                    visibleParts={config.locations}
                     onClickPart={(part) => {
                       if (config.locations.includes(part)) {
                         setActiveLocation(part);
@@ -679,130 +668,167 @@ export default function SmartskinDetailPage() {
           <div>
             <h3 className="font-bold text-base sm:text-lg text-slate-800">
               {config.sections
-                ? `Rincian Bacaan Sensor per Titik Lokasi (14 Titik)`
+                ? `Rincian Bacaan Sensor per Titik Lokasi (3 Section - 14 Titik)`
                 : `Rincian Bacaan Sensor per Titik Lokasi (${config.locations.length} Titik)`}
             </h3>
+            {config.sections && (
+              <p className="text-xs text-slate-500 mt-1">
+                Monitoring terdistribusi pada 4 titik punggung (merah), 4 titik lengan (pink), dan 6 titik paha/kaki (biru).
+              </p>
+            )}
           </div>
         </div>
 
         {config.sections ? (
-          /* Tampilan 2 Baris: Baris Atas (Punggung 2x2 & Lengan 2x2), Baris Bawah (Kaki & Paha Sebaris) */
-          (() => {
-            const secBack = config.sections[0];
-            const secArm = config.sections[1];
-            const secLeg = config.sections[2];
+          /* Tampilan 3 Section Card Khusus Suhu, Tekanan, & Getaran (14 Titik Total) */
+          <div className="flex flex-col gap-6">
+            {config.sections.map((sec) => (
+              <div
+                key={sec.id}
+                className="bg-white rounded-2xl p-5 sm:p-6 border border-slate-100 shadow-[0_2px_15px_rgba(0,0,0,0.02)] flex flex-col gap-4"
+              >
+                {/* Header Section Card */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                  <div className="flex items-center gap-2.5">
+                    <span className={`w-3.5 h-3.5 rounded-full ${sec.colorTheme.dot} shadow-xs shrink-0`} />
+                    <h4 className="font-bold text-base text-slate-800 tracking-tight">
+                      {sec.title}
+                    </h4>
+                    <span className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${sec.colorTheme.badge}`}>
+                      {sec.tag}
+                    </span>
+                  </div>
+                  <p className="text-xs text-slate-400 font-medium">
+                    {sec.subtitle}
+                  </p>
+                </div>
 
-            const renderCard = (locItem, colorTheme) => {
-              const loc = typeof locItem === 'string' ? locItem : locItem.id;
-              const label = typeof locItem === 'string' ? (LOCATION_LABELS[loc] || loc) : locItem.label;
-              const valObj = locationValues[loc] || {};
-              const isSelected = activeLocation === loc;
-              const isOmega = config.unit === 'Ω' || config.unit === 'µε / Ω';
-
-              const displayVal =
-                valObj.back !== undefined
-                  ? isOmega
-                    ? Number(valObj.back).toLocaleString()
-                    : Number(valObj.back).toFixed(2)
-                  : '--';
-
-              return (
+                {/* Grid Kartu Sensor per Titik di dalam Section ini */}
                 <div
-                  key={loc}
-                  onClick={() => setActiveLocation(loc)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && setActiveLocation(loc)}
-                  className={`bg-white rounded-2xl p-4 sm:p-4.5 transition-all duration-200 cursor-pointer flex flex-col justify-between border shadow-sm ${
-                    isSelected
-                      ? `${colorTheme.cardActive} ring-2 shadow-md`
-                      : 'border-slate-100 hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/10 hover:-translate-y-0.5'
+                  className={`grid grid-cols-1 sm:grid-cols-2 ${
+                    sec.locations.length === 6
+                      ? "lg:grid-cols-3 xl:grid-cols-6 gap-3.5"
+                      : "lg:grid-cols-4 gap-4"
                   }`}
                 >
-                  {/* Header Titik: Nama Lokasi di kiri & Icon Sensor di kanan */}
-                  <div className="flex items-center justify-between mb-2">
-                    <span
-                      className="text-xs font-bold text-slate-700 tracking-wide uppercase truncate pr-2 font-mono"
-                      title={label}
-                    >
-                      {label}
-                    </span>
-                    <div
-                      className={`w-7 h-7 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                        isSelected
-                          ? colorTheme.iconActive
-                          : colorTheme.iconDefault
-                      }`}
-                    >
-                      <IconComponent className="w-3.5 h-3.5" />
-                    </div>
-                  </div>
+                  {sec.locations.map((locItem) => {
+                    const loc = typeof locItem === 'string' ? locItem : locItem.id;
+                    const label = typeof locItem === 'string' ? (LOCATION_LABELS[loc] || loc) : locItem.label;
+                    const valObj = locationValues[loc] || {};
+                    const isSelected = activeLocation === loc;
+                    const isOmega = config.unit === 'Ω' || config.unit === 'µε / Ω';
 
-                  {/* Nilai Sensor Utama (Tunggal - Hanya Sisi Belakang) */}
-                  <div className="my-2 flex items-baseline gap-1.5 font-mono">
-                    <span
-                      className={`font-black tracking-tight ${
-                        isSelected ? 'text-slate-900' : 'text-slate-800'
-                      } ${isOmega ? 'text-xl sm:text-2xl' : 'text-2xl sm:text-3xl'}`}
-                    >
-                      {displayVal}
-                    </span>
-                    <span className="text-xs font-semibold text-slate-400 font-sans">
-                      {config.unit}
-                    </span>
-                  </div>
+                    const displayF =
+                      valObj.front !== undefined
+                        ? isOmega
+                          ? Number(valObj.front).toLocaleString()
+                          : Number(valObj.front).toFixed(2)
+                        : '--';
 
-                  {/* Footer Tile: Status Titik Aktif & Tipe Sensor */}
-                  <div className="flex items-center justify-between text-[11px] pt-2.5 border-t border-slate-100 mt-auto">
-                    <span
-                      className={`px-2 py-0.5 rounded-md font-bold text-[10px] border transition-colors ${
-                        isSelected
-                          ? 'bg-[#00ba88] text-white border-[#00ba88]'
-                          : 'bg-slate-50 text-slate-500 border-slate-200'
-                      }`}
-                    >
-                      {isSelected ? 'Titik Aktif' : 'Pilih Titik'}
-                    </span>
-                    <span className="font-mono text-slate-400 text-[10px] truncate pl-1">
-                      {config.sensorName}
-                    </span>
-                  </div>
-                </div>
-              );
-            };
+                    const displayB =
+                      valObj.back !== undefined
+                        ? isOmega
+                          ? Number(valObj.back).toLocaleString()
+                          : Number(valObj.back).toFixed(2)
+                        : '--';
 
-            return (
-              <div className="flex flex-col gap-4 sm:gap-5">
-                {/* Baris Atas: Punggung (2x2) di kiri, Lengan (2x2) di kanan */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5">
-                  {/* Punggung (4 Titik: 2x2) */}
-                  <div className="grid grid-cols-2 gap-3.5">
-                    {[
-                      secBack.locations[0], // Punggung Kiri Atas
-                      secBack.locations[2], // Punggung Kanan Atas
-                      secBack.locations[1], // Punggung Kiri Bawah
-                      secBack.locations[3], // Punggung Kanan Bawah
-                    ].map((locItem) => renderCard(locItem, secBack.colorTheme))}
-                  </div>
+                    return (
+                      <div
+                        key={loc}
+                        onClick={() => setActiveLocation(loc)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => e.key === 'Enter' && setActiveLocation(loc)}
+                        className={`bg-white rounded-2xl p-4 sm:p-4.5 border shadow-sm relative overflow-hidden transition-all duration-300 cursor-pointer flex flex-col justify-between ${
+                          isSelected
+                            ? `${sec.colorTheme.cardActive} ring-2`
+                            : 'border-slate-100 hover:border-slate-300 hover:shadow-lg hover:-translate-y-1'
+                        }`}
+                      >
+                        {/* Header Titik Lokasi: Nama Titik di kiri & Icon Sensor di kanan */}
+                        <div className="flex items-center justify-between mb-3">
+                          <span
+                            className="text-xs font-bold text-slate-600 tracking-wider font-mono uppercase truncate pr-2"
+                            title={label}
+                          >
+                            {label}
+                          </span>
+                          <div
+                            className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
+                              isSelected
+                                ? sec.colorTheme.iconActive
+                                : sec.colorTheme.iconDefault
+                            }`}
+                          >
+                            <IconComponent className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                          </div>
+                        </div>
 
-                  {/* Lengan (4 Titik: 2x2) */}
-                  <div className="grid grid-cols-2 gap-3.5">
-                    {[
-                      secArm.locations[0], // Lengan Kiri Atas
-                      secArm.locations[2], // Lengan Kanan Atas
-                      secArm.locations[1], // Lengan Kiri Bawah
-                      secArm.locations[3], // Lengan Kanan Bawah
-                    ].map((locItem) => renderCard(locItem, secArm.colorTheme))}
-                  </div>
-                </div>
+                        {/* Nilai Utama Depan & Belakang */}
+                        <div className="grid grid-cols-2 gap-2.5 py-1 mb-3">
+                          {/* Sisi Depan */}
+                          <div>
+                            <span className="text-[10px] font-bold text-emerald-600 uppercase font-mono tracking-wider flex items-center gap-1 mb-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                              Depan
+                            </span>
+                            <div className="flex items-baseline gap-1 font-mono">
+                              <span
+                                className={`font-black text-slate-800 tracking-tight ${
+                                  isOmega ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'
+                                }`}
+                              >
+                                {displayF}
+                              </span>
+                              <span className="text-[11px] font-medium text-slate-400 font-sans">
+                                {config.unit}
+                              </span>
+                            </div>
+                          </div>
 
-                {/* Baris Bawah: Kaki dan Paha (6 Titik Sebaris) */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
-                  {secLeg.locations.map((locItem) => renderCard(locItem, secLeg.colorTheme))}
+                          {/* Sisi Belakang */}
+                          <div className="border-l border-slate-100 pl-2.5">
+                            <span className="text-[10px] font-bold text-rose-600 uppercase font-mono tracking-wider flex items-center gap-1 mb-1">
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                              Belakang
+                            </span>
+                            <div className="flex items-baseline gap-1 font-mono">
+                              <span
+                                className={`font-black text-slate-800 tracking-tight ${
+                                  isOmega ? 'text-base sm:text-lg' : 'text-lg sm:text-xl'
+                                }`}
+                              >
+                                {displayB}
+                              </span>
+                              <span className="text-[11px] font-medium text-slate-400 font-sans">
+                                {config.unit}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Footer Card: Badge Status & Nama Hardware Sensor */}
+                        <div className="flex items-center justify-between text-[11px] text-slate-500 pt-2 border-t border-slate-50 mt-auto">
+                          <span
+                            className={`px-2 py-0.5 rounded-md font-bold text-[10px] border ${
+                              isSelected
+                                ? 'bg-slate-900 text-white border-slate-900'
+                                : 'bg-slate-50 text-slate-500 border-slate-200'
+                            }`}
+                          >
+                            {isSelected ? 'Titik Aktif' : 'Pilih Titik'}
+                          </span>
+                          <span className="font-mono text-slate-400 text-[10px] truncate pl-1">
+                            {config.sensorName}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
-            );
-          })()
+            ))}
+          </div>
         ) : (
           /* Tampilan Standar Grid 8 Titik untuk Flex & Strain */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

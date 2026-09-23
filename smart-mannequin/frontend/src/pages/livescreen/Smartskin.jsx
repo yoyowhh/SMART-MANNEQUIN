@@ -365,20 +365,18 @@ export default function SmartskinPage() {
             sliceCats
           );
 
-          const isSingleSensor = sensor.key !== 'flex';
-
           const chartOptions = {
             ...baseChartOpts,
             title: {
               text: undefined,
             },
-            colors: isSingleSensor ? ["#10b981"] : ["#10b981", "#ef4444"], // Single green for temp/press/vib, green/red for flex
+            colors: ["#10b981", "#ef4444"], // Green for Depan, Red for Belakang
             stroke: {
-              width: isSingleSensor ? [2.5] : [2.5, 2.5],
+              width: [2.5, 2.5],
               curve: "smooth",
             },
             legend: {
-              show: !isSingleSensor,
+              show: true,
               position: "top",
               horizontalAlign: "left",
               offsetX: -6,
@@ -403,23 +401,16 @@ export default function SmartskinPage() {
             },
           };
 
-          const series = isSingleSensor
-            ? [
-                {
-                  name: title,
-                  data: sliceBack,
-                },
-              ]
-            : [
-                {
-                  name: "Depan",
-                  data: sliceFront,
-                },
-                {
-                  name: "Belakang",
-                  data: sliceBack,
-                },
-              ];
+          const series = [
+            {
+              name: "Depan",
+              data: sliceFront,
+            },
+            {
+              name: "Belakang",
+              data: sliceBack,
+            },
+          ];
 
           return (
             <div
@@ -434,7 +425,7 @@ export default function SmartskinPage() {
                 className="h-full flex flex-col hover:border-emerald-300 hover:shadow-xl hover:shadow-emerald-500/15"
               >
                 <div className="flex flex-col h-full">
-                  {/* Card Header: Kiri ada Judul Sensor, Kanan ada Badge Nilai & Status Dot */}
+                  {/* Card Header: Kiri ada Judul Sensor, Kanan ada Badge D: / B: & Status Dot */}
                   <div className="flex flex-wrap justify-between items-center mb-1 gap-2">
                     {/* Sisi Kiri: Judul di atas */}
                     <div className="flex flex-col">
@@ -446,26 +437,17 @@ export default function SmartskinPage() {
                       </h3>
                     </div>
 
-                    {/* Sisi Kanan: Badge Nilai Sensor serta live indicator dot */}
+                    {/* Sisi Kanan: Badge D: dan B: serta live indicator dot */}
                     <div className="flex items-center gap-2 shrink-0">
                       <div className="flex items-center gap-1.5 flex-wrap">
-                        {isSingleSensor ? (
-                          <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded bg-emerald-50 border border-emerald-300 text-emerald-800 shadow-xs flex items-center gap-1.5">
-                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                            {displayB} {sensor.unit}
-                          </span>
-                        ) : (
-                          <>
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-300 text-emerald-800 shadow-xs flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                              D: {displayF} {sensor.unit}
-                            </span>
-                            <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-50 border border-rose-300 text-rose-800 shadow-xs flex items-center gap-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
-                              B: {displayB} {sensor.unit}
-                            </span>
-                          </>
-                        )}
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-300 text-emerald-800 shadow-xs flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                          D: {displayF} {sensor.unit}
+                        </span>
+                        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-rose-50 border border-rose-300 text-rose-800 shadow-xs flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-rose-500" />
+                          B: {displayB} {sensor.unit}
+                        </span>
                       </div>
 
                       <div
