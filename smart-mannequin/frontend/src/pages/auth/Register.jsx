@@ -39,12 +39,12 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen w-full bg-[#0d1522] p-2 sm:p-4 lg:p-6 flex items-center justify-center font-sans antialiased">
+    <div className="min-h-screen lg:h-screen w-full bg-[#0d1522] p-2 sm:p-4 lg:p-5 xl:p-6 flex items-center justify-center font-sans antialiased overflow-y-auto lg:overflow-hidden no-scrollbar">
       {/* Outer Shell matching the modern split card reference */}
-      <div className="w-full max-w-[1400px] min-h-[92vh] rounded-[36px] bg-[#090f19] border border-slate-800/80 shadow-2xl overflow-hidden flex flex-col lg:flex-row">
+      <div className="w-full max-w-[1360px] h-auto lg:h-[92vh] lg:max-h-[860px] rounded-[28px] sm:rounded-[36px] bg-[#090f19] border border-slate-800/80 shadow-2xl overflow-hidden flex flex-col lg:flex-row my-auto">
         
         {/* Left Side: Atmosphere, Hero Visual, and Tagline */}
-        <div className="relative flex-1 flex flex-col justify-between p-8 sm:p-12 lg:p-14 overflow-hidden bg-gradient-to-br from-emerald-950/70 via-slate-950 to-[#070d18] text-white">
+        <div className="relative flex-1 flex flex-col justify-between p-6 sm:p-8 lg:p-8 xl:p-12 overflow-hidden bg-gradient-to-br from-emerald-950/70 via-slate-950 to-[#070d18] text-white">
           {/* Ambient Lighting Orbs */}
           <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-emerald-500/15 blur-[120px] pointer-events-none" />
           <div className="absolute bottom-10 right-10 w-96 h-96 rounded-full bg-teal-500/10 blur-[130px] pointer-events-none" />
@@ -60,35 +60,35 @@ const RegisterPage = () => {
 
           {/* Top Brand */}
           <div className="relative z-10 flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center backdrop-blur-md shadow-sm">
+            <div className="h-9 w-9 rounded-xl bg-emerald-500/20 border border-emerald-500/30 flex items-center justify-center backdrop-blur-md shadow-sm">
               <img
                 src="/images/stas-rg/logo_stas.png"
                 alt="STAS Logo"
-                className="h-7 w-auto object-contain"
+                className="h-6 w-auto object-contain"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
               />
             </div>
             <div>
-              <span className="text-xl font-bold tracking-tight text-white font-serif">
+              <span className="text-lg xl:text-xl font-bold tracking-tight text-white font-serif">
                 STAS
               </span>
-              <span className="text-xs text-emerald-400 block -mt-1 font-sans font-medium tracking-wide">
+              <span className="text-[11px] xl:text-xs text-emerald-400 block -mt-1 font-sans font-medium tracking-wide">
                 Smart Mannequin
               </span>
             </div>
           </div>
 
           {/* Central Mannequin Visual & Telemetry Badges */}
-          <div className="relative z-10 my-8 sm:my-10 flex flex-col items-center justify-center">
-            <div className="relative group max-w-[280px] sm:max-w-[340px]">
+          <div className="relative z-10 my-3 lg:my-4 xl:my-6 flex flex-col items-center justify-center">
+            <div className="relative group max-w-[200px] sm:max-w-[240px] lg:max-w-[260px] xl:max-w-[320px]">
               <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-2xl group-hover:bg-emerald-500/30 transition-all duration-700" />
               
               <img
                 src="/images/img-manekin.png"
                 alt="Smart Mannequin"
-                className="relative z-10 w-full h-auto object-contain max-h-[300px] sm:max-h-[380px] drop-shadow-[0_20px_35px_rgba(0,0,0,0.6)] transform hover:scale-[1.02] transition-transform duration-500"
+                className="relative z-10 w-full h-auto object-contain max-h-[180px] sm:max-h-[220px] lg:max-h-[260px] xl:max-h-[320px] drop-shadow-[0_20px_35px_rgba(0,0,0,0.6)] transform hover:scale-[1.02] transition-transform duration-500"
                 onError={(e) => {
                   e.currentTarget.src = "/manequin.png";
                 }}
@@ -108,32 +108,32 @@ const RegisterPage = () => {
 
           {/* Headline & Subtitle */}
           <div className="relative z-10 max-w-xl">
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight font-sans">
+            <h1 className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-extrabold tracking-tight text-white leading-tight font-sans">
               Join the research on passenger comfort.
             </h1>
-            <p className="text-sm sm:text-base text-slate-300/90 mt-3 font-normal leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300/90 mt-2 font-normal leading-relaxed">
               Create an account to access live sensor data, calibration tools, and telemetry exports.
             </p>
           </div>
         </div>
 
         {/* Right Side: Clean Rounded Form Card like in Reference */}
-        <div className="w-full lg:w-[480px] xl:w-[540px] bg-[#fdfbf7] p-6 sm:p-10 lg:p-12 flex flex-col justify-center items-center">
-          <div className="w-full max-w-[390px]">
+        <div className="w-full lg:w-[440px] xl:w-[500px] bg-[#fdfbf7] p-6 sm:p-8 lg:p-8 xl:p-10 flex flex-col justify-center items-center overflow-y-auto no-scrollbar">
+          <div className="w-full max-w-[380px]">
             {/* Card Title */}
-            <div className="text-left mb-7">
-              <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            <div className="text-left mb-4 xl:mb-6">
+              <h2 className="text-2xl xl:text-3xl font-extrabold text-slate-900 tracking-tight">
                 Create an account
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1.5">
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
                 Register to get access to telemetry dashboards.
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-3 xl:space-y-3.5">
               {/* Full Name */}
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <label
                   htmlFor="name"
                   className="block text-xs font-bold text-slate-700 tracking-wide">
@@ -149,13 +149,13 @@ const RegisterPage = () => {
                     name="name"
                     placeholder="Enter your full name"
                     required
-                    className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm rounded-2xl py-3 pl-10 pr-4 focus:outline-none focus:border-[#00ba88] focus:ring-2 focus:ring-[#00ba88]/20 transition-all shadow-sm"
+                    className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm rounded-2xl py-2.5 xl:py-3 pl-10 pr-4 focus:outline-none focus:border-[#00ba88] focus:ring-2 focus:ring-[#00ba88]/20 transition-all shadow-sm"
                   />
                 </div>
               </div>
 
               {/* Email Address */}
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <label
                   htmlFor="email"
                   className="block text-xs font-bold text-slate-700 tracking-wide">
@@ -171,13 +171,13 @@ const RegisterPage = () => {
                     name="email"
                     placeholder="Enter your email"
                     required
-                    className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm rounded-2xl py-3 pl-10 pr-4 focus:outline-none focus:border-[#00ba88] focus:ring-2 focus:ring-[#00ba88]/20 transition-all shadow-sm"
+                    className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm rounded-2xl py-2.5 xl:py-3 pl-10 pr-4 focus:outline-none focus:border-[#00ba88] focus:ring-2 focus:ring-[#00ba88]/20 transition-all shadow-sm"
                   />
                 </div>
               </div>
 
               {/* Password */}
-              <div className="space-y-1.5">
+              <div className="space-y-1">
                 <label
                   htmlFor="password"
                   className="block text-xs font-bold text-slate-700 tracking-wide">
@@ -194,7 +194,7 @@ const RegisterPage = () => {
                     minLength={8}
                     placeholder="At least 8 characters"
                     required
-                    className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm rounded-2xl py-3 pl-10 pr-11 focus:outline-none focus:border-[#00ba88] focus:ring-2 focus:ring-[#00ba88]/20 transition-all shadow-sm"
+                    className="w-full bg-white border border-slate-200 text-slate-900 placeholder-slate-400 text-sm rounded-2xl py-2.5 xl:py-3 pl-10 pr-11 focus:outline-none focus:border-[#00ba88] focus:ring-2 focus:ring-[#00ba88]/20 transition-all shadow-sm"
                   />
                   <button
                     type="button"
@@ -207,11 +207,11 @@ const RegisterPage = () => {
               </div>
 
               {/* Submit Button */}
-              <div className="pt-2">
+              <div className="pt-1.5 xl:pt-2">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full py-3.5 px-6 rounded-2xl font-bold text-white bg-[#00ba88] hover:bg-[#009e73] active:scale-[0.99] transition-all duration-200 shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 text-sm tracking-wide disabled:opacity-70 disabled:cursor-not-allowed">
+                  className="w-full py-3 xl:py-3.5 px-6 rounded-2xl font-bold text-white bg-[#00ba88] hover:bg-[#009e73] active:scale-[0.99] transition-all duration-200 shadow-md shadow-emerald-500/20 flex items-center justify-center gap-2 text-sm tracking-wide disabled:opacity-70 disabled:cursor-not-allowed">
                   {loading ? (
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
@@ -225,7 +225,7 @@ const RegisterPage = () => {
             </form>
 
             {/* Bottom Login Link */}
-            <div className="mt-7 text-center">
+            <div className="mt-4 xl:mt-5 text-center">
               <p className="text-xs text-slate-500">
                 Already have an account?{" "}
                 <Link
@@ -237,7 +237,7 @@ const RegisterPage = () => {
             </div>
 
             {/* Institutional Subtext */}
-            <div className="mt-6 pt-4 border-t border-slate-200/60 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
+            <div className="mt-3.5 xl:mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-center gap-1.5 text-[11px] text-slate-400">
               <ShieldCheck className="w-3.5 h-3.5 text-[#00ba88]" />
               <span>Telkom University • Smart Anthropometric Mannequin</span>
             </div>

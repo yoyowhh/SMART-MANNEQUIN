@@ -106,7 +106,7 @@
     "logoutSuccess": "Logout Successful!"
   },
   "dashboard": {
-    "welcomeAdmin": "Welcome Admin STAS",
+    "welcomeAdmin": "Welcome {{name}} to Smart Mannequin",
     "heroSubtitle": "Anthropometric smart mannequin for passenger comfort and safety studies.",
     "testingCabinet": "Passenger Comfort & Ergonomics Testing Cabinet",
     "systemStatus": "System Status",

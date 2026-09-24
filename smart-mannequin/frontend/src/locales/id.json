@@ -106,7 +106,7 @@
     "logoutSuccess": "Logout Berhasil!"
   },
   "dashboard": {
-    "welcomeAdmin": "Selamat Datang Admin STAS-RG",
+    "welcomeAdmin": "Selamat Datang {{name}} di Smart Mannequin",
     "heroSubtitle": "Manekin cerdas antropometrik untuk studi kenyamanan dan keselamatan penumpang.",
     "testingCabinet": "Kabinet Uji Kenyamanan & Ergonomi Penumpang",
     "systemStatus": "Status Sistem",

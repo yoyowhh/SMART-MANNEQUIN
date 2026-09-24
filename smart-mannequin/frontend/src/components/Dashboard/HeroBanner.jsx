@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Sliders, Download } from "lucide-react";
 import Swal from "sweetalert2";
@@ -11,6 +11,18 @@ export default function HeroBanner({
   calibrationProgress = 0,
 }) {
   const { t } = useTranslation();
+
+  const [userName, setUserName] = useState(() => {
+    return localStorage.getItem("user") || "User";
+  });
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setUserName(localStorage.getItem("user") || "User");
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const handleCalibrate = () => {
     if (onCalibrate) {
@@ -37,12 +49,15 @@ export default function HeroBanner({
       <div className="absolute bottom-0 left-1/3 -mb-12 w-64 h-64 rounded-full bg-teal-400/20 blur-2xl pointer-events-none" />
 
       {/* Hero Main Row */}
-      <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
-        <div className="max-w-3xl">
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            {t("dashboard.welcomeAdmin", "Selamat Datang Admin STAS-RG")}
+      <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="flex-1 w-full">
+          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-4xl font-extrabold tracking-tight text-white leading-tight">
+            {t("dashboard.welcomeAdmin", {
+              name: userName,
+              defaultValue: `Selamat Datang ${userName} di Smart Mannequin`,
+            })}
           </h1>
-          <p className="text-sm sm:text-base text-emerald-100/90 mt-2 leading-relaxed font-medium">
+          <p className="text-xs sm:text-sm md:text-base text-emerald-100/90 mt-2 leading-relaxed font-medium">
             {t("dashboard.heroSubtitle", "Anthropometric smart mannequin for passenger comfort and safety studies.")}
           </p>
         </div>

@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 // Definisi lengkap 9 sensor anatomis mannequin sesuai blueprint desain terbaru
 // merah       : Sensor suara (KY-601/602 - 2 titik telinga)
 // kuning      : Sensor gas (MQ - 1 titik hidung/mulut)
-// hijau       : Sensor Lidar (1 titik dahi/kepala atas)
-// biru        : Kamera Vision (2 titik mata kiri & kanan)
+// hijau lime  : Sensor Lidar (1 titik puncak kepala)
+// cyan        : Kamera Vision (2 titik mata kiri & kanan)
 // ungu        : Sensor ADXL345 (2 titik bahu kiri & kanan)
 // orange      : Sensor MPU6050 (1 titik dada atas / sternum)
 // hitam       : Sensor BME280 (1 titik dada tengah / solar plexus)
-// pink        : Sensor Load Cell (5 titik: leher, paha kiri, paha kanan, lutut kiri, lutut kanan)
+// pink        : Sensor Load Cell (5 titik: leher, paha kiri & kanan, tulang kering kiri & kanan)
 // hijau neon  : SmartSkin (2 titik dada pektoral kiri & kanan)
 const SENSOR_HOTSPOTS = [
   {
@@ -17,11 +17,11 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor Lidar",
     tag: "JARAK 3D",
     route: "/sensor/lidar",
-    color: "#22c55e", // Hijau
-    locationName: "Dahi / Kepala Atas",
+    color: "#74cc00", // Hijau Lime (Puncak Kepala)
+    locationName: "Puncak Kepala",
     shape: "circle",
     cx: 200,
-    cy: 31.5,
+    cy: 26.2,
     r: 7,
   },
   {
@@ -29,12 +29,12 @@ const SENSOR_HOTSPOTS = [
     name: "Kamera Vision",
     tag: "VISION AI",
     route: "/sensor/camera",
-    color: "#0ea5e9", // Biru (Cyan/Sky)
+    color: "#0cc0df", // Cyan / Biru Muda (Mata Kiri & Kanan)
     locationName: "Mata Kiri & Kanan",
     shape: "multi-circle",
     nodes: [
-      { cx: 195, cy: 56.5, label: "Mata Kiri", r: 5.5 },
-      { cx: 211, cy: 56.5, label: "Mata Kanan", r: 5.5 },
+      { cx: 191.3, cy: 51.8, label: "Mata Kiri", r: 5.5 },
+      { cx: 207.3, cy: 51.9, label: "Mata Kanan", r: 5.5 },
     ],
   },
   {
@@ -42,12 +42,12 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor Suara (KY-601/602)",
     tag: "AKUSTIK",
     route: "/sensor/sound",
-    color: "#ef4444", // Merah
+    color: "#ff3131", // Merah (Telinga Kiri & Kanan)
     locationName: "Binaural Ears (Telinga Kiri & Kanan)",
     shape: "multi-circle",
     nodes: [
-      { cx: 177, cy: 61.8, label: "Telinga Kiri (KY-601)", r: 7 },
-      { cx: 224, cy: 61.8, label: "Telinga Kanan (KY-602)", r: 7 },
+      { cx: 175.3, cy: 59.9, label: "Telinga Kiri (KY-601)", r: 7 },
+      { cx: 225.8, cy: 59.9, label: "Telinga Kanan (KY-602)", r: 7 },
     ],
   },
   {
@@ -55,11 +55,11 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor Gas",
     tag: "LINGKUNGAN",
     route: "/sensor/gas",
-    color: "#eab308", // Kuning
+    color: "#ffd21f", // Kuning (Hidung)
     locationName: "Hidung / Saluran Pernafasan",
     shape: "circle",
     cx: 200,
-    cy: 70,
+    cy: 65.6,
     r: 6.5,
   },
   {
@@ -67,15 +67,15 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor Load Cell",
     tag: "BEBAN TEKANAN",
     route: "/sensor/loadcell",
-    color: "#ec4899", // Pink
-    locationName: "5 Titik: Leher, Paha & Lutut",
+    color: "#ff66c4", // Pink (Leher, Paha & Tulang Kering)
+    locationName: "5 Titik: Leher, Paha & Tulang Kering",
     shape: "multi-circle",
     nodes: [
-      { cx: 200, cy: 93, label: "Leher", r: 7 },
-      { cx: 165.5, cy: 283, label: "Paha Kiri", r: 7 },
-      { cx: 237, cy: 283, label: "Paha Kanan", r: 7 },
-      { cx: 162, cy: 349, label: "Lutut Kiri", r: 7 },
-      { cx: 237, cy: 350, label: "Lutut Kanan", r: 7 },
+      { cx: 200.1, cy: 91.6, label: "Leher", r: 7 },
+      { cx: 165.8, cy: 282, label: "Paha Kiri", r: 7 },
+      { cx: 237.5, cy: 282, label: "Paha Kanan", r: 7 },
+      { cx: 160.1, cy: 395.5, label: "Tulang Kering Kiri", r: 7 },
+      { cx: 242.8, cy: 395.6, label: "Tulang Kering Kanan", r: 7 },
     ],
   },
   {
@@ -83,12 +83,12 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor ADXL345",
     tag: "AKSELEROMETER",
     route: "/sensor/adxl",
-    color: "#8b5cf6", // Ungu
+    color: "#5e17eb", // Ungu (Bahu Kiri & Kanan)
     locationName: "Bahu Kiri & Bahu Kanan",
     shape: "multi-circle",
     nodes: [
-      { cx: 151, cy: 105, label: "Bahu Kiri", r: 7 },
-      { cx: 254, cy: 105, label: "Bahu Kanan", r: 7 },
+      { cx: 150.9, cy: 103.2, label: "Bahu Kiri", r: 7 },
+      { cx: 254.3, cy: 103.1, label: "Bahu Kanan", r: 7 },
     ],
   },
   {
@@ -96,11 +96,11 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor MPU6050",
     tag: "ORIENTASI / IMU",
     route: "/sensor/mpu6050",
-    color: "#f97316", // Orange
+    color: "#ff751f", // Orange (Dada Atas / Sternum)
     locationName: "Dada Atas (Sternum)",
     shape: "circle",
-    cx: 200,
-    cy: 118,
+    cx: 200.7,
+    cy: 116.3,
     r: 7.5,
   },
   {
@@ -108,12 +108,12 @@ const SENSOR_HOTSPOTS = [
     name: "SmartSkin Multimodal",
     tag: "SMARTSKIN",
     route: "/sensor/smartskin",
-    color: "#84cc16", // Hijau Neon / Lime
+    color: "#9eff1f", // Hijau Neon / Lime (Dada Pektoral)
     locationName: "Dada Pektoral (Kiri & Kanan)",
     shape: "multi-circle",
     nodes: [
-      { cx: 168, cy: 124, label: "Dada Kiri", r: 7.5 },
-      { cx: 233, cy: 124, label: "Dada Kanan", r: 7.5 },
+      { cx: 168.3, cy: 122.1, label: "Dada Kiri", r: 7.5 },
+      { cx: 233.3, cy: 122.1, label: "Dada Kanan", r: 7.5 },
     ],
   },
   {
@@ -121,11 +121,11 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor BME280",
     tag: "MIKROKLIMAT",
     route: "/sensor/bme",
-    color: "#0f172a", // Hitam
+    color: "#000000", // Hitam (Solar Plexus)
     locationName: "Dada Tengah (Solar Plexus)",
     shape: "circle",
     cx: 200,
-    cy: 143,
+    cy: 141.3,
     r: 7.5,
     hasWhiteBorder: true,
   },

@@ -27,7 +27,7 @@ const SECTIONS_14_POINTS = [
     subtitle: '4 Titik Sensor Kontak Tubuh Bagian Belakang Atas',
     tag: '4 Titik Belakang',
     colorTheme: {
-      dot: 'bg-rose-500',
+      dot: 'bg-[#ff3131]',
       badge: 'bg-rose-50 text-rose-700 border-rose-200',
       cardActive: 'border-emerald-500 shadow-md ring-2 ring-emerald-500/25 bg-emerald-50/25',
       iconActive: 'bg-emerald-500 text-white shadow-2xs',
@@ -46,8 +46,8 @@ const SECTIONS_14_POINTS = [
     subtitle: '4 Titik Sensor Kontak Lengan Belakang Kiri & Kanan',
     tag: '4 Titik Belakang',
     colorTheme: {
-      dot: 'bg-pink-500',
-      badge: 'bg-pink-50 text-pink-700 border-pink-200',
+      dot: 'bg-[#ffd21f]',
+      badge: 'bg-amber-50 text-amber-800 border-amber-200',
       cardActive: 'border-emerald-500 shadow-md ring-2 ring-emerald-500/25 bg-emerald-50/25',
       iconActive: 'bg-emerald-500 text-white shadow-2xs',
       iconDefault: 'bg-emerald-50 text-emerald-600',
@@ -65,7 +65,7 @@ const SECTIONS_14_POINTS = [
     subtitle: '6 Titik Sensor Kontak Paha Belakang Kiri & Kanan',
     tag: '6 Titik Belakang',
     colorTheme: {
-      dot: 'bg-blue-600',
+      dot: 'bg-[#2563eb]',
       badge: 'bg-blue-50 text-blue-700 border-blue-200',
       cardActive: 'border-emerald-500 shadow-md ring-2 ring-emerald-500/25 bg-emerald-50/25',
       iconActive: 'bg-emerald-500 text-white shadow-2xs',
@@ -556,9 +556,9 @@ export default function SmartskinDetailPage() {
       </div>
 
       {/* Main Grid: Chart + Anatomy SVG */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6 items-stretch">
-        {/* Left: Real-time Chart (2 cols) */}
-        <div className="lg:col-span-2">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6 items-stretch">
+        {/* Left: Real-time Chart */}
+        <div className={config.key === 'flex' ? 'lg:col-span-7 xl:col-span-7' : 'lg:col-span-8 xl:col-span-8'}>
           <BaseCard height="h-[460px]" mobileHeight="min-h-[420px]" className="h-full flex flex-col justify-between">
             <div className="flex flex-col h-full justify-between pb-1">
               {/* Header: Kiri ada Judul, Kanan ada Badge Nilai Data Sensor */}
@@ -614,8 +614,8 @@ export default function SmartskinDetailPage() {
           </BaseCard>
         </div>
 
-        {/* Right: Mannequin SVG Hotspot (1 col) - Disamakan Tingginya */}
-        <div>
+        {/* Right: Mannequin SVG Hotspot (Pilih Titik Anatomi) */}
+        <div className={config.key === 'flex' ? 'lg:col-span-5 xl:col-span-5' : 'lg:col-span-4 xl:col-span-4'}>
           <BaseCard height="h-[460px]" mobileHeight="min-h-[420px]" className="h-full flex flex-col justify-between">
             <div className="flex flex-col h-full justify-between items-center text-center pb-1">
               <div className="w-full flex justify-between items-center mb-2">
@@ -623,31 +623,73 @@ export default function SmartskinDetailPage() {
                 <span className="text-[10px] font-semibold text-slate-400">{t("smartskinSensor.interactive", "Interaktif")}</span>
               </div>
 
-              <div className="flex-1 w-full flex items-center justify-center my-1">
-                <div className="w-[185px] h-[260px] flex items-center justify-center">
-                  <MannequinHotspotSVG
-                    className="w-full h-full object-contain"
-                    activePart={activeLocation}
-                    visibleParts={config.locations}
-                    labels={LOCATION_LABELS}
-                    onClickPart={(part) => {
-                      if (config.locations.includes(part)) {
-                        setActiveLocation(part);
-                      }
-                    }}
-                    imageHref="/images/mannequin/Mannequin Back Full Body.png"
-                  />
-                </div>
-              </div>
+              {config.key === 'flex' ? (
+                /* Flex & Strain Gauge: Dua Sisi Berdampingan dalam 1 Card (Depan & Belakang) */
+                <div className="flex-1 w-full grid grid-cols-2 gap-3 items-center justify-center my-auto">
+                  {/* Sisi Depan */}
+                  <div className="flex flex-col items-center h-full justify-center">
+                    <span className="text-[11px] font-bold text-slate-600 bg-slate-100/90 border border-slate-200 px-2.5 py-0.5 rounded-full mb-1 shadow-2xs">
+                      {t("common.frontView", "Tampak Depan")}
+                    </span>
+                    <div className="w-full h-[335px] flex items-center justify-center">
+                      <MannequinHotspotSVG
+                        className="w-full h-full object-contain"
+                        side="front"
+                        activePart={activeLocation}
+                        visibleParts={config.locations}
+                        labels={LOCATION_LABELS}
+                        onClickPart={(part) => {
+                          if (config.locations.includes(part)) {
+                            setActiveLocation(part);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
 
-              <div className="w-full bg-slate-50 border border-slate-100 rounded-xl p-2.5 mt-auto">
-                <p className="text-[11px] text-slate-500 font-medium">
-                  {t("smartskinSensor.selectedActivePoint", "Titik Aktif Terpilih:")}
-                </p>
-                <p className="text-xs font-bold text-emerald-700 truncate">
-                  {LOCATION_LABELS[activeLocation] || activeLocation}
-                </p>
-              </div>
+                  {/* Sisi Belakang */}
+                  <div className="flex flex-col items-center h-full justify-center border-l border-slate-100 pl-2">
+                    <span className="text-[11px] font-bold text-slate-600 bg-slate-100/90 border border-slate-200 px-2.5 py-0.5 rounded-full mb-1 shadow-2xs">
+                      {t("common.backView", "Tampak Belakang")}
+                    </span>
+                    <div className="w-full h-[335px] flex items-center justify-center">
+                      <MannequinHotspotSVG
+                        className="w-full h-full object-contain"
+                        side="back"
+                        activePart={activeLocation}
+                        visibleParts={config.locations}
+                        labels={LOCATION_LABELS}
+                        onClickPart={(part) => {
+                          if (config.locations.includes(part)) {
+                            setActiveLocation(part);
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                /* Suhu, Tekanan, Getaran: 1 Sisi Belakang (14 Titik) */
+                <div className="flex-1 w-full flex flex-col items-center justify-center my-auto">
+                  <span className="text-[11px] font-bold text-slate-600 bg-slate-100/90 border border-slate-200 px-2.5 py-0.5 rounded-full mb-1 shadow-2xs">
+                    {t("common.backView", "Tampak Belakang")}
+                  </span>
+                  <div className="w-[195px] h-[335px] flex items-center justify-center">
+                    <MannequinHotspotSVG
+                      className="w-full h-full object-contain"
+                      side="back"
+                      activePart={activeLocation}
+                      visibleParts={config.locations}
+                      labels={LOCATION_LABELS}
+                      onClickPart={(part) => {
+                        if (config.locations.includes(part)) {
+                          setActiveLocation(part);
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
           </BaseCard>
         </div>
