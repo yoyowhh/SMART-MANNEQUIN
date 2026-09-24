@@ -19,10 +19,10 @@ const Footer = () => {
             />
             <div className="footer-brand-text flex flex-col">
               <h3 className="footer-brand-title text-base sm:text-lg font-extrabold text-slate-900 tracking-tight leading-tight">
-                STAS RG Smart Mannequin
+                STAS-RG Smart Mannequin
               </h3>
               <span className="footer-brand-sub text-xs font-semibold text-[#00ba88] tracking-wide">
-                Center of Excellence & Research Group
+                Research Center Smart Technology & Applied Science
               </span>
             </div>
           </div>
@@ -135,7 +135,7 @@ const Footer = () => {
           <p className="font-medium text-slate-600">
             &copy; {new Date().getFullYear()} STAS RG Smart Mannequin
           </p>
-          <p>Anthropometric smart mannequin for passenger comfort & safety.</p>
+          <p>Research Center Smart Technology & Applied Science.</p>
         </div>
       </div>
     </footer>

@@ -177,7 +177,7 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
     }
 
     if (path.includes("/sensor/lidar")) {
-      crumbs.push({ label: t("sensor.lidar", "Sensor LiDAR") });
+      crumbs.push({ label: t("sensor.lidar", "Sensor Lidar") });
       return crumbs;
     }
 
@@ -232,7 +232,7 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
           />
           <div className="flex flex-col">
             <span className="font-extrabold text-slate-900 leading-tight text-base tracking-tight">
-              STAS RG
+              STAS-RG
             </span>
             <span className="text-[11px] font-semibold text-[#00ba88] leading-none">
               Smart Mannequin
@@ -296,9 +296,8 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
             <span className="w-2.5 h-2.5 rounded-full bg-[#00ba88] inline-block" />
             <span>Manekin {mannequinId}</span>
             <ChevronDown
-              className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${
-                isMannequinOpen ? "rotate-180" : ""
-              }`}
+              className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${isMannequinOpen ? "rotate-180" : ""
+                }`}
             />
           </button>
 
@@ -309,18 +308,16 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
               </div>
               <button
                 onClick={() => switchMannequin(1)}
-                className={`w-full text-left px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between hover:bg-slate-50 transition ${
-                  String(mannequinId) === "1"
+                className={`w-full text-left px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between hover:bg-slate-50 transition ${String(mannequinId) === "1"
                     ? "text-[#00ba88] font-bold bg-[#00ba88]/10"
                     : "text-slate-700"
-                }`}>
+                  }`}>
                 <span className="flex items-center gap-2">
                   <span
-                    className={`w-2 h-2 rounded-full ${
-                      String(mannequinId) === "1"
+                    className={`w-2 h-2 rounded-full ${String(mannequinId) === "1"
                         ? "bg-[#00ba88]"
                         : "bg-slate-300"
-                    }`}
+                      }`}
                   />
                   {t("header.mannequin1", "Manekin 1")}
                 </span>
@@ -330,18 +327,16 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
               </button>
               <button
                 onClick={() => switchMannequin(2)}
-                className={`w-full text-left px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between hover:bg-slate-50 transition ${
-                  String(mannequinId) === "2"
+                className={`w-full text-left px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between hover:bg-slate-50 transition ${String(mannequinId) === "2"
                     ? "text-[#00ba88] font-bold bg-[#00ba88]/10"
                     : "text-slate-700"
-                }`}>
+                  }`}>
                 <span className="flex items-center gap-2">
                   <span
-                    className={`w-2 h-2 rounded-full ${
-                      String(mannequinId) === "2"
+                    className={`w-2 h-2 rounded-full ${String(mannequinId) === "2"
                         ? "bg-[#00ba88]"
                         : "bg-slate-300"
-                    }`}
+                      }`}
                   />
                   {t("header.mannequin2", "Manekin 2")}
                 </span>
@@ -357,11 +352,10 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
         <div className="flex items-center bg-[#F1F5F9] p-1 rounded-full border border-slate-200">
           <button
             onClick={() => changeLanguage("id")}
-            className={`flex items-center justify-center w-7 h-7 rounded-full transition-all ${
-              currentLang === "id"
+            className={`flex items-center justify-center w-7 h-7 rounded-full transition-all ${currentLang === "id"
                 ? "bg-[#00ba88] ring-2 ring-[#00ba88]/30 shadow-xs scale-105"
                 : "opacity-60 hover:opacity-100 hover:bg-slate-200"
-            }`}
+              }`}
             title="Bahasa Indonesia">
             <ReactCountryFlag
               countryCode="ID"
@@ -376,11 +370,10 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
           </button>
           <button
             onClick={() => changeLanguage("en")}
-            className={`flex items-center justify-center w-7 h-7 rounded-full transition-all ${
-              currentLang === "en"
+            className={`flex items-center justify-center w-7 h-7 rounded-full transition-all ${currentLang === "en"
                 ? "bg-[#00ba88] ring-2 ring-[#00ba88]/30 shadow-xs scale-105"
                 : "opacity-60 hover:opacity-100 hover:bg-slate-200"
-            }`}
+              }`}
             title="English (UK)">
             <ReactCountryFlag
               countryCode="GB"
@@ -463,9 +456,8 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
             />
             <span className="hidden sm:inline font-semibold">{userName}</span>
             <ChevronDown
-              className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${
-                isProfileOpen ? "rotate-180" : ""
-              }`}
+              className={`w-3.5 h-3.5 text-slate-500 transition-transform duration-200 ${isProfileOpen ? "rotate-180" : ""
+                }`}
             />
           </button>
 

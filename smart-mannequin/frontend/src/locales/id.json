@@ -106,7 +106,7 @@
     "logoutSuccess": "Logout Berhasil!"
   },
   "dashboard": {
-    "welcomeAdmin": "Selamat Datang Admin STAS",
+    "welcomeAdmin": "Selamat Datang Admin STAS-RG",
     "heroSubtitle": "Manekin cerdas antropometrik untuk studi kenyamanan dan keselamatan penumpang.",
     "testingCabinet": "Kabinet Uji Kenyamanan & Ergonomi Penumpang",
     "systemStatus": "Status Sistem",
@@ -160,7 +160,7 @@
     "overall": "Keseluruhan",
     "sound": "Sensor Suara",
     "gas": "Sensor Gas",
-    "lidar": "Sensor LiDAR",
+    "lidar": "Sensor Lidar",
     "camera": "Kamera Termal",
     "wit": "Sensor Witmotion",
     "adxl": "Sensor ADXL345",
@@ -184,7 +184,7 @@
     "deskripsiSensor": "Sensor Gas MQ-2 adalah sensor yang dapat mendeteksi gas seperti LPG, i-butana, propana, metana, alkohol, hidrogen, asap dan karbon monoksida. Sensor ini memiliki dua pin keluaran, satu adalah keluaran analog (AO) dan yang lainnya adalah keluaran digital (DO). Sensor ini memiliki sensitivitas yang tinggi dan waktu respon yang cepat. Sensor ini sangat cocok untuk aplikasi deteksi gas."
   },
   "lidarSensor": {
-    "deskripsiSensor": "Sensor LiDAR TF-Mini adalah sensor pengukur jarak optik berbasis laser time-of-flight yang terpasang pada manekin untuk mendeteksi keberadaan objek, perimeter halangan, dan jarak kedekatan lingkungan secara real-time. Sensor ini memiliki akurasi tinggi dan respon frekuensi cepat untuk aplikasi keselamatan kerja dan navigasi."
+    "deskripsiSensor": "Sensor Lidar TF-Mini adalah sensor pengukur jarak optik berbasis laser time-of-flight yang terpasang pada manekin untuk mendeteksi keberadaan objek, perimeter halangan, dan jarak kedekatan lingkungan secara real-time. Sensor ini memiliki akurasi tinggi dan respon frekuensi cepat untuk aplikasi keselamatan kerja dan navigasi."
   },
   "cameraSensor": {
     "deskripsiSensor": "AMG8833 adalah generasi berikutnya dari sensor IR termal 8x8 dari Panasonic, dan menawarkan kinerja yang lebih tinggi dari pendahulunya AMG8831. Sensor ini hanya mendukung I2C, dan memiliki pin interupsi yang dapat dikonfigurasi yang dapat dipicu ketika setiap piksel melebihi atau kurang dari ambang batas yang Anda tetapkan. Sensor ini pada dasarnya adalah kamera termal, yang ketika terhubung ke mikrokontroler (atau raspberry pi) akan mengembalikan array dari 64 pembacaan suhu inframerah individu melalui I2C. Papan pengemudi kompatibel dengan setiap mikrokontroler yang dapat berkomunikasi melalui I2C, atau dengan raspberry pi menggunakan perpustakaan wiringPi.",

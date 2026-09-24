@@ -41,7 +41,7 @@ module.exports = router;
  * @swagger
  * tags:
  *  name: lidar
- *  description: API Sensor lidar
+ *  description: API Sensor Lidar
  * /sensor/lidar:
  *  get:
  *    summary: Returns the list of all the lidar

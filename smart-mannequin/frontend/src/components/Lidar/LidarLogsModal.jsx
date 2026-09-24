@@ -42,8 +42,8 @@ export default function LidarLogsModal({
       const rows = Array.isArray(response?.data)
         ? response.data
         : Array.isArray(response)
-        ? response
-        : [];
+          ? response
+          : [];
       setReadings(rows);
     } catch (err) {
       console.error("Error fetching lidar logs:", err);
@@ -108,8 +108,8 @@ export default function LidarLogsModal({
         val < 50
           ? "Objek Sangat Dekat"
           : val <= 150
-          ? "Zona Waspada"
-          : "Area Aman";
+            ? "Zona Waspada"
+            : "Area Aman";
 
       return [
         no++,
@@ -143,180 +143,180 @@ export default function LidarLogsModal({
 
   return (
     <LogsModalPortal isOpen={isOpen} onClose={onClose}>
-        {/* Header Modal */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
-          <div className="flex items-center gap-3">
-            <div className="p-2.5 rounded-xl bg-emerald-50 text-[#00ba88] border border-emerald-100 shadow-2xs">
-              <FileSpreadsheet size={20} />
-            </div>
-            <div>
-              <h3 className="font-bold text-slate-800 text-lg">
-                Log Riwayat Sensor LiDAR (TF-Mini 3D)
-              </h3>
-              <p className="text-xs text-slate-500 font-mono">
-                Data histori telemetri perimeter & jarak halangan • Total {totalItems.toLocaleString()} data
-              </p>
-            </div>
+      {/* Header Modal */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex items-center gap-3">
+          <div className="p-2.5 rounded-xl bg-emerald-50 text-[#00ba88] border border-emerald-100 shadow-2xs">
+            <FileSpreadsheet size={20} />
           </div>
-          <button
-            onClick={onClose}
-            className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
-          >
-            <X size={20} />
-          </button>
-        </div>
-
-        {/* Toolbar Filter & Aksi */}
-        <div className="px-6 py-3 border-b border-slate-100 bg-white flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-              <Filter size={13} className="text-[#00ba88]" />
-              <span>{t("common.filter", "Filter:")}</span>
-            </div>
-
-            <select
-              value={selectedStatus}
-              onChange={(e) => {
-                setSelectedStatus(e.target.value);
-                setPage(1);
-              }}
-              className="text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-            >
-              {statusFilters.map((s) => (
-                <option key={s.value} value={s.value}>
-                  {s.label}
-                </option>
-              ))}
-            </select>
-
-            <select
-              value={fetchLimit}
-              onChange={(e) => {
-                setFetchLimit(Number(e.target.value));
-                setPage(1);
-              }}
-              className="text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
-            >
-              <option value={50}>{t("common.takeData", { count: 50 }, "Ambil 50 Data")}</option>
-              <option value={100}>{t("common.takeData", { count: 100 }, "Ambil 100 Data")}</option>
-              <option value={200}>{t("common.takeData", { count: 200 }, "Ambil 200 Data")}</option>
-            </select>
-
-            <button
-              onClick={fetchLogs}
-              disabled={loading}
-              className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer disabled:opacity-50"
-            >
-              <RefreshCw size={13} className={loading ? "animate-spin text-[#00ba88]" : ""} />
-              <span>{t("common.refresh", "Segarkan")}</span>
-            </button>
-          </div>
-
-          <button
-            onClick={handleExport}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
-          >
-            <Download size={14} className="text-emerald-400" />
-            <span>{t("common.exportCsv", "Ekspor CSV")}</span>
-          </button>
-        </div>
-
-        {/* Tabel Konten Log */}
-        <div className="flex-1 overflow-y-auto overscroll-contain p-6">
-          {loading && readings.length === 0 ? (
-            <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
-              {t("lidarSensor.loadingLogs", "Memuat data log riwayat LiDAR...")}
-            </div>
-          ) : paginatedRows.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-2">
-              <Compass className="w-10 h-10 text-slate-300" />
-              <p className="text-sm font-medium">{t("common.noLogData", "Belum ada rekaman log telemetri LiDAR.")}</p>
-              <p className="text-xs text-slate-400">
-                {t("lidarSensor.noLogsDesc", "Pastikan sensor LiDAR TF-Mini terhubung dan aktif mendeteksi jarak.")}
-              </p>
-            </div>
-          ) : (
-            <div className="border border-slate-200 rounded-xl overflow-hidden shadow-xs">
-              <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 text-slate-600 border-b border-slate-200 font-semibold uppercase tracking-wider text-[11px] font-mono">
-                  <tr>
-                    <th className="py-3 px-4">{t("common.time", "Waktu")} (WIB)</th>
-                    <th className="py-3 px-4">Sensor ID</th>
-                    <th className="py-3 px-4 text-right">{t("lidarSensor.distance", "Jarak")} (cm)</th>
-                    <th className="py-3 px-4 text-right">{t("lidarSensor.distance", "Jarak")} (Meter)</th>
-                    <th className="py-3 px-4 text-center">{t("common.status", "Status")}</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 text-slate-700 font-sans">
-                  {paginatedRows.map((r, idx) => {
-                    const val = parseFloat(r.value) || 0;
-                    const isNear = val < 50;
-                    const isMid = val >= 50 && val <= 150;
-
-                    return (
-                      <tr key={r.event_id || idx} className="hover:bg-slate-50/80 transition-colors">
-                        <td className="py-2.5 px-4 text-slate-500 font-mono text-[11px]">
-                          {r.inputed_at
-                            ? moment(r.inputed_at).format("DD/MM/YYYY, HH:mm:ss")
-                            : "-"}
-                        </td>
-                        <td className="py-2.5 px-4 font-mono font-semibold text-slate-600">
-                          {r.sensor_id || 901}
-                        </td>
-                        <td className="py-2.5 px-4 text-right font-mono font-bold text-[#00ba88] text-sm">
-                          {val.toFixed(1)} cm
-                        </td>
-                        <td className="py-2.5 px-4 text-right font-mono text-slate-500">
-                          {(val / 100).toFixed(2)} m
-                        </td>
-                        <td className="py-2.5 px-4 text-center">
-                          {isNear ? (
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
-                              {t("lidarSensor.tooClose", "Terlalu Dekat (< 50 cm)")}
-                            </span>
-                          ) : isMid ? (
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
-                              {t("lidarSensor.midDistance", "Waspada (50 - 150 cm)")}
-                            </span>
-                          ) : (
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-                              {t("lidarSensor.safeDistance", "Aman (> 150 cm)")}
-                            </span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </div>
-
-        {/* Footer Pagination */}
-        <div className="px-6 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-xs text-slate-600">
           <div>
-            {t("common.page", "Halaman")} <span className="font-bold text-slate-800">{currentPage}</span> {t("common.of", "dari")}{" "}
-            <span className="font-bold text-slate-800">{totalPages}</span>
-            <span className="text-slate-400 ml-2">({totalItems} {t("common.data", "data")})</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setPage((p) => Math.max(1, p - 1))}
-              disabled={currentPage <= 1 || loading}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white disabled:opacity-40 hover:bg-slate-50 transition-colors font-medium cursor-pointer"
-            >
-              {t("common.prev", "Sebelumnya")}
-            </button>
-            <button
-              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-              disabled={currentPage >= totalPages || loading}
-              className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white disabled:opacity-40 hover:bg-slate-50 transition-colors font-medium cursor-pointer"
-            >
-              {t("common.next", "Selanjutnya")}
-            </button>
+            <h3 className="font-bold text-slate-800 text-lg">
+              Log Riwayat Sensor Lidar (TF-Mini 3D)
+            </h3>
+            <p className="text-xs text-slate-500 font-mono">
+              Data histori telemetri perimeter & jarak halangan • Total {totalItems.toLocaleString()} data
+            </p>
           </div>
         </div>
-      </LogsModalPortal>
+        <button
+          onClick={onClose}
+          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors cursor-pointer"
+        >
+          <X size={20} />
+        </button>
+      </div>
+
+      {/* Toolbar Filter & Aksi */}
+      <div className="px-6 py-3 border-b border-slate-100 bg-white flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+            <Filter size={13} className="text-[#00ba88]" />
+            <span>{t("common.filter", "Filter:")}</span>
+          </div>
+
+          <select
+            value={selectedStatus}
+            onChange={(e) => {
+              setSelectedStatus(e.target.value);
+              setPage(1);
+            }}
+            className="text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+          >
+            {statusFilters.map((s) => (
+              <option key={s.value} value={s.value}>
+                {s.label}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={fetchLimit}
+            onChange={(e) => {
+              setFetchLimit(Number(e.target.value));
+              setPage(1);
+            }}
+            className="text-xs border border-slate-200 rounded-lg px-3 py-2 bg-white text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500"
+          >
+            <option value={50}>{t("common.takeData", { count: 50 }, "Ambil 50 Data")}</option>
+            <option value={100}>{t("common.takeData", { count: 100 }, "Ambil 100 Data")}</option>
+            <option value={200}>{t("common.takeData", { count: 200 }, "Ambil 200 Data")}</option>
+          </select>
+
+          <button
+            onClick={fetchLogs}
+            disabled={loading}
+            className="inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50 text-slate-700 transition-colors cursor-pointer disabled:opacity-50"
+          >
+            <RefreshCw size={13} className={loading ? "animate-spin text-[#00ba88]" : ""} />
+            <span>{t("common.refresh", "Segarkan")}</span>
+          </button>
+        </div>
+
+        <button
+          onClick={handleExport}
+          className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-[#0f172a] hover:bg-slate-800 text-white text-xs font-semibold shadow-xs transition-all cursor-pointer"
+        >
+          <Download size={14} className="text-emerald-400" />
+          <span>{t("common.exportCsv", "Ekspor CSV")}</span>
+        </button>
+      </div>
+
+      {/* Tabel Konten Log */}
+      <div className="flex-1 overflow-y-auto overscroll-contain p-6">
+        {loading && readings.length === 0 ? (
+          <div className="flex items-center justify-center py-20 text-slate-400 text-sm">
+            {t("lidarSensor.loadingLogs", "Memuat data log riwayat LiDAR...")}
+          </div>
+        ) : paginatedRows.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 text-slate-400 gap-2">
+            <Compass className="w-10 h-10 text-slate-300" />
+            <p className="text-sm font-medium">{t("common.noLogData", "Belum ada rekaman log telemetri LiDAR.")}</p>
+            <p className="text-xs text-slate-400">
+              {t("lidarSensor.noLogsDesc", "Pastikan Sensor Lidar TF-Mini terhubung dan aktif mendeteksi jarak.")}
+            </p>
+          </div>
+        ) : (
+          <div className="border border-slate-200 rounded-xl overflow-hidden shadow-xs">
+            <table className="w-full text-left text-xs">
+              <thead className="bg-slate-50 text-slate-600 border-b border-slate-200 font-semibold uppercase tracking-wider text-[11px] font-mono">
+                <tr>
+                  <th className="py-3 px-4">{t("common.time", "Waktu")} (WIB)</th>
+                  <th className="py-3 px-4">Sensor ID</th>
+                  <th className="py-3 px-4 text-right">{t("lidarSensor.distance", "Jarak")} (cm)</th>
+                  <th className="py-3 px-4 text-right">{t("lidarSensor.distance", "Jarak")} (Meter)</th>
+                  <th className="py-3 px-4 text-center">{t("common.status", "Status")}</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100 text-slate-700 font-sans">
+                {paginatedRows.map((r, idx) => {
+                  const val = parseFloat(r.value) || 0;
+                  const isNear = val < 50;
+                  const isMid = val >= 50 && val <= 150;
+
+                  return (
+                    <tr key={r.event_id || idx} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="py-2.5 px-4 text-slate-500 font-mono text-[11px]">
+                        {r.inputed_at
+                          ? moment(r.inputed_at).format("DD/MM/YYYY, HH:mm:ss")
+                          : "-"}
+                      </td>
+                      <td className="py-2.5 px-4 font-mono font-semibold text-slate-600">
+                        {r.sensor_id || 901}
+                      </td>
+                      <td className="py-2.5 px-4 text-right font-mono font-bold text-[#00ba88] text-sm">
+                        {val.toFixed(1)} cm
+                      </td>
+                      <td className="py-2.5 px-4 text-right font-mono text-slate-500">
+                        {(val / 100).toFixed(2)} m
+                      </td>
+                      <td className="py-2.5 px-4 text-center">
+                        {isNear ? (
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                            {t("lidarSensor.tooClose", "Terlalu Dekat (< 50 cm)")}
+                          </span>
+                        ) : isMid ? (
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                            {t("lidarSensor.midDistance", "Waspada (50 - 150 cm)")}
+                          </span>
+                        ) : (
+                          <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                            {t("lidarSensor.safeDistance", "Aman (> 150 cm)")}
+                          </span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Footer Pagination */}
+      <div className="px-6 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-xs text-slate-600">
+        <div>
+          {t("common.page", "Halaman")} <span className="font-bold text-slate-800">{currentPage}</span> {t("common.of", "dari")}{" "}
+          <span className="font-bold text-slate-800">{totalPages}</span>
+          <span className="text-slate-400 ml-2">({totalItems} {t("common.data", "data")})</span>
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage <= 1 || loading}
+            className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white disabled:opacity-40 hover:bg-slate-50 transition-colors font-medium cursor-pointer"
+          >
+            {t("common.prev", "Sebelumnya")}
+          </button>
+          <button
+            onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+            disabled={currentPage >= totalPages || loading}
+            className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white disabled:opacity-40 hover:bg-slate-50 transition-colors font-medium cursor-pointer"
+          >
+            {t("common.next", "Selanjutnya")}
+          </button>
+        </div>
+      </div>
+    </LogsModalPortal>
   );
 }

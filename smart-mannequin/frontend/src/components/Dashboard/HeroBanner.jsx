@@ -40,7 +40,7 @@ export default function HeroBanner({
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="max-w-3xl">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
-            {t("dashboard.welcomeAdmin", "Selamat Datang Admin STAS")}
+            {t("dashboard.welcomeAdmin", "Selamat Datang Admin STAS-RG")}
           </h1>
           <p className="text-sm sm:text-base text-emerald-100/90 mt-2 leading-relaxed font-medium">
             {t("dashboard.heroSubtitle", "Anthropometric smart mannequin for passenger comfort and safety studies.")}

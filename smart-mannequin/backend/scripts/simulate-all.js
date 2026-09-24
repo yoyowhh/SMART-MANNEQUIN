@@ -13,6 +13,7 @@ const INTERVAL_MS = 2500;
 const args = process.argv.slice(2);
 const midArg = args.find((a) => a.startsWith('--mid='));
 const TARGET_MIDS = midArg ? midArg.split('=')[1].split(',').map(Number) : [1, 2];
+const DEFAULT_MID = TARGET_MIDS[0] || 1;
 
 console.log('================================================================');
 console.log('🚀 MEMULAI SIMULASI SEMUA SENSOR REAL-TIME (ALL-IN-ONE)');
@@ -142,7 +143,7 @@ async function simulateCycle() {
   // 2. LORA MICRO 1 (BME, MPU, Sound)
   const loraMicro1 = {
     micro: 1,
-    mid: MANNEQUIN_ID,
+    mid: DEFAULT_MID,
     bmeData: {
       humidity: rand(50, 75),
       pressure: rand(980, 1015),
@@ -176,7 +177,7 @@ async function simulateCycle() {
   // 3. LORA MICRO 2 (ADXL, Lidar, MQ Gas)
   const loraMicro2 = {
     micro: 2,
-    mid: MANNEQUIN_ID,
+    mid: DEFAULT_MID,
     adxlRightData: {
       x_axis: Number((wave * 1.5).toFixed(4)),
       y_axis: Number((waveCos * 1.2).toFixed(4)),
@@ -236,7 +237,7 @@ async function simulateCycle() {
   // 4. LORA MICRO 3 (FSR 1..8)
   const loraMicro3 = {
     micro: 3,
-    mid: MANNEQUIN_ID,
+    mid: DEFAULT_MID,
   };
   for (let i = 1; i <= 8; i++) {
     const val = Number((5.0 + Math.sin(t / 5 + i) * 3.5 + rand(-0.5, 0.5)).toFixed(2));

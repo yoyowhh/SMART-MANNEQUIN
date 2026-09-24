@@ -307,7 +307,6 @@ export default function SmartskinDetailPage() {
   const IconComponent = config.icon;
 
   const [activeLocation, setActiveLocation] = useState(config.locations[0]);
-  const [selectedAreaTab, setSelectedAreaTab] = useState('all');
 
   // Pastikan activeLocation selalu valid saat berganti sensor
   useEffect(() => {
@@ -672,70 +671,26 @@ export default function SmartskinDetailPage() {
         </div>
 
         {config.sections ? (
-          /* Tampilan Tab Area + Grid Card Gambar 2 untuk 14 Titik Belakang */
+          /* Tampilan Grid Card per Area Tubuh untuk 14 Titik Belakang */
           <div className="space-y-6">
-            {/* Filter / Tab Navigasi Area Tubuh */}
-            <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setSelectedAreaTab('all')}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  selectedAreaTab === 'all'
-                    ? 'bg-slate-900 text-white shadow-xs'
-                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-                }`}
-              >
-                {t("smartskinSensor.allPointsTab", "Semua Titik (14)")}
-              </button>
-              {config.sections.map((sec) => (
-                <button
-                  key={sec.id}
-                  type="button"
-                  onClick={() => setSelectedAreaTab(sec.id)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-2 ${
-                    selectedAreaTab === sec.id
-                      ? 'bg-[#00ba88] text-white shadow-xs'
-                      : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
-                  }`}
-                >
-                  <span className={`w-2 h-2 rounded-full ${selectedAreaTab === sec.id ? 'bg-white' : sec.colorTheme.dot}`} />
-                  <span>{t(`smartskinSensor.${sec.id}Area`, sec.title)}</span>
-                  <span
-                    className={`text-[10px] px-1.5 py-0.5 rounded-full font-mono ${
-                      selectedAreaTab === sec.id
-                        ? 'bg-white/20 text-white'
-                        : 'bg-slate-100 text-slate-600'
-                    }`}
-                  >
-                    {sec.locations.length}
-                  </span>
-                </button>
-              ))}
-            </div>
-
-            {/* List Seksi Area Tubuh dengan Card Grid Gambar 2 */}
-            {(selectedAreaTab === 'all'
-              ? config.sections
-              : config.sections.filter((s) => s.id === selectedAreaTab)
-            ).map((sec) => (
+            {/* List Seksi Area Tubuh dengan Card Grid */}
+            {config.sections.map((sec) => (
               <div key={sec.id} className="space-y-3.5">
-                {/* Header Subseksi (saat tab Semua Titik aktif) */}
-                {selectedAreaTab === 'all' && (
-                  <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                    <div className="flex items-center gap-2">
-                      <span className={`w-3 h-3 rounded-full ${sec.colorTheme.dot} shadow-xs shrink-0`} />
-                      <h4 className="font-extrabold text-slate-800 text-sm sm:text-base">
-                        {sec.title}
-                      </h4>
-                      <span className="text-xs text-slate-400 font-mono">
-                        ({sec.locations.length} Titik)
-                      </span>
-                    </div>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${sec.colorTheme.badge}`}>
-                      {sec.tag}
+                {/* Header Subseksi */}
+                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+                  <div className="flex items-center gap-2">
+                    <span className={`w-3 h-3 rounded-full ${sec.colorTheme.dot} shadow-xs shrink-0`} />
+                    <h4 className="font-extrabold text-slate-800 text-sm sm:text-base">
+                      {sec.title}
+                    </h4>
+                    <span className="text-xs text-slate-400 font-mono">
+                      ({sec.locations.length} Titik)
                     </span>
                   </div>
-                )}
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${sec.colorTheme.badge}`}>
+                    {sec.tag}
+                  </span>
+                </div>
 
                 {/* Grid Card Gambar 2 per Area */}
                 <div className={`grid grid-cols-1 sm:grid-cols-2 ${sec.locations.length > 4 ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-4`}>

@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 // Definisi lengkap 9 sensor anatomis mannequin sesuai blueprint desain terbaru
 // merah       : Sensor suara (KY-601/602 - 2 titik telinga)
 // kuning      : Sensor gas (MQ - 1 titik hidung/mulut)
-// hijau       : Sensor LiDAR (1 titik dahi/kepala atas)
+// hijau       : Sensor Lidar (1 titik dahi/kepala atas)
 // biru        : Kamera Vision (2 titik mata kiri & kanan)
 // ungu        : Sensor ADXL345 (2 titik bahu kiri & kanan)
 // orange      : Sensor MPU6050 (1 titik dada atas / sternum)
@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 const SENSOR_HOTSPOTS = [
   {
     key: "lidar",
-    name: "Sensor LiDAR",
+    name: "Sensor Lidar",
     tag: "JARAK 3D",
     route: "/sensor/lidar",
     color: "#22c55e", // Hijau

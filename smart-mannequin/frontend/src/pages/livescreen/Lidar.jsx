@@ -72,8 +72,8 @@ const LidarPage = () => {
       const rows = Array.isArray(response?.data)
         ? response.data
         : Array.isArray(response)
-        ? response
-        : [];
+          ? response
+          : [];
 
       setRawRows(rows);
 
@@ -132,8 +132,8 @@ const LidarPage = () => {
         val < 50
           ? "Terlalu Dekat"
           : val <= 150
-          ? "Waspada"
-          : "Jarak Aman";
+            ? "Waspada"
+            : "Jarak Aman";
 
       return [
         no++,
@@ -246,8 +246,8 @@ const LidarPage = () => {
   const formattedUpdateTime = lastUpdateTime
     ? moment(lastUpdateTime).format("DD/MM/YYYY, HH:mm:ss") + " WIB"
     : lastFetchTime
-    ? moment(lastFetchTime).format("DD/MM/YYYY, HH:mm:ss") + " WIB"
-    : "-";
+      ? moment(lastFetchTime).format("DD/MM/YYYY, HH:mm:ss") + " WIB"
+      : "-";
 
   return (
     <div className="w-full pb-2 space-y-6">
@@ -294,11 +294,10 @@ const LidarPage = () => {
             <button
               key={opt.value}
               onClick={() => setLimit(opt.value)}
-              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                limit === opt.value
+              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${limit === opt.value
                   ? "bg-white text-[#00ba88] shadow-xs"
                   : "text-slate-600 hover:text-slate-900"
-              }`}>
+                }`}>
               {opt.label}
             </button>
           ))}
@@ -324,12 +323,12 @@ const LidarPage = () => {
       >
         <div className="flex flex-col gap-2">
           <h4 className="font-bold text-slate-800 text-base">
-            Sistem Sensor LiDAR TF-Mini (Perimeter & Proximity)
+            Sistem Sensor Lidar TF-Mini (Perimeter & Proximity)
           </h4>
           <p className="text-slate-600 text-sm leading-relaxed text-justify">
             {t(
               "lidarSensor.deskripsiSensor",
-              "Sensor LiDAR TF-Mini adalah sensor pengukur jarak optik berbasis laser time-of-flight yang terpasang pada manekin untuk mendeteksi keberadaan objek, perimeter halangan, dan jarak kedekatan lingkungan secara real-time. Sensor ini memiliki akurasi tinggi dan respon frekuensi cepat untuk aplikasi keselamatan kerja dan navigasi."
+              "Sensor Lidar TF-Mini adalah sensor pengukur jarak optik berbasis laser time-of-flight yang terpasang pada manekin untuk mendeteksi keberadaan objek, perimeter halangan, dan jarak kedekatan lingkungan secara real-time. Sensor ini memiliki akurasi tinggi dan respon frekuensi cepat untuk aplikasi keselamatan kerja dan navigasi."
             )}
           </p>
         </div>
@@ -451,7 +450,7 @@ const LidarPage = () => {
               </div>
               <div>
                 <h4 className="font-bold text-slate-800 text-base">
-                  Ringkasan Parameter Sensor LiDAR
+                  Ringkasan Parameter Sensor Lidar
                 </h4>
                 <p className="text-xs text-slate-400">
                   Parameter operasional, status jangkauan, dan waktu update telemetri real-time
@@ -478,7 +477,7 @@ const LidarPage = () => {
                   <td className="py-3.5 px-4 font-semibold text-slate-800">
                     <div className="flex items-center gap-2">
                       <span className="h-2 w-2 rounded-full bg-emerald-500 shrink-0"></span>
-                      <span>Sensor LiDAR TF-Mini</span>
+                      <span>Sensor Lidar TF-Mini</span>
                     </div>
                     <span className="block text-[11px] text-slate-400 font-normal pl-4">
                       Sensor ID: 901

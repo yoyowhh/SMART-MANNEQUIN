@@ -431,145 +431,144 @@ const MannequinPage = () => {
 
   return (
     <div className="w-full max-w-[1700px] mx-auto flex flex-col gap-6">
-        {/* Header Halaman Manekin - Dark Modern (Serasi dengan Informasi Tim) */}
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 text-white px-6 py-4 sm:py-5 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-4">
-          {/* Decorative ambient gradients */}
-          <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
-          <div className="absolute bottom-0 left-1/4 -mb-10 w-60 h-60 rounded-full bg-teal-500/10 blur-2xl pointer-events-none" />
+      {/* Header Halaman Manekin - Dark Modern (Serasi dengan Informasi Tim) */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 text-white px-6 py-4 sm:py-5 shadow-sm flex flex-col md:flex-row md:items-start justify-between gap-4">
+        {/* Decorative ambient gradients */}
+        <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 -mb-10 w-60 h-60 rounded-full bg-teal-500/10 blur-2xl pointer-events-none" />
 
-          {/* Left Text Block - Exact same margin & padding as Informasi Tim */}
-          <div className="relative z-10 max-w-3xl">
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
-                {t("mannequinPage.title", "Visualisasi Manekin")}
-              </h1>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                {t("Mannequin", "Manekin")} #{mannequinId}
-              </span>
-            </div>
-            <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
-              {t("mannequinPage.subtitle", "Visualisasi blueprint anatomi mannequin interaktif & telemetri kesehatan sensor secara real-time.")}
-            </p>
+        {/* Left Text Block - Exact same margin & padding as Informasi Tim */}
+        <div className="relative z-10 max-w-3xl">
+          <div className="flex items-center gap-2.5">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+              {t("mannequinPage.title", "Visualisasi Manekin")}
+            </h1>
+            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              {t("Mannequin", "Manekin")} #{mannequinId}
+            </span>
           </div>
-
-          {/* Quick Metrics & Actions (Vertical Stack) */}
-          <div className="relative z-10 flex flex-col items-start md:items-end gap-2.5 flex-shrink-0">
-            {/* Status counts: 6 Normal 2 Perhatian 1 Kritis */}
-            <div className="flex items-center gap-2.5 px-3 py-1.5 bg-slate-800/80 rounded-xl border border-slate-700/60 text-xs font-medium">
-              <span className="flex items-center gap-1 text-emerald-400 font-semibold">
-                <CheckCircle2 className="w-3.5 h-3.5" /> {normalCount} {t("dashboard.optimal", "Normal")}
-              </span>
-              {warningCount > 0 && (
-                <span className="flex items-center gap-1 text-amber-400 font-semibold">
-                  <AlertTriangle className="w-3.5 h-3.5" /> {warningCount} {t("dashboard.warningStatus", "Perhatian")}
-                </span>
-              )}
-              {criticalCount > 0 && (
-                <span className="flex items-center gap-1 text-rose-400 font-semibold">
-                  <AlertTriangle className="w-3.5 h-3.5" /> {criticalCount} {t("dashboard.criticalBadge", "Kritis")}
-                </span>
-              )}
-            </div>
-
-            {/* Dibawahnya: Kalibrasi dan Log Riwayat */}
-            <div className="flex items-center gap-2">
-              {/* Tombol Kalibrasi */}
-              <button
-                onClick={handleStartCalibration}
-                disabled={isCalibrating}
-                className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${
-                  isCalibrating
-                    ? "bg-amber-500 text-white border-amber-600 animate-pulse cursor-wait"
-                    : "bg-slate-800/80 hover:bg-slate-750 text-slate-200 hover:text-white border-slate-700 shadow-2xs"
-                }`}
-                title="Mulai kalibrasi zero-point">
-                <Sliders className={`w-3.5 h-3.5 ${isCalibrating ? "animate-spin text-white" : "text-emerald-400"}`} />
-                <span>
-                  {isCalibrating
-                    ? `${t("mannequinPage.calibrating", "Scanning")} (${calibrationProgress}%)`
-                    : t("mannequinPage.calibrate", "Kalibrasi")}
-                </span>
-              </button>
-
-              {/* Tombol Log Riwayat */}
-              <button
-                onClick={() => setIsLogsModalOpen(true)}
-                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#00ba88] hover:bg-[#009e74] text-white transition-all shadow-xs cursor-pointer"
-                title="Buka log riwayat dan ekspor data">
-                <ScrollText className="w-3.5 h-3.5" />
-                <span>{t("common.viewLogs", "Log Riwayat")}</span>
-              </button>
-            </div>
-          </div>
+          <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+            {t("mannequinPage.subtitle", "Visualisasi blueprint anatomi mannequin interaktif & telemetri kesehatan sensor secara real-time.")}
+          </p>
         </div>
 
-        {/* Notifikasi Hotspot Terpilih */}
-        {selectedSensorKey && (
-          <div className="bg-[#00ba88]/10 border border-[#00ba88]/30 rounded-2xl px-4 py-3 flex items-center justify-between gap-3 text-xs sm:text-sm animate-in fade-in slide-in-from-top-2 duration-200">
-            <div className="flex items-center gap-2 text-slate-800 font-medium">
-              <span className="w-2 h-2 rounded-full bg-[#00ba88]" />
-              Titik sensor fokus:{" "}
-              <strong className="text-[#00ba88] font-bold">
-                {SENSOR_LIST.find((s) => s.id === selectedSensorKey)?.name || selectedSensorKey}
-              </strong>
-              <span className="text-slate-500 hidden sm:inline">
-                ({SENSOR_LIST.find((s) => s.id === selectedSensorKey)?.location})
+        {/* Quick Metrics & Actions (Vertical Stack) */}
+        <div className="relative z-10 flex flex-col items-start md:items-end gap-2.5 flex-shrink-0">
+          {/* Status counts: 6 Normal 2 Perhatian 1 Kritis */}
+          <div className="flex items-center gap-2.5 px-3 py-1.5 bg-slate-800/80 rounded-xl border border-slate-700/60 text-xs font-medium">
+            <span className="flex items-center gap-1 text-emerald-400 font-semibold">
+              <CheckCircle2 className="w-3.5 h-3.5" /> {normalCount} {t("dashboard.optimal", "Normal")}
+            </span>
+            {warningCount > 0 && (
+              <span className="flex items-center gap-1 text-amber-400 font-semibold">
+                <AlertTriangle className="w-3.5 h-3.5" /> {warningCount} {t("dashboard.warningStatus", "Perhatian")}
               </span>
-            </div>
+            )}
+            {criticalCount > 0 && (
+              <span className="flex items-center gap-1 text-rose-400 font-semibold">
+                <AlertTriangle className="w-3.5 h-3.5" /> {criticalCount} {t("dashboard.criticalBadge", "Kritis")}
+              </span>
+            )}
+          </div>
+
+          {/* Dibawahnya: Kalibrasi dan Log Riwayat */}
+          <div className="flex items-center gap-2">
+            {/* Tombol Kalibrasi */}
             <button
-              onClick={() => setSelectedSensorKey(null)}
-              className="text-xs font-bold text-[#00ba88] hover:text-[#009e74] hover:underline px-2 py-1 rounded-lg">
-              {t("showMore", "Tampilkan Semua")}
+              onClick={handleStartCalibration}
+              disabled={isCalibrating}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold transition-all border ${isCalibrating
+                  ? "bg-amber-500 text-white border-amber-600 animate-pulse cursor-wait"
+                  : "bg-slate-800/80 hover:bg-slate-750 text-slate-200 hover:text-white border-slate-700 shadow-2xs"
+                }`}
+              title="Mulai kalibrasi zero-point">
+              <Sliders className={`w-3.5 h-3.5 ${isCalibrating ? "animate-spin text-white" : "text-emerald-400"}`} />
+              <span>
+                {isCalibrating
+                  ? `${t("mannequinPage.calibrating", "Scanning")} (${calibrationProgress}%)`
+                  : t("mannequinPage.calibrate", "Kalibrasi")}
+              </span>
+            </button>
+
+            {/* Tombol Log Riwayat */}
+            <button
+              onClick={() => setIsLogsModalOpen(true)}
+              className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-[#00ba88] hover:bg-[#009e74] text-white transition-all shadow-xs cursor-pointer"
+              title="Buka log riwayat dan ekspor data">
+              <ScrollText className="w-3.5 h-3.5" />
+              <span>{t("common.viewLogs", "Log Riwayat")}</span>
             </button>
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* Main Layout Grid: Blueprint & 9 Sensor Summary Cards (Persis yang di foto) */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
-          {/* Left: High-Tech Mannequin Blueprint Card */}
-          <div className="w-full lg:w-[34%] xl:w-[30%]">
-            <MannequinBlueprint
-              selectedSensorKey={selectedSensorKey}
-              onSelectHotspot={(sensorKey) =>
-                setSelectedSensorKey((prev) => (prev === sensorKey ? null : sensorKey))
-              }
-              mannequinId={mannequinId}
-              isCalibrating={isCalibrating}
-              calibrationProgress={calibrationProgress}
-            />
+      {/* Notifikasi Hotspot Terpilih */}
+      {selectedSensorKey && (
+        <div className="bg-[#00ba88]/10 border border-[#00ba88]/30 rounded-2xl px-4 py-3 flex items-center justify-between gap-3 text-xs sm:text-sm animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="flex items-center gap-2 text-slate-800 font-medium">
+            <span className="w-2 h-2 rounded-full bg-[#00ba88]" />
+            Titik sensor fokus:{" "}
+            <strong className="text-[#00ba88] font-bold">
+              {SENSOR_LIST.find((s) => s.id === selectedSensorKey)?.name || selectedSensorKey}
+            </strong>
+            <span className="text-slate-500 hidden sm:inline">
+              ({SENSOR_LIST.find((s) => s.id === selectedSensorKey)?.location})
+            </span>
           </div>
+          <button
+            onClick={() => setSelectedSensorKey(null)}
+            className="text-xs font-bold text-[#00ba88] hover:text-[#009e74] hover:underline px-2 py-1 rounded-lg">
+            {t("showMore", "Tampilkan Semua")}
+          </button>
+        </div>
+      )}
 
-          {/* Right: 9 Sensor Summary Cards Grid */}
-          <div className="w-full lg:w-[66%] xl:w-[70%]">
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-              {SENSOR_LIST.map((sensor) => (
-                <SensorCard
-                  key={sensor.id}
-                  sensor={sensor}
-                  reading={readings[sensor.id]}
-                  status={sensorStatusMap[sensor.id] || "normal"}
-                  isSelected={selectedSensorKey === sensor.id}
-                  onSelect={(id) =>
-                    setSelectedSensorKey((prev) => (prev === id ? null : id))
-                  }
-                  mannequinId={mannequinId}
-                />
-              ))}
-            </div>
-          </div>
+      {/* Main Layout Grid: Blueprint & 9 Sensor Summary Cards (Persis yang di foto) */}
+      <div className="flex flex-col lg:flex-row gap-6 items-start">
+        {/* Left: High-Tech Mannequin Blueprint Card */}
+        <div className="w-full lg:w-[34%] xl:w-[30%]">
+          <MannequinBlueprint
+            selectedSensorKey={selectedSensorKey}
+            onSelectHotspot={(sensorKey) =>
+              setSelectedSensorKey((prev) => (prev === sensorKey ? null : sensorKey))
+            }
+            mannequinId={mannequinId}
+            isCalibrating={isCalibrating}
+            calibrationProgress={calibrationProgress}
+          />
         </div>
 
-        {/* Modal Log Riwayat Telemetri Manekin (didalemnya ada Ekspor Data) */}
-        <MannequinLogsModal
-          isOpen={isLogsModalOpen}
-          onClose={() => setIsLogsModalOpen(false)}
-          mannequinId={mannequinId}
-          sensors={evaluatedSensors}
-          readings={readings}
-          onExportCsv={handleExportCSV}
-        />
+        {/* Right: 9 Sensor Summary Cards Grid */}
+        <div className="w-full lg:w-[66%] xl:w-[70%]">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            {SENSOR_LIST.map((sensor) => (
+              <SensorCard
+                key={sensor.id}
+                sensor={sensor}
+                reading={readings[sensor.id]}
+                status={sensorStatusMap[sensor.id] || "normal"}
+                isSelected={selectedSensorKey === sensor.id}
+                onSelect={(id) =>
+                  setSelectedSensorKey((prev) => (prev === id ? null : id))
+                }
+                mannequinId={mannequinId}
+              />
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Modal Log Riwayat Telemetri Manekin (didalemnya ada Ekspor Data) */}
+      <MannequinLogsModal
+        isOpen={isLogsModalOpen}
+        onClose={() => setIsLogsModalOpen(false)}
+        mannequinId={mannequinId}
+        sensors={evaluatedSensors}
+        readings={readings}
+        onExportCsv={handleExportCSV}
+      />
+    </div>
   );
 };
 

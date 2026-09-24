@@ -429,8 +429,11 @@ const GasPage = () => {
       {/* Row 1: 4 Cards Khusus Tiap Parameter Gas (Smoke, NH3, CO2, CO) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Card 1: Partikel Asap (Smoke) */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
-          <div className="flex flex-col gap-3 justify-between h-full">
+        <BaseCard
+          height="h-auto"
+          mobileHeight="h-auto"
+          className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
+          <div className="flex flex-col gap-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-emerald-50 text-[#00ba88]">
@@ -448,35 +451,17 @@ const GasPage = () => {
               </span>
             </div>
 
-            {/* Nilai Utama & Equalizer Wave */}
-            <div className="py-2">
+            {/* Nilai Utama */}
+            <div className="py-1">
               <div className="flex items-baseline gap-1 font-mono">
                 <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
                   {latestSmoke.toFixed(1)}
                 </span>
                 <span className="text-sm font-bold text-slate-400">PPM</span>
               </div>
-              <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                Raw: ~{Math.round(latestSmoke * 10.24)} ADC
-              </span>
-
-              {/* Dynamic Gas Density Equalizer Bars */}
-              <div className="flex items-end gap-1 h-5 mt-2 px-2 py-0.5 rounded-md bg-emerald-50/70 border border-emerald-100/80 w-fit">
-                {[35, 75, 50, 90, 60, 80].map((h, i) => (
-                  <span
-                    key={i}
-                    className="w-1 bg-[#00ba88] rounded-full transition-all duration-300"
-                    style={{
-                      height: `${Math.min(100, Math.max(20, (latestSmoke / 80) * h))}%`,
-                      opacity: 0.6 + (i % 2) * 0.4,
-                    }}
-                  />
-                ))}
-                <span className="text-[9px] font-mono text-emerald-700 font-bold ml-1">SMOKE</span>
-              </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-1">
               <span>Batas Toleransi:</span>
               <span className="font-semibold text-emerald-700 font-mono">&lt; 50 PPM</span>
             </div>
@@ -484,8 +469,11 @@ const GasPage = () => {
         </BaseCard>
 
         {/* Card 2: Gas Amonia (NH3) */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
-          <div className="flex flex-col gap-3 justify-between h-full">
+        <BaseCard
+          height="h-auto"
+          mobileHeight="h-auto"
+          className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
+          <div className="flex flex-col gap-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-emerald-50 text-[#00ba88]">
@@ -503,35 +491,17 @@ const GasPage = () => {
               </span>
             </div>
 
-            {/* Nilai Utama & Equalizer Wave */}
-            <div className="py-2">
+            {/* Nilai Utama */}
+            <div className="py-1">
               <div className="flex items-baseline gap-1 font-mono">
                 <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
                   {latestNh3.toFixed(1)}
                 </span>
                 <span className="text-sm font-bold text-slate-400">PPM</span>
               </div>
-              <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                Raw: ~{Math.round(latestNh3 * 10.24)} ADC
-              </span>
-
-              {/* Dynamic Gas Density Equalizer Bars */}
-              <div className="flex items-end gap-1 h-5 mt-2 px-2 py-0.5 rounded-md bg-emerald-50/70 border border-emerald-100/80 w-fit">
-                {[45, 85, 60, 95, 40, 75].map((h, i) => (
-                  <span
-                    key={i}
-                    className="w-1 bg-[#00ba88] rounded-full transition-all duration-300"
-                    style={{
-                      height: `${Math.min(100, Math.max(20, (latestNh3 / 50) * h))}%`,
-                      opacity: 0.6 + (i % 2) * 0.4,
-                    }}
-                  />
-                ))}
-                <span className="text-[9px] font-mono text-emerald-700 font-bold ml-1">NH3</span>
-              </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-1">
               <span>Batas Toleransi:</span>
               <span className="font-semibold text-emerald-700 font-mono">&lt; 25 PPM</span>
             </div>
@@ -539,8 +509,11 @@ const GasPage = () => {
         </BaseCard>
 
         {/* Card 3: Karbon Dioksida (CO2) */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
-          <div className="flex flex-col gap-3 justify-between h-full">
+        <BaseCard
+          height="h-auto"
+          mobileHeight="h-auto"
+          className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
+          <div className="flex flex-col gap-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-emerald-50 text-[#00ba88]">
@@ -558,35 +531,17 @@ const GasPage = () => {
               </span>
             </div>
 
-            {/* Nilai Utama & Equalizer Wave */}
-            <div className="py-2">
+            {/* Nilai Utama */}
+            <div className="py-1">
               <div className="flex items-baseline gap-1 font-mono">
                 <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
                   {latestCo2.toFixed(1)}
                 </span>
                 <span className="text-sm font-bold text-slate-400">PPM</span>
               </div>
-              <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                Raw: ~{Math.round(latestCo2 * 10.24)} ADC
-              </span>
-
-              {/* Dynamic Gas Density Equalizer Bars */}
-              <div className="flex items-end gap-1 h-5 mt-2 px-2 py-0.5 rounded-md bg-emerald-50/70 border border-emerald-100/80 w-fit">
-                {[55, 70, 85, 60, 90, 75].map((h, i) => (
-                  <span
-                    key={i}
-                    className="w-1 bg-[#00ba88] rounded-full transition-all duration-300"
-                    style={{
-                      height: `${Math.min(100, Math.max(20, (latestCo2 / 200) * h))}%`,
-                      opacity: 0.6 + (i % 2) * 0.4,
-                    }}
-                  />
-                ))}
-                <span className="text-[9px] font-mono text-emerald-700 font-bold ml-1">CO2</span>
-              </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-1">
               <span>Batas Toleransi:</span>
               <span className="font-semibold text-emerald-700 font-mono">&lt; 100 PPM</span>
             </div>
@@ -594,8 +549,11 @@ const GasPage = () => {
         </BaseCard>
 
         {/* Card 4: Karbon Monoksida (CO) */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
-          <div className="flex flex-col gap-3 justify-between h-full">
+        <BaseCard
+          height="h-auto"
+          mobileHeight="h-auto"
+          className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
+          <div className="flex flex-col gap-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-emerald-50 text-[#00ba88]">
@@ -613,35 +571,17 @@ const GasPage = () => {
               </span>
             </div>
 
-            {/* Nilai Utama & Equalizer Wave */}
-            <div className="py-2">
+            {/* Nilai Utama */}
+            <div className="py-1">
               <div className="flex items-baseline gap-1 font-mono">
                 <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
                   {latestCo.toFixed(1)}
                 </span>
                 <span className="text-sm font-bold text-slate-400">PPM</span>
               </div>
-              <span className="text-[11px] text-slate-400 font-mono mt-0.5 block">
-                Raw: ~{Math.round(latestCo * 10.24)} ADC
-              </span>
-
-              {/* Dynamic Gas Density Equalizer Bars */}
-              <div className="flex items-end gap-1 h-5 mt-2 px-2 py-0.5 rounded-md bg-emerald-50/70 border border-emerald-100/80 w-fit">
-                {[40, 75, 60, 95, 50, 85].map((h, i) => (
-                  <span
-                    key={i}
-                    className="w-1 bg-[#00ba88] rounded-full transition-all duration-300"
-                    style={{
-                      height: `${Math.min(100, Math.max(20, (latestCo / 70) * h))}%`,
-                      opacity: 0.6 + (i % 2) * 0.4,
-                    }}
-                  />
-                ))}
-                <span className="text-[9px] font-mono text-emerald-700 font-bold ml-1">CO</span>
-              </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-auto">
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-1">
               <span>Batas Toleransi:</span>
               <span className="font-semibold text-emerald-700 font-mono">&lt; 35 PPM</span>
             </div>
