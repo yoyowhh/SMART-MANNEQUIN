@@ -721,7 +721,6 @@ export default function SmartskinDetailPage() {
                 {/* Header Subseksi */}
                 <div className="flex items-center justify-between pb-2 border-b border-slate-100">
                   <div className="flex items-center gap-2">
-                    <span className={`w-3 h-3 rounded-full ${sec.colorTheme.dot} shadow-xs shrink-0`} />
                     <h4 className="font-extrabold text-slate-800 text-sm sm:text-base">
                       {sec.title}
                     </h4>
@@ -770,12 +769,9 @@ export default function SmartskinDetailPage() {
                         <div>
                           {/* Header Card: Judul Titik & Pill Status Badge */}
                           <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-1.5 min-w-0 pr-1">
-                              <span className={`w-2 h-2 rounded-full shrink-0 ${sec.colorTheme.dot}`} />
-                              <h3 className="font-extrabold text-slate-800 text-sm sm:text-base truncate" title={label}>
-                                {label}
-                              </h3>
-                            </div>
+                            <h3 className="font-extrabold text-slate-800 text-sm sm:text-base truncate pr-1" title={label}>
+                              {label}
+                            </h3>
                             <span
                               className={`px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-2xs shrink-0 transition-colors ${
                                 isSelected

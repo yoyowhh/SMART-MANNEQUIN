@@ -173,16 +173,17 @@ const TeamPage = () => {
     ...listMahasiswa,
   ];
 
-  const filteredMembers =
+  const hardwareMembers = listMahasiswa.filter((m) => m.category === "hardware" || m.category === "iot");
+  const softwareMembers = listMahasiswa.filter((m) => m.category === "software");
+
+  const filteredMahasiswa =
     activeTab === "all"
-      ? allMembers
-      : activeTab === "dosen"
-        ? listDosen
-        : listMahasiswa.filter(
-          (m) =>
-            m.category === activeTab ||
-            (activeTab === "software" && (m.category === "software" || m.category === "iot"))
-        );
+      ? listMahasiswa
+      : activeTab === "hardware"
+        ? hardwareMembers
+        : activeTab === "software"
+          ? softwareMembers
+          : [];
 
   return (
     <div className="w-full max-w-[1700px] mx-auto flex flex-col gap-6">
@@ -226,7 +227,7 @@ const TeamPage = () => {
                 ? "bg-[#00ba88] text-white shadow-xs"
                 : "bg-white text-slate-600 hover:bg-slate-50 hover:text-[#00ba88] hover:border-[#00ba88]/40 border border-slate-100 shadow-2xs"
               }`}>
-            {t("team.hardware", "Hardware")} ({listMahasiswa.filter((m) => m.category === "hardware").length})
+            {t("team.hardwareIot", "Hardware & IoT")} ({hardwareMembers.length})
           </button>
           <button
             onClick={() => setActiveTab("software")}
@@ -234,7 +235,7 @@ const TeamPage = () => {
                 ? "bg-[#00ba88] text-white shadow-xs"
                 : "bg-white text-slate-600 hover:bg-slate-50 hover:text-[#00ba88] hover:border-[#00ba88]/40 border border-slate-100 shadow-2xs"
               }`}>
-            {t("team.softwareIot", "Software & IoT")} ({listMahasiswa.filter((m) => m.category === "software" || m.category === "iot").length})
+            {t("team.software", "Software")} ({softwareMembers.length})
           </button>
         </div>
 
@@ -294,14 +295,7 @@ const TeamPage = () => {
               <h2 className="text-base sm:text-lg font-bold text-slate-900">Mahasiswa & Tim Pengembang</h2>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
-              {(activeTab === "all"
-                ? listMahasiswa
-                : listMahasiswa.filter(
-                  (m) =>
-                    m.category === activeTab ||
-                    (activeTab === "software" && (m.category === "software" || m.category === "iot"))
-                )
-              ).map((member) => (
+              {filteredMahasiswa.map((member) => (
                 <div
                   key={member.id}
                   className="group bg-white rounded-xl border border-slate-100 p-3 shadow-sm hover:border-[#00ba88] hover:shadow-xl hover:shadow-emerald-500/15 hover:-translate-y-2 transition-all duration-300 flex flex-col items-center text-center cursor-default">
@@ -316,7 +310,7 @@ const TeamPage = () => {
                       }}
                     />
                     <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 rounded-full bg-slate-800 text-white flex items-center justify-center text-[9px] shadow-xs">
-                      {member.category === "hardware" ? (
+                      {member.category === "hardware" || member.category === "iot" ? (
                         <Cpu className="w-2.5 h-2.5 text-emerald-400" />
                       ) : (
                         <Code2 className="w-2.5 h-2.5 text-cyan-400" />

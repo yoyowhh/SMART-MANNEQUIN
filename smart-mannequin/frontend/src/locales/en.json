@@ -149,8 +149,10 @@
     "subtitle": "List of advisors, researchers, and developers of the IoT-based Smart Mannequin and Smart Skin system at Telkom University.",
     "allMembers": "All Members",
     "lecturers": "Faculty Advisors",
-    "hardware": "Hardware Engineers",
-    "softwareIot": "Software & IoT Developers"
+    "hardware": "Hardware & IoT",
+    "hardwareIot": "Hardware & IoT",
+    "software": "Software",
+    "softwareIot": "Software"
   },
   "sensorInfo": {
     "title": "Sensor Information",

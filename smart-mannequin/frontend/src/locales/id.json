@@ -149,8 +149,10 @@
     "subtitle": "Daftar dosen pembimbing, peneliti, dan pengembang sistem Smart Mannequin dan Smart Skin berbasis IoT di Telkom University.",
     "allMembers": "Semua Anggota",
     "lecturers": "Dosen Pembimbing",
-    "hardware": "Hardware Engineer",
-    "softwareIot": "Software & IoT Developer"
+    "hardware": "Hardware & IoT",
+    "hardwareIot": "Hardware & IoT",
+    "software": "Software",
+    "softwareIot": "Software"
   },
   "sensorInfo": {
     "title": "Informasi Sensor",
