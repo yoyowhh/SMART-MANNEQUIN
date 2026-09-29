@@ -1,23 +1,14 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 
-// Definisi lengkap 9 sensor anatomis mannequin sesuai blueprint desain terbaru
-// merah       : Sensor suara (KY-601/602 - 2 titik telinga)
-// kuning      : Sensor gas (MQ - 1 titik hidung/mulut)
-// hijau lime  : Sensor Lidar (1 titik puncak kepala)
-// cyan        : Kamera Vision (2 titik mata kiri & kanan)
-// ungu        : Sensor ADXL345 (2 titik bahu kiri & kanan)
-// orange      : Sensor MPU6050 (1 titik dada atas / sternum)
-// hitam       : Sensor BME280 (1 titik dada tengah / solar plexus)
-// pink        : Sensor Load Cell (5 titik: leher, paha kiri & kanan, tulang kering kiri & kanan)
-// hijau neon  : SmartSkin (2 titik dada pektoral kiri & kanan)
+// Definisi lengkap 9 sensor anatomis mannequin
+// Seluruh titik/hotspot sensor diseragamkan menjadi 1 warna hijau (#00ba88) sesuai desain visualisasi
 const SENSOR_HOTSPOTS = [
   {
     key: "lidar",
     name: "Sensor Lidar",
     tag: "JARAK 3D",
     route: "/sensor/lidar",
-    color: "#74cc00", // Hijau Lime (Puncak Kepala)
+    color: "#00ba88", // Hijau seragam (Puncak Kepala)
     locationName: "Puncak Kepala",
     shape: "circle",
     cx: 200,
@@ -29,7 +20,7 @@ const SENSOR_HOTSPOTS = [
     name: "Kamera Vision",
     tag: "VISION AI",
     route: "/sensor/camera",
-    color: "#0cc0df", // Cyan / Biru Muda (Mata Kiri & Kanan)
+    color: "#00ba88", // Hijau seragam (Mata Kiri & Kanan)
     locationName: "Mata Kiri & Kanan",
     shape: "multi-circle",
     nodes: [
@@ -42,7 +33,7 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor Suara (KY-601/602)",
     tag: "AKUSTIK",
     route: "/sensor/sound",
-    color: "#ff3131", // Merah (Telinga Kiri & Kanan)
+    color: "#00ba88", // Hijau seragam (Telinga Kiri & Kanan)
     locationName: "Binaural Ears (Telinga Kiri & Kanan)",
     shape: "multi-circle",
     nodes: [
@@ -55,7 +46,7 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor Gas",
     tag: "LINGKUNGAN",
     route: "/sensor/gas",
-    color: "#ffd21f", // Kuning (Hidung)
+    color: "#00ba88", // Hijau seragam (Hidung)
     locationName: "Hidung / Saluran Pernafasan",
     shape: "circle",
     cx: 200,
@@ -67,7 +58,7 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor Load Cell",
     tag: "BEBAN TEKANAN",
     route: "/sensor/loadcell",
-    color: "#ff66c4", // Pink (Leher, Paha & Tulang Kering)
+    color: "#00ba88", // Hijau seragam (Leher, Paha & Tulang Kering)
     locationName: "5 Titik: Leher, Paha & Tulang Kering",
     shape: "multi-circle",
     nodes: [
@@ -83,7 +74,7 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor ADXL345",
     tag: "AKSELEROMETER",
     route: "/sensor/adxl",
-    color: "#5e17eb", // Ungu (Bahu Kiri & Kanan)
+    color: "#00ba88", // Hijau seragam (Bahu Kiri & Kanan)
     locationName: "Bahu Kiri & Bahu Kanan",
     shape: "multi-circle",
     nodes: [
@@ -96,7 +87,7 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor MPU6050",
     tag: "ORIENTASI / IMU",
     route: "/sensor/mpu6050",
-    color: "#ff751f", // Orange (Dada Atas / Sternum)
+    color: "#00ba88", // Hijau seragam (Dada Atas / Sternum)
     locationName: "Dada Atas (Sternum)",
     shape: "circle",
     cx: 200.7,
@@ -108,7 +99,7 @@ const SENSOR_HOTSPOTS = [
     name: "SmartSkin Multimodal",
     tag: "SMARTSKIN",
     route: "/sensor/smartskin",
-    color: "#9eff1f", // Hijau Neon / Lime (Dada Pektoral)
+    color: "#00ba88", // Hijau seragam (Dada Pektoral)
     locationName: "Dada Pektoral (Kiri & Kanan)",
     shape: "multi-circle",
     nodes: [
@@ -121,13 +112,13 @@ const SENSOR_HOTSPOTS = [
     name: "Sensor BME280",
     tag: "MIKROKLIMAT",
     route: "/sensor/bme",
-    color: "#000000", // Hitam (Solar Plexus)
+    color: "#00ba88", // Hijau seragam (Dada Tengah / Solar Plexus)
     locationName: "Dada Tengah (Solar Plexus)",
     shape: "circle",
     cx: 200,
     cy: 141.3,
     r: 7.5,
-    hasWhiteBorder: true,
+    hasWhiteBorder: false,
   },
 ];
 
@@ -155,17 +146,10 @@ export default function MannequinBlueprint({
   isCalibrating = false,
   calibrationProgress = 0,
 }) {
-  const navigate = useNavigate();
-
   const handleHotspotClick = (sensorItem) => {
     if (onSelectHotspot) {
       onSelectHotspot(sensorItem.key);
     }
-    const targetId = mannequinId || 1;
-    const path = sensorItem.route.startsWith("/")
-      ? sensorItem.route
-      : `/${sensorItem.route}`;
-    navigate(`/${targetId}${path}`);
   };
 
   return (
@@ -181,7 +165,7 @@ export default function MannequinBlueprint({
 
       {/* Subtitle */}
       <p className="text-xs text-slate-400 text-center my-3 font-medium">
-        Klik titik sensor di tubuh mannequin untuk melihat data spesifik
+        Klik titik sensor di tubuh mannequin untuk menyorot kartu sensor terkait
       </p>
 
       {/* Blueprint Canvas Container - Tampil Lega & Besar */}
@@ -291,7 +275,7 @@ export default function MannequinBlueprint({
                             e.stopPropagation();
                             handleHotspotClick(item);
                           }}>
-                          <title>{`${item.name} - ${node.label} (Klik untuk membuka)`}</title>
+                          <title>{`${item.name} - ${node.label} (Klik untuk menyorot kartu sensor)`}</title>
 
                           {/* Calibration Active Pulse Effect */}
                           {isScanning && (
@@ -415,7 +399,7 @@ export default function MannequinBlueprint({
                     e.stopPropagation();
                     handleHotspotClick(item);
                   }}>
-                  <title>{`${item.name} - ${item.locationName} (Klik untuk membuka)`}</title>
+                  <title>{`${item.name} - ${item.locationName} (Klik untuk menyorot kartu sensor)`}</title>
 
                   {/* Calibration Scan Effect */}
                   {isScanning && (

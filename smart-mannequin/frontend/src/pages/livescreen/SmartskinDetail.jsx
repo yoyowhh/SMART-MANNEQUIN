@@ -458,7 +458,7 @@ export default function SmartskinDetailPage() {
         curve: 'smooth',
       },
       markers: {
-        size: 3,
+        size: 0,
         hover: {
           size: 6,
         },

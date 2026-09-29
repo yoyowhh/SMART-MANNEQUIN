@@ -9,7 +9,6 @@ import {
   getLatestData,
 } from "../../helpers/utils";
 import { Skeleton } from "@mui/material";
-import LinearGauge from "../../components/Elements/LinearGauge";
 import { useTranslation } from "react-i18next";
 import { useFetchSensor } from "../../hooks/useSensor";
 import { useParams } from "react-router-dom";
@@ -78,7 +77,7 @@ const SoundSensorPage = () => {
   const getSoundStatus = (val, isHighFlag) => {
     if (isHighFlag || val >= 75) {
       return {
-        label: "Bising Tinggi (Warning)",
+        label: "Tinggi (Warning)",
         badgeClass: "bg-red-100 text-red-700 border-red-200",
         color: "#ef4444",
         desc: "Tingkat kebisingan melebihi batas toleransi",
@@ -86,14 +85,14 @@ const SoundSensorPage = () => {
     }
     if (val >= 45) {
       return {
-        label: "Normal / Percakapan",
-        badgeClass: "bg-amber-100 text-amber-700 border-amber-200",
-        color: "#f59e0b",
+        label: "Normal",
+        badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
+        color: "#00ba88",
         desc: "Kondisi suara lingkungan sedang / wajar",
       };
     }
     return {
-      label: "Hening / Tenang",
+      label: "Tenang",
       badgeClass: "bg-emerald-100 text-[#00ba88] border-emerald-200",
       color: "#00ba88",
       desc: "Kondisi suara lingkungan sangat tenang",
@@ -245,10 +244,10 @@ const SoundSensorPage = () => {
       const adc = Math.round(val * 10.24);
       const status =
         val >= 75
-          ? "Bising Tinggi (Warning)"
+          ? "Tinggi (Warning)"
           : val >= 45
-          ? "Normal / Percakapan"
-          : "Hening / Tenang";
+          ? "Normal"
+          : "Tenang";
       rows.push([
         no++,
         item.inputed_at
@@ -270,10 +269,10 @@ const SoundSensorPage = () => {
       const adc = Math.round(val * 10.24);
       const status =
         val >= 75
-          ? "Bising Tinggi (Warning)"
+          ? "Tinggi (Warning)"
           : val >= 45
-          ? "Normal / Percakapan"
-          : "Hening / Tenang";
+          ? "Normal"
+          : "Tenang";
       rows.push([
         no++,
         item.inputed_at
@@ -389,7 +388,7 @@ const SoundSensorPage = () => {
       colors: ["#00ba88", "#0ea5e9", "#f59e0b"], // 3 warna berbeda: Hijau Emerald, Biru Langit, Amber
       chart: {
         ...baseOpt.chart,
-        type: "area",
+        type: "line",
         toolbar: {
           show: false,
         },
@@ -403,19 +402,13 @@ const SoundSensorPage = () => {
           },
         },
       },
-      fill: {
-        type: "gradient",
-        gradient: {
-          shadeIntensity: 1,
-          opacityFrom: 0.22,
-          opacityTo: 0.02,
-          stops: [0, 90, 100],
-        },
-      },
       stroke: {
         curve: "smooth",
-        width: [2.5, 2.5, 2],
-        dashArray: [0, 0, 4],
+        width: 2.5,
+      },
+      markers: {
+        size: 0,
+        hover: { size: 5 },
       },
       legend: {
         show: true,
@@ -502,29 +495,6 @@ const SoundSensorPage = () => {
             <span className="text-[11px] text-slate-400">({relativeUpdateTime})</span>
           </div>
         </div>
-
-        {/* Pilihan Periode Waktu & Ekspor CSV */}
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Pilihan Periode Waktu */}
-          <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
-            <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-              {t("common.period", "Periode:")}
-            </span>
-            {PERIOD_OPTIONS.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => setLimit(opt.value)}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
-                  limit === opt.value
-                    ? "bg-white text-[#00ba88] shadow-xs"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}>
-                {opt.value} {t("common.data", "Data")}
-              </button>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* Informasi Sensor Card (Sama Seperti di Sensor Gas) */}
@@ -548,7 +518,7 @@ const SoundSensorPage = () => {
           <h4 className="font-bold text-slate-800 text-base">
             Sistem Sensor Suara KY-037 & KY-038 (Dual-Channel Acoustic)
           </h4>
-          <p className="text-slate-600 text-sm leading-relaxed text-justify">
+          <p className="text-slate-600 text-sm leading-relaxed text-left">
             Sensor Suara KY-037/KY-038 dirancang untuk mendeteksi intensitas gelombang suara dan getaran akustik lingkungan pada manekin di dua titik anatomis (Telinga Kiri dan Telinga Kanan). Dilengkapi pembanding komparasi stereo, pemantau ambang batas kebisingan (Heartrate/Acoustic pulse), serta riwayat telemetri real-time.
           </p>
         </div>
@@ -557,7 +527,10 @@ const SoundSensorPage = () => {
       {/* Row 1: Cards Informasi Nilai Saat Ini & Multi-Parameter */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Card 1: Telinga Kiri (KY-602) */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300">
+        <BaseCard
+          height="h-auto"
+          mobileHeight="h-auto"
+          className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
           <div className="flex flex-col gap-3 justify-between h-full">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -571,64 +544,39 @@ const SoundSensorPage = () => {
                   <p className="text-[10px] text-slate-400 font-mono">KY-602 • Kanal Kiri</p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
+              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border shadow-2xs ${statusKy602.badgeClass}`}>
                 {statusKy602.label}
               </span>
             </div>
 
-            {/* Nilai Utama, Equalizer Wave, & Gauge */}
-            <div className="flex justify-between items-end w-full flex-grow pt-1">
-              <div className="flex flex-col">
-                <div className="flex items-baseline gap-1 font-mono">
-                  <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
-                    {gaugeDataKy602}
-                  </span>
-                  <span className="text-sm font-bold text-slate-400">dB</span>
-                </div>
-                <span className="text-[11px] text-slate-400 font-mono mt-0.5">
-                  Raw: ~{Math.round(gaugeDataKy602 * 10.24)} ADC
+            {/* Nilai Utama */}
+            <div className="py-1">
+              <div className="flex items-baseline gap-1 font-mono">
+                <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
+                  {gaugeDataKy602}
                 </span>
-
-                {/* Micro Equalizer Waveform Bars (Green) */}
-                <div className="flex items-end gap-1 h-6 mt-2 px-2 py-1 rounded-md bg-emerald-50/70 border border-emerald-100/80 w-fit">
-                  {[35, 75, 50, 90, 60, 80].map((h, i) => (
-                    <span
-                      key={i}
-                      className="w-1 bg-[#00ba88] rounded-full transition-all duration-300"
-                      style={{
-                        height: `${Math.min(100, Math.max(18, (gaugeDataKy602 / 100) * h))}%`,
-                        opacity: 0.6 + (i % 2) * 0.4,
-                      }}
-                    />
-                  ))}
-                  <span className="text-[9px] font-mono text-emerald-700 font-bold ml-1">EQ</span>
-                </div>
+                <span className="text-sm font-bold text-slate-400">dB</span>
               </div>
-
-              <LinearGauge
-                GHeight={125}
-                GWidth={75}
-                height={115}
-                width={38}
-                max={100}
-                value={gaugeDataKy602}
-              />
+              <div className="mt-2.5 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500 bg-[#00ba88]"
+                  style={{ width: `${Math.min(100, Math.max(5, (gaugeDataKy602 / 100) * 100))}%` }}
+                />
+              </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <span className="flex items-center gap-1">
-                <Activity className="w-3 h-3 text-slate-400" />
-                <span>Status Kanal:</span>
-              </span>
-              <span className="font-semibold text-emerald-600 flex items-center gap-1 font-mono">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online
-              </span>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-1">
+              <span>Batas Nyaman:</span>
+              <span className="font-semibold text-emerald-700 font-mono">&lt; 70 dB</span>
             </div>
           </div>
         </BaseCard>
 
         {/* Card 2: Telinga Kanan (KY-601) */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300">
+        <BaseCard
+          height="h-auto"
+          mobileHeight="h-auto"
+          className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
           <div className="flex flex-col gap-3 justify-between h-full">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -642,135 +590,87 @@ const SoundSensorPage = () => {
                   <p className="text-[10px] text-slate-400 font-mono">KY-601 • Kanal Kanan</p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-full border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
+              <span className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full border shadow-2xs ${statusKy601.badgeClass}`}>
                 {statusKy601.label}
               </span>
             </div>
 
-            {/* Nilai Utama, Equalizer Wave, & Gauge */}
-            <div className="flex justify-between items-end w-full flex-grow pt-1">
-              <div className="flex flex-col">
-                <div className="flex items-baseline gap-1 font-mono">
-                  <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
-                    {gaugeDataKy601}
-                  </span>
-                  <span className="text-sm font-bold text-slate-400">dB</span>
-                </div>
-                <span className="text-[11px] text-slate-400 font-mono mt-0.5">
-                  Raw: ~{Math.round(gaugeDataKy601 * 10.24)} ADC
+            {/* Nilai Utama */}
+            <div className="py-1">
+              <div className="flex items-baseline gap-1 font-mono">
+                <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
+                  {gaugeDataKy601}
                 </span>
-
-                {/* Micro Equalizer Waveform Bars (Green) */}
-                <div className="flex items-end gap-1 h-6 mt-2 px-2 py-1 rounded-md bg-emerald-50/70 border border-emerald-100/80 w-fit">
-                  {[45, 85, 60, 95, 40, 75].map((h, i) => (
-                    <span
-                      key={i}
-                      className="w-1 bg-[#00ba88] rounded-full transition-all duration-300"
-                      style={{
-                        height: `${Math.min(100, Math.max(18, (gaugeDataKy601 / 100) * h))}%`,
-                        opacity: 0.6 + (i % 2) * 0.4,
-                      }}
-                    />
-                  ))}
-                  <span className="text-[9px] font-mono text-emerald-700 font-bold ml-1">EQ</span>
-                </div>
+                <span className="text-sm font-bold text-slate-400">dB</span>
               </div>
-
-              <LinearGauge
-                GHeight={125}
-                GWidth={75}
-                height={115}
-                width={38}
-                max={100}
-                value={gaugeDataKy601}
-              />
+              <div className="mt-2.5 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500 bg-[#00ba88]"
+                  style={{ width: `${Math.min(100, Math.max(5, (gaugeDataKy601 / 100) * 100))}%` }}
+                />
+              </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <span className="flex items-center gap-1">
-                <Activity className="w-3 h-3 text-slate-400" />
-                <span>Status Kanal:</span>
-              </span>
-              <span className="font-semibold text-emerald-600 flex items-center gap-1 font-mono">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span> Online
-              </span>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-1">
+              <span>Batas Nyaman:</span>
+              <span className="font-semibold text-emerald-700 font-mono">&lt; 70 dB</span>
             </div>
           </div>
         </BaseCard>
 
         {/* Card 3: Multi-Parameter Stereo & Rata-rata Ambience */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300">
-          <div className="flex flex-col justify-between h-full gap-2.5">
+        <BaseCard
+          height="h-auto"
+          mobileHeight="h-auto"
+          className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
+          <div className="flex flex-col gap-3 justify-between h-full">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="p-1.5 rounded-lg bg-emerald-50 text-[#00ba88]">
                   <Radio className="w-4 h-4" />
                 </div>
-                <h3 className="font-extrabold text-slate-800 text-sm">
-                  Analisis Stereo & Ambience
-                </h3>
+                <div>
+                  <h3 className="font-extrabold text-slate-800 text-sm">
+                    Rata-rata Ambience
+                  </h3>
+                  <p className="text-[10px] text-slate-400 font-mono">Stereo Sound Balance</p>
+                </div>
               </div>
               <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
                 STEREO
               </span>
             </div>
 
-            {/* Rata-Rata Ambience Nilai */}
-            <div className="space-y-2 py-0.5">
-              <div className="flex items-baseline justify-between">
-                <span className="text-[11px] font-medium text-slate-400">Rata-rata Ambience:</span>
-                <div className="flex items-baseline gap-1 font-mono">
-                  <span className="text-2xl font-black text-[#00ba88]">
-                    {averageValue}
-                  </span>
-                  <span className="text-xs font-bold text-slate-400">dB</span>
-                </div>
+            {/* Nilai Utama */}
+            <div className="py-1">
+              <div className="flex items-baseline gap-1 font-mono">
+                <span className="text-3xl sm:text-4xl font-black text-[#00ba88] tracking-tight">
+                  {averageValue}
+                </span>
+                <span className="text-sm font-bold text-slate-400">dB</span>
               </div>
-
-              {/* Spectrum Meter Bar 0-100 dB (Pure Emerald Gradient) */}
-              <div className="space-y-1">
-                <div className="flex justify-between text-[9px] font-mono text-emerald-700 font-semibold">
-                  <span>Hening (&lt;45)</span>
-                  <span>Wajar (45-75)</span>
-                  <span>Bising (&gt;75)</span>
-                </div>
-                <div className="relative h-2 rounded-full bg-slate-100 overflow-hidden shadow-inner">
-                  <div
-                    className="h-full rounded-full transition-all duration-500 bg-gradient-to-r from-emerald-300 via-emerald-400 to-[#00ba88]"
-                    style={{ width: `${Math.min(100, Math.max(5, parseFloat(averageValue) || 0))}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Stereo Balance Indicator Slider */}
-              <div className="pt-1">
-                <div className="flex items-center justify-between text-[10px] text-slate-500 font-medium">
-                  <span>Kiri (L)</span>
-                  <span className="font-mono text-[11px] font-bold text-emerald-700">
-                    {stereoDominance}
-                  </span>
-                  <span>Kanan (R)</span>
-                </div>
-                <div className="relative h-1.5 bg-slate-100 rounded-full mt-1 border border-slate-200">
-                  <div
-                    className="absolute top-1/2 -translate-y-1/2 h-3 w-3 bg-[#00ba88] border-2 border-white rounded-full shadow-xs transition-all duration-500"
-                    style={{
-                      left: `${Math.min(92, Math.max(8, 50 + (gaugeDataKy601 - gaugeDataKy602) * 1.5))}%`,
-                    }}
-                  />
-                </div>
+              <div className="mt-2.5 w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500 bg-[#00ba88]"
+                  style={{ width: `${Math.min(100, Math.max(5, parseFloat(averageValue) || 0))}%` }}
+                />
               </div>
             </div>
 
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500">
-              <span>Ambang Toleransi:</span>
-              <span className="font-bold text-emerald-700 font-mono">≤ 89 dB</span>
+            <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 mt-1">
+              <span>Keseimbangan:</span>
+              <span className="font-semibold text-emerald-700 font-mono truncate max-w-[140px] text-right" title={stereoDominance}>
+                {stereoDominance}
+              </span>
             </div>
           </div>
         </BaseCard>
 
         {/* Card 4: Detak Akustik / Heartrate Pulse Monitor */}
-        <BaseCard className="relative overflow-hidden group hover:border-emerald-300">
+        <BaseCard
+          height="h-auto"
+          mobileHeight="h-auto"
+          className="relative overflow-hidden group hover:border-emerald-300 hover:shadow-md transition-all duration-300">
           <div className="flex flex-col gap-2 justify-between h-full">
             <div className="flex justify-between items-center">
               <div className="flex items-center gap-2">
@@ -872,7 +772,27 @@ const SoundSensorPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 self-start sm:self-center">
+                <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-center">
+                  {/* Pilihan Periode Waktu */}
+                  <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
+                    <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+                      {t("common.period", "Periode:")}
+                    </span>
+                    {PERIOD_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setLimit(opt.value)}
+                        className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all ${
+                          limit === opt.value
+                            ? "bg-white text-[#00ba88] shadow-xs"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}>
+                        {opt.value} {t("common.data", "Data")}
+                      </button>
+                    ))}
+                  </div>
+
                   <LiveIndicatorBadge isLive={isNewData1 || isNewData2} label="TELEMETRI STEREO" />
                 </div>
               </div>
@@ -882,6 +802,7 @@ const SoundSensorPage = () => {
                 <ApexChart
                   options={combinedChartData.multiOptions}
                   series={combinedChartData.multiSeries}
+                  type="line"
                   height={350}
                 />
               </div>
@@ -1131,13 +1052,13 @@ const SoundSensorPage = () => {
             <div className="flex items-center gap-4 flex-wrap">
               <span className="font-semibold text-slate-600 font-mono">Batas Ambang:</span>
               <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-emerald-500"></span> &lt; 45 dB (Hening / Tenang)
+                <span className="h-2 w-2 rounded-full bg-emerald-500"></span> &lt; 45 dB (Tenang)
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-amber-500"></span> 45 – 75 dB (Wajar / Percakapan)
+                <span className="h-2 w-2 rounded-full bg-amber-500"></span> 45 – 75 dB (Normal)
               </span>
               <span className="flex items-center gap-1.5">
-                <span className="h-2 w-2 rounded-full bg-red-500"></span> &ge; 75 dB (Bising Tinggi)
+                <span className="h-2 w-2 rounded-full bg-red-500"></span> &ge; 75 dB (Tinggi)
               </span>
             </div>
             <div className="font-mono text-slate-400">

@@ -43,22 +43,22 @@ export default function HeroBanner({
   };
 
   return (
-    <div className="w-full rounded-3xl bg-gradient-to-r from-emerald-700 via-teal-700 to-slate-900 text-white p-6 sm:p-7 shadow-xl border border-emerald-600/30 relative overflow-hidden">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-850 to-slate-900 border border-slate-800 text-white px-6 py-4 sm:py-5 shadow-sm">
       {/* Decorative ambient gradients */}
-      <div className="absolute top-0 right-0 -mt-12 -mr-12 w-96 h-96 rounded-full bg-emerald-500/20 blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-1/3 -mb-12 w-64 h-64 rounded-full bg-teal-400/20 blur-2xl pointer-events-none" />
+      <div className="absolute top-0 right-0 -mt-10 -mr-10 w-80 h-80 rounded-full bg-emerald-500/10 blur-3xl pointer-events-none" />
+      <div className="absolute bottom-0 left-1/4 -mb-10 w-60 h-60 rounded-full bg-teal-500/10 blur-2xl pointer-events-none" />
 
       {/* Hero Main Row */}
       <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex-1 w-full">
-          <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl xl:text-4xl font-extrabold tracking-tight text-white leading-tight">
+          <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-white leading-tight">
             {t("dashboard.welcomeAdmin", {
               name: userName,
               defaultValue: `Selamat Datang ${userName} di Smart Mannequin`,
             })}
           </h1>
-          <p className="text-xs sm:text-sm md:text-base text-emerald-100/90 mt-2 leading-relaxed font-medium">
-            {t("dashboard.heroSubtitle", "Anthropometric smart mannequin for passenger comfort and safety studies.")}
+          <p className="text-xs sm:text-sm text-slate-300 mt-1 leading-relaxed">
+            {t("dashboard.heroSubtitle", "Manekin cerdas antropometrik untuk studi kenyamanan dan keselamatan penumpang.")}
           </p>
         </div>
 

@@ -13,8 +13,8 @@ const CHANNEL_FILTERS = [
 const STATUS_FILTERS = [
   { value: "all", label: "Semua Status Kebisingan" },
   { value: "high", label: "Bising Tinggi (> 75 dB)" },
-  { value: "normal", label: "Normal / Percakapan (45 - 75 dB)" },
-  { value: "quiet", label: "Hening / Tenang (< 45 dB)" },
+  { value: "normal", label: "Normal (45 - 75 dB)" },
+  { value: "quiet", label: "Tenang (< 45 dB)" },
 ];
 
 export default function SoundLogsModal({
@@ -153,10 +153,10 @@ export default function SoundLogsModal({
     const csvRows = filteredReadings.map((r) => {
       const status =
         r.valDb >= 75
-          ? "Bising Tinggi (Warning)"
+          ? "Tinggi (Warning)"
           : r.valDb >= 45
-          ? "Normal / Percakapan"
-          : "Hening / Tenang";
+          ? "Normal"
+          : "Tenang";
 
       return [
         no++,
@@ -348,12 +348,12 @@ export default function SoundLogsModal({
                               Bising Tinggi
                             </span>
                           ) : isWarn ? (
-                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                            <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
                               Normal
                             </span>
                           ) : (
                             <span className="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-                              Hening / Tenang
+                              Tenang
                             </span>
                           )}
                         </td>

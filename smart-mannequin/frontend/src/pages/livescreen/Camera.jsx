@@ -195,6 +195,14 @@ const ThermalPage = () => {
       { name: "Suhu Max (°C)", data: highSeries },
     ];
 
+    const allValues = [...centerSeries, ...lowSeries, ...highSeries].filter(
+      (v) => typeof v === "number" && !isNaN(v) && v > 0
+    );
+    const minVal = allValues.length ? Math.min(...allValues) : 25;
+    const maxVal = allValues.length ? Math.max(...allValues) : 40;
+    const yMin = Math.max(0, Math.floor(minVal - 1.5));
+    const yMax = Math.ceil(maxVal + 1.5);
+
     const baseOpt = createChartOptions(
       `thermal-chart-${mannequinId}`,
       "Telemetri Kontinu Suhu Termal",
@@ -206,7 +214,7 @@ const ThermalPage = () => {
       title: { text: undefined },
       chart: {
         ...baseOpt.chart,
-        type: "area",
+        type: "line",
         toolbar: { show: false },
         animations: {
           enabled: true,
@@ -217,24 +225,25 @@ const ThermalPage = () => {
         },
       },
       colors: ["#00ba88", "#0284c7", "#ef4444"],
-      fill: {
-        type: ["gradient", "solid", "solid"],
-        gradient: {
-          shadeIntensity: 1,
-          opacityFrom: 0.35,
-          opacityTo: 0.05,
-          stops: [0, 90, 100],
-        },
-      },
       stroke: {
         curve: "smooth",
-        width: [3, 2, 2],
+        width: 2.5,
+      },
+      markers: {
+        size: 0,
+        hover: { size: 5 },
+      },
+      grid: {
+        borderColor: "#f1f5f9",
+        strokeDashArray: 3,
+        xaxis: { lines: { show: false } },
+        yaxis: { lines: { show: true } },
       },
       xaxis: {
         ...baseOpt.xaxis,
         categories,
         labels: {
-          style: { colors: "#64748b", fontSize: "11px" },
+          style: { colors: "#0f172a", fontSize: "11px", fontWeight: 600, fontFamily: "Plus Jakarta Sans, sans-serif" },
           rotate: 0,
         },
       },
@@ -244,7 +253,8 @@ const ThermalPage = () => {
         horizontalAlign: "left",
         fontSize: "12px",
         fontWeight: 600,
-        labels: { colors: "#475569" },
+        fontFamily: "Plus Jakarta Sans, sans-serif",
+        labels: { colors: "#0f172a" },
         markers: { radius: 12, width: 10, height: 10 },
         itemMargin: { horizontal: 10, vertical: 4 },
       },
@@ -252,16 +262,24 @@ const ThermalPage = () => {
         ...baseOpt.tooltip,
         shared: true,
         intersect: false,
+        theme: "light",
+        y: {
+          formatter: (val) => (val !== undefined && val !== null ? `${Number(val).toFixed(2)} °C` : "-"),
+        },
       },
       yaxis: {
         ...baseOpt.yaxis,
         title: {
           text: "Suhu (°C)",
-          style: { fontSize: "12px", fontWeight: "600", color: "#64748b" },
+          style: { fontSize: "12px", fontWeight: "600", color: "#0f172a", fontFamily: "Plus Jakarta Sans, sans-serif" },
         },
-        min: 15,
-        max: 70,
+        min: yMin,
+        max: yMax,
         forceNiceScale: true,
+        labels: {
+          formatter: (val) => (val !== undefined && val !== null ? `${Number(val).toFixed(1)}°C` : ""),
+          style: { colors: "#0f172a", fontSize: "11px", fontWeight: 600, fontFamily: "Plus Jakarta Sans, sans-serif" },
+        },
       },
     };
 
@@ -369,26 +387,6 @@ const ThermalPage = () => {
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
-
-        {/* Pilihan Periode Waktu */}
-        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
-          <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            {t("common.period", "Periode:")}
-          </span>
-          {PERIOD_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setLimit(opt.value)}
-              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                limit === opt.value
-                  ? "bg-white text-[#00ba88] shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}>
-              {opt.value} {t("common.data", "Data")}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* 2. Informasi Sensor Card */}
@@ -410,7 +408,7 @@ const ThermalPage = () => {
           <h4 className="font-bold text-slate-800 text-base">
             Sistem Kamera & Sensor Termal MLX90640
           </h4>
-          <p className="text-slate-600 text-sm leading-relaxed text-justify">
+          <p className="text-slate-600 text-sm leading-relaxed text-left">
             {t(
               "cameraSensor.deskripsiSensor",
               "Sensor termal MLX90640 adalah array sensor inframerah 32x24 piksel yang memetakan distribusi panas permukaan secara real-time. Terintegrasi dengan saluran feed live streaming kamera via URL (WebRTC/RTSP/HTTP/Iframe) untuk pemantauan visual terpadu pada Smart Mannequin.",
@@ -924,7 +922,7 @@ const ThermalPage = () => {
         {!loading ? (
           <BaseCard height="auto" mobileHeight="auto" className="!h-auto">
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-slate-100 gap-3">
                 <div className="flex items-center gap-2">
                   <div className="p-2 rounded-xl bg-emerald-50 text-[#00ba88]">
                     <Activity className="w-4 h-4" />
@@ -938,7 +936,30 @@ const ThermalPage = () => {
                     </p>
                   </div>
                 </div>
-                <LiveIndicatorBadge isLive={isNewData} label="TELEMETRI TERMAL" />
+
+                <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-center">
+                  {/* Pilihan Periode Waktu */}
+                  <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
+                    <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+                      {t("common.period", "Periode:")}
+                    </span>
+                    {PERIOD_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setLimit(opt.value)}
+                        className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                          limit === opt.value
+                            ? "bg-white text-[#00ba88] shadow-xs"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}>
+                        {opt.value} {t("common.data", "Data")}
+                      </button>
+                    ))}
+                  </div>
+
+                  <LiveIndicatorBadge isLive={isNewData} label="TELEMETRI TERMAL" />
+                </div>
               </div>
 
               <div className="w-full pt-1">
@@ -946,6 +967,7 @@ const ThermalPage = () => {
                   <ApexChart
                     options={chartOptions}
                     series={chartSeries}
+                    type="line"
                     height={320}
                   />
                 ) : (

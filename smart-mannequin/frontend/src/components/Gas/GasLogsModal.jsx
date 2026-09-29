@@ -110,7 +110,7 @@ export default function GasLogsModal({
           ? "Bahaya Gas"
           : coVal >= 25 || smokeVal >= 30
           ? "Waspada"
-          : "Aman / Normal";
+          : "Normal";
 
       return [
         no++,

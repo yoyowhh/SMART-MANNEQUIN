@@ -71,7 +71,7 @@ const GasPage = () => {
       };
     }
     return {
-      label: "Aman / Normal",
+      label: "Normal",
       badgeClass: "bg-emerald-50 text-emerald-700 border-emerald-200/80",
       desc: "Kualitas udara normal dan bebas cemaran gas",
     };
@@ -164,7 +164,7 @@ const GasPage = () => {
           ? "Bahaya Gas"
           : coVal >= 25 || smokeVal >= 30
           ? "Waspada"
-          : "Aman / Normal";
+          : "Normal";
 
       return [
         no++,
@@ -254,7 +254,7 @@ const GasPage = () => {
       title: { text: undefined }, // Matikan duplicate title
       chart: {
         ...baseOpt.chart,
-        type: "area",
+        type: "line",
         toolbar: {
           show: false,
         },
@@ -269,18 +269,13 @@ const GasPage = () => {
         },
       },
       colors: ["#00ba88", "#0ea5e9", "#f59e0b", "#ef4444"], // 4 warna berbeda: Hijau Emerald (Asap), Biru (NH3), Amber (CO2), Merah (CO)
-      fill: {
-        type: "gradient",
-        gradient: {
-          shadeIntensity: 1,
-          opacityFrom: 0.25,
-          opacityTo: 0.02,
-          stops: [0, 90, 100],
-        },
-      },
       stroke: {
         curve: "smooth",
-        width: [2.5, 2.5, 2, 2],
+        width: 2.5,
+      },
+      markers: {
+        size: 0,
+        hover: { size: 5 },
       },
       legend: {
         show: true,
@@ -374,26 +369,6 @@ const GasPage = () => {
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
-
-        {/* Pilihan Periode Waktu */}
-        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
-          <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            {t("common.period", "Periode:")}
-          </span>
-          {PERIOD_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setLimit(opt.value)}
-              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                limit === opt.value
-                  ? "bg-white text-[#00ba88] shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}>
-              {opt.value} {t("common.data", "Data")}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Informasi Sensor (Ukuran Gambar Besar Sama Seperti Sensor Suara) */}
@@ -417,7 +392,7 @@ const GasPage = () => {
           <h4 className="font-bold text-slate-800 text-base">
             Sistem Sensor Gas MQ-2 (Air Quality & Flammable Gas)
           </h4>
-          <p className="text-slate-600 text-sm leading-relaxed text-justify">
+          <p className="text-slate-600 text-sm leading-relaxed text-left">
             {t(
               "gasSensor.deskripsiSensor",
               "Sensor Gas MQ-2 adalah sensor yang dapat mendeteksi gas seperti LPG, i-butana, propana, metana, alkohol, hidrogen, asap dan karbon monoksida. Sensor ini memiliki dua pin keluaran, satu adalah keluaran analog (AO) dan yang lainnya adalah keluaran digital (DO). Sensor ini memiliki sensitivitas yang tinggi dan waktu respon yang cepat. Sensor ini sangat cocok untuk aplikasi deteksi gas dan pemantauan kualitas udara lingkungan secara real-time."
@@ -446,7 +421,7 @@ const GasPage = () => {
                   <p className="text-[10px] text-slate-400 font-mono">Smoke / LPG</p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs ${statusSmoke.badgeClass}`}>
                 {statusSmoke.label}
               </span>
             </div>
@@ -486,7 +461,7 @@ const GasPage = () => {
                   <p className="text-[10px] text-slate-400 font-mono">NH3 • Bau Menyengat</p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs ${statusNh3.badgeClass}`}>
                 {statusNh3.label}
               </span>
             </div>
@@ -526,7 +501,7 @@ const GasPage = () => {
                   <p className="text-[10px] text-slate-400 font-mono">CO2 • Kerapatan Udara</p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs ${statusCo2.badgeClass}`}>
                 {statusCo2.label}
               </span>
             </div>
@@ -566,7 +541,7 @@ const GasPage = () => {
                   <p className="text-[10px] text-slate-400 font-mono">CO • Gas Toksik</p>
                 </div>
               </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border shadow-2xs ${statusCo.badgeClass}`}>
                 {statusCo.label}
               </span>
             </div>
@@ -618,7 +593,27 @@ const GasPage = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 self-start sm:self-center">
+                <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-center">
+                  {/* Pilihan Periode Waktu */}
+                  <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
+                    <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
+                    <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+                      {t("common.period", "Periode:")}
+                    </span>
+                    {PERIOD_OPTIONS.map((opt) => (
+                      <button
+                        key={opt.value}
+                        onClick={() => setLimit(opt.value)}
+                        className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                          limit === opt.value
+                            ? "bg-white text-[#00ba88] shadow-xs"
+                            : "text-slate-600 hover:text-slate-900"
+                        }`}>
+                        {opt.value} {t("common.data", "Data")}
+                      </button>
+                    ))}
+                  </div>
+
                   <LiveIndicatorBadge isLive={isConnected} label="TELEMETRI GAS" />
                 </div>
               </div>
@@ -628,6 +623,7 @@ const GasPage = () => {
                 <ApexChart
                   options={chartData.multiOptions}
                   series={chartData.multiSeries}
+                  type="line"
                   height={350}
                 />
               </div>
@@ -765,8 +761,8 @@ const GasPage = () => {
                   </td>
                   <td className="py-3.5 px-4 font-mono font-bold text-slate-500">PPM</td>
                   <td className="py-3.5 px-4">
-                    <span className="inline-block px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-xs bg-emerald-50 text-emerald-700 border-emerald-200/80">
-                      Aman
+                    <span className={`inline-block px-2.5 py-0.5 rounded-full font-bold text-[10px] border shadow-xs ${statusCo2.badgeClass}`}>
+                      {statusCo2.label}
                     </span>
                   </td>
                   <td className="py-3.5 px-4">

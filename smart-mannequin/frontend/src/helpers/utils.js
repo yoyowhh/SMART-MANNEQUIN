@@ -671,6 +671,12 @@ export const createChartOptions = (chartId, chartTitle, categories) => ({
     curve: "smooth",
     width: 2.5,
   },
+  markers: {
+    size: 0,
+    hover: {
+      size: 5,
+    },
+  },
   tooltip: {
     theme: "light",
     x: {

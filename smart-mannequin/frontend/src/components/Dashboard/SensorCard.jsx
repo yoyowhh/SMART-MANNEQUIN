@@ -31,6 +31,7 @@ export default function SensorCard({
           accentColor: "text-rose-600",
           barColor: "bg-rose-500",
           borderHover: "hover:border-rose-400 hover:shadow-[0_12px_30px_rgba(244,63,94,0.14)]",
+          selectedClasses: "border-rose-500 ring-2 ring-rose-500 shadow-[0_8px_25px_rgba(244,63,94,0.22)] -translate-y-1 bg-rose-50/[0.2]",
         };
       case "warning":
         return {
@@ -40,6 +41,7 @@ export default function SensorCard({
           accentColor: "text-amber-500",
           barColor: "bg-amber-500",
           borderHover: "hover:border-amber-400 hover:shadow-[0_12px_30px_rgba(245,158,11,0.14)]",
+          selectedClasses: "border-amber-500 ring-2 ring-amber-500 shadow-[0_8px_25px_rgba(245,158,11,0.22)] -translate-y-1 bg-amber-50/[0.2]",
         };
       case "offline":
         return {
@@ -49,6 +51,7 @@ export default function SensorCard({
           accentColor: "text-slate-400",
           barColor: "bg-slate-300",
           borderHover: "hover:border-slate-300 hover:shadow-[0_12px_30px_rgba(0,0,0,0.06)]",
+          selectedClasses: "border-slate-400 ring-2 ring-slate-400 shadow-[0_8px_25px_rgba(100,116,139,0.2)] -translate-y-1 bg-slate-50/[0.2]",
         };
       case "normal":
       default:
@@ -59,6 +62,7 @@ export default function SensorCard({
           accentColor: "text-[#00ba88]",
           barColor: "bg-[#00ba88]",
           borderHover: "hover:border-[#00ba88] hover:shadow-[0_12px_30px_rgba(0,186,136,0.14)]",
+          selectedClasses: "border-[#00ba88] ring-2 ring-[#00ba88] shadow-[0_8px_25px_rgba(0,186,136,0.22)] -translate-y-1 bg-emerald-50/[0.2]",
         };
     }
   };
@@ -67,13 +71,14 @@ export default function SensorCard({
 
   return (
     <div
+      id={`sensor-card-${sensor.id}`}
       onClick={handleCardClick}
       onMouseEnter={() => onHover && onHover(sensor.id)}
-      className={`group cursor-pointer rounded-2xl p-5 bg-white transition-all duration-300 border flex flex-col justify-between hover:-translate-y-1 ${
+      className={`group cursor-pointer rounded-2xl p-5 bg-white transition-all duration-300 border flex flex-col justify-between ${
         statusConfig.borderHover
       } ${
         isSelected
-          ? "border-[#00ba88] ring-2 ring-[#00ba88]/20 shadow-[0_8px_30px_rgba(0,186,136,0.12)]"
+          ? statusConfig.selectedClasses
           : status === "critical"
           ? "border-rose-300 shadow-[0_4px_20px_rgba(244,63,94,0.06)]"
           : status === "warning"
@@ -83,19 +88,19 @@ export default function SensorCard({
       {/* Top row: Icon + Name (left) & Status Pill (right) */}
       <div>
         <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 min-w-0">
             <Icon
-              className={`w-5 h-5 ${statusConfig.accentColor} group-hover:scale-110 transition-transform`}
+              className={`w-5 h-5 shrink-0 ${statusConfig.accentColor} group-hover:scale-110 transition-transform`}
             />
             <h4
-              className={`font-bold text-slate-800 text-[15px] leading-snug group-hover:${statusConfig.accentColor} transition-colors`}>
+              className={`font-bold text-slate-800 text-[15px] leading-snug truncate group-hover:${statusConfig.accentColor} transition-colors`}>
               {sensor.name}
             </h4>
           </div>
 
           {/* Status Badge */}
           <div
-            className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10.5px] font-bold ${statusConfig.badge}`}>
+            className={`flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10.5px] font-bold shrink-0 ${statusConfig.badge}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${statusConfig.dot}`} />
             <span>{statusConfig.label}</span>
           </div>
@@ -120,14 +125,21 @@ export default function SensorCard({
         </div>
       </div>
 
-      {/* Bottom row: Subtitle / Anatomical Location (left) & Lihat Detail -> (right) */}
-      <div className="mt-5 pt-3 border-t border-slate-50 flex items-center justify-between text-xs">
-        <span className="text-slate-400 font-medium text-[11px]">
-          {sensor.location}
-        </span>
+      {/* Bottom row: Subtitle / Anatomical Location + Quantity (left) & Lihat Detail -> (right) */}
+      <div className="mt-5 pt-3 border-t border-slate-50 flex items-center justify-between text-xs gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          {sensor.quantity && (
+            <span className="px-2 py-0.5 rounded-md bg-slate-100 text-slate-700 border border-slate-200/80 text-[10.5px] font-bold font-mono shrink-0">
+              {sensor.quantity}
+            </span>
+          )}
+          <span className="text-slate-400 font-medium text-[11px] truncate">
+            {sensor.location}
+          </span>
+        </div>
 
         <span
-          className={`font-bold ${statusConfig.accentColor} flex items-center gap-1 transition-all text-[11.5px] group-hover:translate-x-0.5`}>
+          className={`font-bold ${statusConfig.accentColor} flex items-center gap-1 transition-all text-[11.5px] group-hover:translate-x-0.5 shrink-0`}>
           <span>Lihat Detail</span>
           <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
         </span>

@@ -251,7 +251,7 @@ const AdxlPage = () => {
       title: { text: undefined },
       chart: {
         ...baseOpt.chart,
-        type: "area",
+        type: "line",
         toolbar: { show: false },
         animations: {
           enabled: true,
@@ -264,16 +264,11 @@ const AdxlPage = () => {
         },
       },
       colors: ["#00ba88", "#0ea5e9"], // Tangan Kanan: Hijau Emerald, Tangan Kiri: Biru Langit (Berbeda)
-      fill: {
-        type: "gradient",
-        gradient: {
-          shadeIntensity: 1,
-          opacityFrom: 0.35,
-          opacityTo: 0.04,
-          stops: [0, 90, 100],
-        },
+      stroke: { curve: "smooth", width: 2.5 },
+      markers: {
+        size: 0,
+        hover: { size: 5 },
       },
-      stroke: { curve: "smooth", width: [2.5, 2.5] },
       legend: {
         show: true,
         position: "top",
@@ -353,26 +348,6 @@ const AdxlPage = () => {
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
-
-        {/* Pilihan Periode Waktu */}
-        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
-          <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            {t("common.period", "Periode:")}
-          </span>
-          {PERIOD_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setLimit(opt.value)}
-              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                limit === opt.value
-                  ? "bg-white text-[#00ba88] shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}>
-              {opt.value} {t("common.data", "Data")}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Informasi Sensor Card */}
@@ -396,7 +371,7 @@ const AdxlPage = () => {
           <h4 className="font-bold text-slate-800 text-base">
             {t("adxlSensor.title", "Sistem Sensor Akselerometer ADXL345 (Kinematika Ekstremitas)")}
           </h4>
-          <p className="text-slate-600 text-sm leading-relaxed text-justify">
+          <p className="text-slate-600 text-sm leading-relaxed text-left">
             {t(
               "adxlSensor.dekripsiSensor",
               "Sensor ADXL345 adalah modul akselerometer digital 3-sumbu dengan resolusi tinggi (13-bit) yang dipasang pada lengan manekin (Tangan Kanan ADXL-201 dan Tangan Kiri ADXL-202). Sensor ini mengukur percepatan statis gravitasi serta percepatan dinamis akibat gerakan tubuh, getaran mekanik, dan impak benturan secara real-time."
@@ -495,7 +470,7 @@ const AdxlPage = () => {
         {!loading ? (
           <BaseCard height="auto" mobileHeight="auto" className="!h-auto">
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-slate-100 gap-3">
                 <div className="flex items-center gap-2">
                   <div className="p-2 rounded-xl bg-emerald-50 text-[#00ba88]">
                     <Activity className="w-4 h-4" />
@@ -509,12 +484,33 @@ const AdxlPage = () => {
                     </p>
                   </div>
                 </div>
+
+                {/* Pilihan Periode Waktu */}
+                <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl self-start sm:self-center">
+                  <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+                    {t("common.period", "Periode:")}
+                  </span>
+                  {PERIOD_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setLimit(opt.value)}
+                      className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                        limit === opt.value
+                          ? "bg-white text-[#00ba88] shadow-xs"
+                          : "text-slate-600 hover:text-slate-900"
+                      }`}>
+                      {opt.value} {t("common.data", "Data")}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="w-full pt-1">
                 <ApexChart
                   options={chartData.options}
                   series={chartData.series}
+                  type="line"
                   height={350}
                 />
               </div>

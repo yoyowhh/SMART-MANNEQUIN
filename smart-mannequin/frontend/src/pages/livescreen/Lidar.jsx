@@ -185,7 +185,7 @@ const LidarPage = () => {
       title: { text: undefined },
       chart: {
         ...baseOpt.chart,
-        type: "area",
+        type: "line",
         toolbar: { show: false },
         animations: {
           enabled: true,
@@ -198,16 +198,11 @@ const LidarPage = () => {
         },
       },
       colors: ["#00ba88", "#10b981"], // Palette Hijau Tema: Emerald (Raw) & Mint Emerald (Kalman)
-      fill: {
-        type: "gradient",
-        gradient: {
-          shadeIntensity: 1,
-          opacityFrom: 0.30,
-          opacityTo: 0.03,
-          stops: [0, 90, 100],
-        },
+      stroke: { curve: "smooth", width: 2.5 },
+      markers: {
+        size: 0,
+        hover: { size: 5 },
       },
-      stroke: { curve: "smooth", width: [2.5, 2] },
       legend: {
         show: true,
         position: "top",
@@ -283,25 +278,6 @@ const LidarPage = () => {
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
-
-        {/* Pilihan Periode Waktu */}
-        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
-          <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            {t("common.period", "Periode:")}
-          </span>
-          {PERIOD_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setLimit(opt.value)}
-              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${limit === opt.value
-                  ? "bg-white text-[#00ba88] shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
-                }`}>
-              {opt.label}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Informasi Sensor Card */}
@@ -325,7 +301,7 @@ const LidarPage = () => {
           <h4 className="font-bold text-slate-800 text-base">
             Sistem Sensor Lidar TF-Mini (Perimeter & Proximity)
           </h4>
-          <p className="text-slate-600 text-sm leading-relaxed text-justify">
+          <p className="text-slate-600 text-sm leading-relaxed text-left">
             {t(
               "lidarSensor.deskripsiSensor",
               "Sensor Lidar TF-Mini adalah sensor pengukur jarak optik berbasis laser time-of-flight yang terpasang pada manekin untuk mendeteksi keberadaan objek, perimeter halangan, dan jarak kedekatan lingkungan secara real-time. Sensor ini memiliki akurasi tinggi dan respon frekuensi cepat untuk aplikasi keselamatan kerja dan navigasi."
@@ -408,7 +384,7 @@ const LidarPage = () => {
         {!loading ? (
           <BaseCard height="auto" mobileHeight="auto" className="!h-auto">
             <div className="flex flex-col gap-3">
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-2 border-b border-slate-100 gap-3">
                 <div className="flex items-center gap-2">
                   <div className="p-2 rounded-xl bg-emerald-50 text-[#00ba88]">
                     <Activity className="w-4 h-4" />
@@ -422,12 +398,32 @@ const LidarPage = () => {
                     </p>
                   </div>
                 </div>
+
+                {/* Pilihan Periode Waktu */}
+                <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl self-start sm:self-center">
+                  <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+                    {t("common.period", "Periode:")}
+                  </span>
+                  {PERIOD_OPTIONS.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setLimit(opt.value)}
+                      className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${limit === opt.value
+                          ? "bg-white text-[#00ba88] shadow-xs"
+                          : "text-slate-600 hover:text-slate-900"
+                        }`}>
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
               <div className="w-full pt-1">
                 <ApexChart
                   options={chartData.options}
                   series={chartData.series}
+                  type="line"
                   height={350}
                 />
               </div>

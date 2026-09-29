@@ -200,22 +200,17 @@ const MpuPage = () => {
       title: { text: undefined },
       chart: {
         ...baseOpt.chart,
-        type: "area",
+        type: "line",
         toolbar: { show: false }, // Hapus menu hamburger / download
       },
       colors: ["#00ba88", "#0ea5e9", "#f59e0b"], // 3 warna berbeda: Sumbu X (Hijau), Sumbu Y (Biru), Sumbu Z (Amber)
-      fill: {
-        type: "gradient",
-        gradient: {
-          shadeIntensity: 1,
-          opacityFrom: 0.25,
-          opacityTo: 0.02,
-          stops: [0, 90, 100],
-        },
-      },
       stroke: {
         curve: "smooth",
-        width: [2.5, 2.5, 2.5],
+        width: 2.5,
+      },
+      markers: {
+        size: 0,
+        hover: { size: 5 },
       },
       legend: {
         show: true,
@@ -291,26 +286,6 @@ const MpuPage = () => {
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
-
-        {/* Pilihan Periode Waktu */}
-        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
-          <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            {t("common.period", "Periode:")}
-          </span>
-          {PERIOD_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              onClick={() => setLimit(opt.value)}
-              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
-                limit === opt.value
-                  ? "bg-white text-[#00ba88] shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}>
-              {opt.value} {t("common.data", "Data")}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Informasi Sensor Card */}
@@ -332,7 +307,7 @@ const MpuPage = () => {
           <h4 className="font-bold text-slate-800 text-base">
             {t("mpuSensor.title", "Sistem Sensor Gerak & Orientasi MPU-6050")}
           </h4>
-          <p className="text-slate-600 text-sm leading-relaxed text-justify">
+          <p className="text-slate-600 text-sm leading-relaxed text-left">
             {t(
               "mpuSensor.dekripsiSensor",
               "Sensor MPU-6050 menggabungkan akselerometer 3-sumbu dan giroskop 3-sumbu dengan Digital Motion Processor (DMP) terintegrasi untuk melacak orientasi angular, akselerasi gravitasi, dan stabilitas dinamis manekin."
@@ -478,13 +453,35 @@ const MpuPage = () => {
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-medium text-slate-500">
-              Sampel Ditampilkan:
-            </span>
-            <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-[#00ba88] font-bold font-mono text-xs">
-              {rawRows.length} Titik
-            </span>
+          <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-center">
+            {/* Pilihan Periode Waktu */}
+            <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
+              <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+                {t("common.period", "Periode:")}
+              </span>
+              {PERIOD_OPTIONS.map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setLimit(opt.value)}
+                  className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                    limit === opt.value
+                      ? "bg-white text-[#00ba88] shadow-xs"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}>
+                  {opt.value} {t("common.data", "Data")}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs font-medium text-slate-500">
+                Sampel Ditampilkan:
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-emerald-50 text-[#00ba88] font-bold font-mono text-xs">
+                {rawRows.length} Titik
+              </span>
+            </div>
           </div>
         </div>
 
@@ -494,7 +491,7 @@ const MpuPage = () => {
             <ApexChart
               options={chartOptions}
               series={chartSeries}
-              type="area"
+              type="line"
               height={320}
             />
           </div>

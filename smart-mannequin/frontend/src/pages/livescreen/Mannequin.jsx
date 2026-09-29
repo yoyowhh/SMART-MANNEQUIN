@@ -89,6 +89,7 @@ const SENSOR_LIST = [
   {
     id: "sound",
     name: "Sensor Suara",
+    quantity: "2 Unit",
     defaultValue: "43.3",
     unit: "dB",
     location: "Telinga Kiri & Kanan (KY-601/602)",
@@ -99,6 +100,7 @@ const SENSOR_LIST = [
   {
     id: "gas",
     name: "Sensor Gas",
+    quantity: "1 Unit",
     defaultValue: "18.5",
     unit: "ppm",
     location: "Hidung / Saluran Udara (MQ-101)",
@@ -109,6 +111,7 @@ const SENSOR_LIST = [
   {
     id: "lidar",
     name: "Sensor Lidar",
+    quantity: "1 Unit",
     defaultValue: "84.2",
     unit: "cm",
     location: "Puncak Kepala / TF-Mini LiDAR (901)",
@@ -119,6 +122,7 @@ const SENSOR_LIST = [
   {
     id: "camera",
     name: "Kamera",
+    quantity: "2 Titik",
     defaultValue: "33.7",
     unit: "°C",
     location: "Mata Kiri & Kanan (702)",
@@ -129,6 +133,7 @@ const SENSOR_LIST = [
   {
     id: "adxl",
     name: "Sensor ADXL345",
+    quantity: "2 Unit",
     defaultValue: "0.14",
     unit: "g",
     location: "Bahu Kiri & Kanan (ADXL-201)",
@@ -139,6 +144,7 @@ const SENSOR_LIST = [
   {
     id: "mpu",
     name: "Sensor MPU6050",
+    quantity: "1 Unit",
     defaultValue: "1.02",
     unit: "G",
     location: "Dada Atas / Sternum (1002)",
@@ -149,6 +155,7 @@ const SENSOR_LIST = [
   {
     id: "bme",
     name: "Sensor BME280",
+    quantity: "1 Unit",
     defaultValue: "28.5",
     unit: "°C",
     location: "Dada Tengah / Solar Plexus (BME-1001)",
@@ -159,6 +166,7 @@ const SENSOR_LIST = [
   {
     id: "loadcell",
     name: "Sensor Load Cell",
+    quantity: "5 Titik",
     defaultValue: "12.4",
     unit: "N",
     location: "Leher, Paha & Tulang Kering (801)",
@@ -169,6 +177,7 @@ const SENSOR_LIST = [
   {
     id: "smartskin",
     name: "SmartSkin",
+    quantity: "2 Modul",
     defaultValue: "32.5",
     unit: "°C",
     location: "Dada Pektoral Kiri & Kanan (MCP9808)",
@@ -530,9 +539,20 @@ const MannequinPage = () => {
         <div className="w-full lg:w-[34%] xl:w-[30%]">
           <MannequinBlueprint
             selectedSensorKey={selectedSensorKey}
-            onSelectHotspot={(sensorKey) =>
-              setSelectedSensorKey((prev) => (prev === sensorKey ? null : sensorKey))
-            }
+            onSelectHotspot={(sensorKey) => {
+              setSelectedSensorKey((prev) => {
+                const nextKey = prev === sensorKey ? null : sensorKey;
+                if (nextKey) {
+                  setTimeout(() => {
+                    const cardEl = document.getElementById(`sensor-card-${nextKey}`);
+                    if (cardEl) {
+                      cardEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+                    }
+                  }, 50);
+                }
+                return nextKey;
+              });
+            }}
             mannequinId={mannequinId}
             isCalibrating={isCalibrating}
             calibrationProgress={calibrationProgress}

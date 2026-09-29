@@ -65,7 +65,7 @@ export default function AlertBanner({ alerts = [], mannequinId = 1 }) {
         <div className="flex items-center gap-3">
           <div
             className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 ${bannerTheme.iconBg}`}>
-            <Icon className="w-4 h-4 animate-bounce" />
+            <Icon className="w-4 h-4" />
           </div>
           <div>
             <div className="flex items-center gap-2">

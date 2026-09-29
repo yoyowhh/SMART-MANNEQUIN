@@ -265,27 +265,6 @@ export default function SmartskinPage() {
             <span className="font-bold text-slate-700">{formattedUpdateTime}</span>
           </div>
         </div>
-
-        {/* Pilihan Periode Waktu */}
-        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl">
-          <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
-          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
-            {t("common.period", "Periode:")}
-          </span>
-          {PERIOD_OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => setLimit(opt.value)}
-              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${limit === opt.value
-                  ? "bg-white text-[#00ba88] shadow-xs"
-                  : "text-slate-600 hover:text-slate-900"
-                }`}
-            >
-              {opt.value} {t("common.data", "Data")}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Informasi Sensor (Di Atas) */}
@@ -322,7 +301,7 @@ export default function SmartskinPage() {
             <h4 className="font-bold text-slate-800 text-base sm:text-lg">
               {t("smartskinSensor.title", "Sistem Sensor Cerdas Smart Skin (STAS-RG)")}
             </h4>
-            <p className="text-slate-600 text-sm leading-relaxed text-justify">
+            <p className="text-slate-600 text-sm leading-relaxed text-left">
               {t(
                 "smartskinSensor.deskripsiSensor",
                 "Smart Skin adalah sistem sensor multimodal yang terpasang pada permukaan manekin untuk mendeteksi berbagai stimulasi fisik secara real-time. Sistem ini mengintegrasikan sensor suhu (MCP9808) untuk pemantauan termal, sensor tekanan (FSR RP-S40-ST) untuk distribusi tekanan kontak, sensor getaran piezoelektrik untuk deteksi impak, dan flex sensor untuk pemantauan artikulasi kelengkungan sendi (bahu, siku, pinggang, dan lutut)."
@@ -330,6 +309,40 @@ export default function SmartskinPage() {
             </p>
           </div>
         </SensorInfoCard>
+      </div>
+
+      {/* Header Bagian Grafik & Pilihan Periode Waktu */}
+      <div className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-100 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
+        <div>
+          <h3 className="text-base font-bold text-slate-800">
+            Grafik Telemetri Smart Skin Multimodal
+          </h3>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Visualisasi riwayat telemetri real-time 4 kanal utama Smart Skin.
+          </p>
+        </div>
+
+        {/* Pilihan Periode Waktu */}
+        <div className="flex items-center gap-1.5 bg-slate-100/80 p-1 rounded-xl shrink-0 self-start sm:self-center">
+          <Calendar className="w-3.5 h-3.5 text-slate-500 ml-1.5" />
+          <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mr-1">
+            {t("common.period", "Periode:")}
+          </span>
+          {PERIOD_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setLimit(opt.value)}
+              className={`px-2.5 py-1 text-xs font-bold rounded-lg transition-all cursor-pointer ${
+                limit === opt.value
+                  ? "bg-white text-[#00ba88] shadow-xs"
+                  : "text-slate-600 hover:text-slate-900"
+              }`}
+            >
+              {opt.value} {t("common.data", "Data")}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* 4 Card Sensor SmartSkin: Grid 2x2 Simetris & Lega */}

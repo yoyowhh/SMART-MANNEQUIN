@@ -15,6 +15,7 @@ import {
 import HeroBanner from "../components/Dashboard/HeroBanner";
 import QuickStatusSummary from "../components/Dashboard/QuickStatusSummary";
 import AlertBanner from "../components/Dashboard/AlertBanner";
+import InstalledSensorsCard from "../components/Dashboard/InstalledSensorsCard";
 
 import { useFetchSensor } from "../hooks/useSensor";
 import { getLatestData } from "../helpers/utils";
@@ -381,6 +382,13 @@ const NewLiveScreen = () => {
 
       {/* 3. Alert Banner: Informasi Peringatan Terbaru jika ada */}
       <AlertBanner alerts={alerts} mannequinId={mannequinId} />
+
+      {/* 4. Daftar Sensor Terpasang pada Manekin & Jumlah Unit */}
+      <InstalledSensorsCard
+        sensors={evaluatedSensors}
+        readings={readings}
+        mannequinId={mannequinId}
+      />
     </div>
   );
 };

@@ -25,10 +25,10 @@ export default function SensorInfoCard({
             <div className="flex items-center gap-2.5">
               <Info className="w-5 h-5 text-[#00ba88] shrink-0" strokeWidth={2.2} />
               <div>
-                <h4 className="font-bold text-slate-800 text-base">
+                <h4 className="font-bold text-slate-900 text-base sm:text-lg">
                   {displayTitle}
                 </h4>
-                <p className="text-xs text-slate-400">
+                <p className="text-xs sm:text-sm text-slate-700 font-medium">
                   {t("sensorInfo.specSubtitle", "Spesifikasi & Penempatan Anatomis Mannequin")}
                 </p>
               </div>
@@ -36,7 +36,7 @@ export default function SensorInfoCard({
             <div className="flex items-center gap-2">
               {action}
               {sensorCode && (
-                <span className="px-3 py-1 rounded-full text-[11px] font-mono font-bold uppercase tracking-wider bg-emerald-50 text-emerald-700 border border-emerald-200 shadow-xs">
+                <span className="px-3 py-1 rounded-full text-xs font-mono font-bold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 shadow-xs">
                   {sensorCode}
                 </span>
               )}
@@ -57,8 +57,8 @@ export default function SensorInfoCard({
                 )}
               </div>
             )}
-            <div className="text-slate-600 text-sm leading-relaxed font-medium flex-1 text-justify">
-              {description && <p className="text-justify leading-relaxed">{description}</p>}
+            <div className="text-slate-900 text-sm sm:text-base leading-relaxed font-normal flex-1 text-left">
+              {description && <p className="text-left leading-relaxed">{description}</p>}
               {children}
             </div>
           </div>
