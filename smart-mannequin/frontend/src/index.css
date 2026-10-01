@@ -8,6 +8,7 @@
   .trapezium-right {
     clip-path: polygon(10% 0, 100% 0, 100% 100%, 10% 80%);
   }
+
   .trapezium-left {
     clip-path: polygon(0 0, 90% 20%, 90% 100%, 0 100%);
   }
@@ -41,19 +42,22 @@ pre {
 .text-gray-500:not(.bg-slate-900 *):not(.bg-slate-850 *):not(.bg-slate-800 *):not(.bg-slate-950 *),
 .text-neutral-400:not(.bg-slate-900 *):not(.bg-slate-850 *):not(.bg-slate-800 *):not(.bg-slate-950 *),
 .text-neutral-500:not(.bg-slate-900 *):not(.bg-slate-850 *):not(.bg-slate-800 *):not(.bg-slate-950 *) {
-  color: #1e293b !important; /* Deep dark slate / hitam tajam */
+  color: #1e293b !important;
+  /* Deep dark slate / hitam tajam */
 }
 
 .text-slate-600:not(.bg-slate-900 *):not(.bg-slate-850 *):not(.bg-slate-800 *):not(.bg-slate-950 *),
 .text-gray-600:not(.bg-slate-900 *):not(.bg-slate-850 *):not(.bg-slate-800 *):not(.bg-slate-950 *) {
-  color: #0f172a !important; /* Hitam pekat */
+  color: #0f172a !important;
+  /* Hitam pekat */
 }
 
 /* Penyesuaian ukuran teks micro agar nyaman dibaca dan tidak terlalu kecil */
 .text-\[10px\],
 .text-\[10\.5px\],
 .text-\[11px\] {
-  font-size: 0.75rem !important; /* Minimal 12px (text-xs) agar jelas terbaca */
+  font-size: 0.75rem !important;
+  /* Minimal 12px (text-xs) agar jelas terbaca */
   line-height: 1.15rem !important;
 }
 
@@ -77,7 +81,8 @@ pre {
 
 ::-webkit-scrollbar {
   width: 6px;
-  height: 0px; /* Hide horizontal scrollbar */
+  height: 0px;
+  /* Hide horizontal scrollbar */
 }
 
 ::-webkit-scrollbar:horizontal {
@@ -105,6 +110,7 @@ pre {
     opacity: 0;
     transform: translateY(12px) scale(0.995);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -115,6 +121,7 @@ pre {
   animation: pageEnter 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   will-change: opacity, transform;
 }
+
 /* end modern scrollbar & page animation */
 
 svg {
@@ -123,25 +130,39 @@ svg {
 
 /* Styling for the quarter circle */
 .quarter-circle {
-  width: 30%; /* 50% of the viewport's smaller dimension (width or height) */
-  height: 55vmin; /* 50% of the viewport's smaller dimension (width or height) */
-  background-color: rgb(209, 213, 219); /* Background color for visualization */
-  border-top-left-radius: 100%; /* Create a quarter circle shape */
-  position: absolute; /* Position it absolutely */
-  top: 0; /* Stick to the top of the viewport */
-  left: 0; /* Stick to the left of the viewport */
+  width: 30%;
+  /* 50% of the viewport's smaller dimension (width or height) */
+  height: 55vmin;
+  /* 50% of the viewport's smaller dimension (width or height) */
+  background-color: rgb(209, 213, 219);
+  /* Background color for visualization */
+  border-top-left-radius: 100%;
+  /* Create a quarter circle shape */
+  position: absolute;
+  /* Position it absolutely */
+  top: 0;
+  /* Stick to the top of the viewport */
+  left: 0;
+  /* Stick to the left of the viewport */
   transform: rotate(180deg);
   background-color: #c4c4c4;
 }
 
 .quarter-circle2 {
-  width: 30%; /* 50% of the viewport's smaller dimension (width or height) */
-  height: 55vmin; /* 50% of the viewport's smaller dimension (width or height) */
-  background-color: rgb(209, 213, 219); /* Background color for visualization */
-  border-top-left-radius: 100%; /* Create a quarter circle shape */
-  position: absolute; /* Position it absolutely */
-  right: 0; /* Stick to the top of the viewport */
-  bottom: 0; /* Stick to the left of the viewport */
+  width: 30%;
+  /* 50% of the viewport's smaller dimension (width or height) */
+  height: 55vmin;
+  /* 50% of the viewport's smaller dimension (width or height) */
+  background-color: rgb(209, 213, 219);
+  /* Background color for visualization */
+  border-top-left-radius: 100%;
+  /* Create a quarter circle shape */
+  position: absolute;
+  /* Position it absolutely */
+  right: 0;
+  /* Stick to the top of the viewport */
+  bottom: 0;
+  /* Stick to the left of the viewport */
   /* transform: rotate(180deg); */
   background-color: #c4c4c4;
 }
@@ -150,57 +171,69 @@ svg {
 .quarter-circle::before {
   content: "";
   display: block;
-  width: 50%; /* Center the content horizontally within the quarter circle */
-  height: 50%; /* Center the content vertically within the quarter circle */
+  width: 50%;
+  /* Center the content horizontally within the quarter circle */
+  height: 50%;
+  /* Center the content vertically within the quarter circle */
   margin: auto;
 }
 
 .quarter-circle2::before {
   content: "";
   display: block;
-  width: 50%; /* Center the content horizontally within the quarter circle */
-  height: 50%; /* Center the content vertically within the quarter circle */
+  width: 50%;
+  /* Center the content horizontally within the quarter circle */
+  height: 50%;
+  /* Center the content vertically within the quarter circle */
   margin: auto;
 }
 
 /* Media query untuk responsif */
 @media only screen and (max-width: 1024px) {
   .quarter-circle {
-    width: 40%; /* Adjust the width for smaller screens */
+    width: 40%;
+    /* Adjust the width for smaller screens */
     height: 30vmin;
   }
 }
 
 @media only screen and (max-width: 1024px) {
   .quarter-circle {
-    width: 30%; /* Adjust the width for smaller screens */
+    width: 30%;
+    /* Adjust the width for smaller screens */
     height: 45vmin;
   }
 
   .quarter-circle2 {
-    width: 30%; /* Adjust the width for smaller screens */
+    width: 30%;
+    /* Adjust the width for smaller screens */
     height: 45vmin;
   }
 }
+
 @media only screen and (max-width: 768px) {
   .quarter-circle {
-    width: 30%; /* Adjust the width for smaller screens */
+    width: 30%;
+    /* Adjust the width for smaller screens */
     height: 35vmin;
   }
 
   .quarter-circle2 {
-    width: 30%; /* Adjust the width for smaller screens */
+    width: 30%;
+    /* Adjust the width for smaller screens */
     height: 35vmin;
   }
 }
 
 @media only screen and (max-width: 480px) {
   .quarter-circle {
-    width: 35%; /* Further adjust the width for even smaller screens */
+    width: 35%;
+    /* Further adjust the width for even smaller screens */
   }
 
   .quarter-circle2 {
-    width: 35%; /* Further adjust the width for even smaller screens */
+    width: 35%;
+    /* Further adjust the width for even smaller screens */
   }
 }
 
@@ -226,6 +259,7 @@ svg {
 .arrow span:nth-child(2) {
   animation-delay: -0.2s;
 }
+
 .arrow span:nth-child(3) {
   animation-delay: -0.4s;
 }
@@ -250,11 +284,9 @@ svg {
   content: "";
   position: absolute;
   display: block;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 176, 155, 0.5),
-    rgba(150, 201, 61, 1)
-  );
+  background: linear-gradient(to bottom,
+      rgba(0, 176, 155, 0.5),
+      rgba(150, 201, 61, 1));
   z-index: 2;
   transition: 0.5s all;
   opacity: 0;

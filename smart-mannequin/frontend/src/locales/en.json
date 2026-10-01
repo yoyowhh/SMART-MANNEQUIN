@@ -102,7 +102,10 @@
     "mannequin2": "Mannequin 2",
     "dashboardOverview": "Dashboard Overview",
     "logout": "Logout",
-    "logoutConfirm": "Are you sure you want to log out?",
+    "logoutTitle": "Confirm Logout",
+    "logoutConfirm": "Are you sure you want to log out of your session?",
+    "logoutYes": "Yes, Log Out",
+    "logoutCancel": "Cancel",
     "logoutSuccess": "Logout Successful!"
   },
   "dashboard": {

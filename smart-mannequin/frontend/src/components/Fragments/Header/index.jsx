@@ -309,14 +309,14 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
               <button
                 onClick={() => switchMannequin(1)}
                 className={`w-full text-left px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between hover:bg-slate-50 transition ${String(mannequinId) === "1"
-                    ? "text-[#00ba88] font-bold bg-[#00ba88]/10"
-                    : "text-slate-700"
+                  ? "text-[#00ba88] font-bold bg-[#00ba88]/10"
+                  : "text-slate-700"
                   }`}>
                 <span className="flex items-center gap-2">
                   <span
                     className={`w-2 h-2 rounded-full ${String(mannequinId) === "1"
-                        ? "bg-[#00ba88]"
-                        : "bg-slate-300"
+                      ? "bg-[#00ba88]"
+                      : "bg-slate-300"
                       }`}
                   />
                   {t("header.mannequin1", "Manekin 1")}
@@ -328,14 +328,14 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
               <button
                 onClick={() => switchMannequin(2)}
                 className={`w-full text-left px-4 py-2 text-xs sm:text-sm font-medium flex items-center justify-between hover:bg-slate-50 transition ${String(mannequinId) === "2"
-                    ? "text-[#00ba88] font-bold bg-[#00ba88]/10"
-                    : "text-slate-700"
+                  ? "text-[#00ba88] font-bold bg-[#00ba88]/10"
+                  : "text-slate-700"
                   }`}>
                 <span className="flex items-center gap-2">
                   <span
                     className={`w-2 h-2 rounded-full ${String(mannequinId) === "2"
-                        ? "bg-[#00ba88]"
-                        : "bg-slate-300"
+                      ? "bg-[#00ba88]"
+                      : "bg-slate-300"
                       }`}
                   />
                   {t("header.mannequin2", "Manekin 2")}
@@ -353,8 +353,8 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
           <button
             onClick={() => changeLanguage("id")}
             className={`flex items-center justify-center w-7 h-7 rounded-full transition-all ${currentLang === "id"
-                ? "bg-[#00ba88] ring-2 ring-[#00ba88]/30 shadow-xs scale-105"
-                : "opacity-60 hover:opacity-100 hover:bg-slate-200"
+              ? "bg-[#00ba88] ring-2 ring-[#00ba88]/30 shadow-xs scale-105"
+              : "opacity-60 hover:opacity-100 hover:bg-slate-200"
               }`}
             title="Bahasa Indonesia">
             <ReactCountryFlag
@@ -371,8 +371,8 @@ const HeaderPage = ({ isCollapse, handleCollapsedChange }) => {
           <button
             onClick={() => changeLanguage("en")}
             className={`flex items-center justify-center w-7 h-7 rounded-full transition-all ${currentLang === "en"
-                ? "bg-[#00ba88] ring-2 ring-[#00ba88]/30 shadow-xs scale-105"
-                : "opacity-60 hover:opacity-100 hover:bg-slate-200"
+              ? "bg-[#00ba88] ring-2 ring-[#00ba88]/30 shadow-xs scale-105"
+              : "opacity-60 hover:opacity-100 hover:bg-slate-200"
               }`}
             title="English (UK)">
             <ReactCountryFlag

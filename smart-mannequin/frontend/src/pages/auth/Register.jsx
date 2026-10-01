@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { User, Mail, Lock, Eye, EyeOff, ShieldCheck, Activity } from "lucide-react";
+import { User, Mail, Lock, Eye, EyeOff, ShieldCheck } from "lucide-react";
 import { postData, buildApiUrl } from "../../service/api";
 import { showError, showSuccess } from "../../helpers/sweetalert";
 
@@ -72,10 +72,10 @@ const RegisterPage = () => {
             </div>
             <div>
               <span className="text-lg xl:text-xl font-bold tracking-tight text-white font-serif">
-                STAS
+                STAS-RG
               </span>
               <span className="text-[11px] xl:text-xs text-emerald-400 block -mt-1 font-sans font-medium tracking-wide">
-                Smart Mannequin
+                Research Center Smart Technology & Applied Science
               </span>
             </div>
           </div>
@@ -83,6 +83,7 @@ const RegisterPage = () => {
           {/* Central Mannequin Visual & Telemetry Badges */}
           <div className="relative z-10 my-3 lg:my-4 xl:my-6 flex flex-col items-center justify-center">
             <div className="relative group max-w-[200px] sm:max-w-[240px] lg:max-w-[260px] xl:max-w-[320px]">
+              {/* Backlight Glow for Image */}
               <div className="absolute inset-0 rounded-full bg-emerald-500/20 blur-2xl group-hover:bg-emerald-500/30 transition-all duration-700" />
               
               <img
@@ -90,29 +91,20 @@ const RegisterPage = () => {
                 alt="Smart Mannequin"
                 className="relative z-10 w-full h-auto object-contain max-h-[180px] sm:max-h-[220px] lg:max-h-[260px] xl:max-h-[320px] drop-shadow-[0_20px_35px_rgba(0,0,0,0.6)] transform hover:scale-[1.02] transition-transform duration-500"
                 onError={(e) => {
+                  // Fallback to manequin.png if img-manekin has issues
                   e.currentTarget.src = "/manequin.png";
                 }}
               />
-
-              {/* Floating Telemetry Chips */}
-              <div className="absolute -left-4 top-1/4 z-20 backdrop-blur-md bg-slate-900/80 border border-emerald-500/30 rounded-2xl px-3 py-1.5 shadow-lg text-[11px] text-emerald-300 flex items-center gap-1.5 hidden sm:flex">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                <span>SmartSkin • Active</span>
-              </div>
-              <div className="absolute -right-4 bottom-1/4 z-20 backdrop-blur-md bg-slate-900/80 border border-teal-500/30 rounded-2xl px-3 py-1.5 shadow-lg text-[11px] text-teal-300 flex items-center gap-1.5 hidden sm:flex">
-                <Activity className="w-3 h-3 text-teal-400" />
-                <span>LiDAR & IMU • Connected</span>
-              </div>
             </div>
           </div>
 
-          {/* Headline & Subtitle */}
+          {/* Headline & Subtitle matching the reference layout */}
           <div className="relative z-10 max-w-xl">
             <h1 className="text-2xl sm:text-3xl lg:text-3xl xl:text-4xl font-extrabold tracking-tight text-white leading-tight font-sans">
-              Join the research on passenger comfort.
+              Every detail matters in safety & comfort.
             </h1>
             <p className="text-xs sm:text-sm text-slate-300/90 mt-2 font-normal leading-relaxed">
-              Create an account to access live sensor data, calibration tools, and telemetry exports.
+              Log in to monitor live anthropometric telemetry, posture dynamics, and cabin comfort analytics.
             </p>
           </div>
         </div>
